@@ -1,0 +1,1382 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice Google Maps - Trajets en train</title>
+    <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@400;600;700&family=Poppins:wght@500;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #2D5F8D;
+            --secondary: #4A90A4;
+            --accent: #FFB84D;
+            --success: #7BC96F;
+            --background: #F8F9FA;
+            --card-bg: #FFFFFF;
+            --text-dark: #2C3E50;
+            --text-light: #5A6C7D;
+            --border: #E0E6ED;
+        }
+
+        body {
+            font-family: 'Quicksand', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background-attachment: fixed;
+            color: var(--text-dark);
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+
+        header {
+            background: var(--card-bg);
+            border-radius: 20px;
+            padding: 30px;
+            text-align: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.15);
+            margin-bottom: 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary), var(--accent));
+        }
+
+        h1 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary);
+            font-size: 2rem;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+
+        .subtitle {
+            color: var(--text-light);
+            font-size: 1.1rem;
+            font-weight: 500;
+        }
+
+        .emoji {
+            font-size: 2rem;
+            margin-right: 10px;
+        }
+
+        .instructions {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 30px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            border-left: 5px solid var(--accent);
+        }
+
+        .instructions h2 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--secondary);
+            font-size: 1.4rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .instructions ol {
+            padding-left: 25px;
+            color: var(--text-dark);
+        }
+
+        .instructions li {
+            margin-bottom: 12px;
+            font-size: 1rem;
+        }
+
+        .instructions strong {
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .google-maps-btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: #4285F4;
+            color: white;
+            padding: 12px 24px;
+            border-radius: 25px;
+            text-decoration: none;
+            font-weight: 600;
+            margin-top: 15px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(66, 133, 244, 0.3);
+        }
+
+        .google-maps-btn:hover {
+            background: #3367D6;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(66, 133, 244, 0.4);
+        }
+
+        .scenario {
+            background: var(--card-bg);
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            border-top: 4px solid var(--primary);
+        }
+
+        .scenario:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+        }
+
+        .scenario-header {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--border);
+        }
+
+        .scenario-number {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            font-weight: 700;
+            font-family: 'Poppins', sans-serif;
+            box-shadow: 0 4px 15px rgba(45, 95, 141, 0.3);
+        }
+
+        .scenario-title {
+            flex: 1;
+        }
+
+        .scenario-title h3 {
+            font-family: 'Poppins', sans-serif;
+            color: var(--primary);
+            font-size: 1.3rem;
+            margin-bottom: 5px;
+        }
+
+        .scenario-subtitle {
+            color: var(--text-light);
+            font-size: 0.95rem;
+        }
+
+        .scenario-context {
+            background: linear-gradient(135deg, #f5f7fa 0%, #e8ecef 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+            border-left: 4px solid var(--accent);
+        }
+
+        .scenario-context p {
+            font-size: 1.05rem;
+            color: var(--text-dark);
+            line-height: 1.7;
+        }
+
+        .info-box {
+            background: #FFF9E6;
+            border-left: 4px solid var(--accent);
+            border-radius: 8px;
+            padding: 15px;
+            margin: 15px 0;
+        }
+
+        .info-box strong {
+            color: #D4880C;
+        }
+
+        .form-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .form-group label {
+            font-weight: 600;
+            color: var(--primary);
+            font-size: 0.95rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+            padding: 12px 15px;
+            border: 2px solid var(--border);
+            border-radius: 8px;
+            font-family: 'Quicksand', sans-serif;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .form-group input:focus,
+        .form-group select:focus {
+            outline: none;
+            border-color: var(--secondary);
+            box-shadow: 0 0 0 3px rgba(74, 144, 164, 0.1);
+        }
+
+        .icon {
+            font-size: 1.2rem;
+        }
+
+        .check-answer-btn {
+            background: linear-gradient(135deg, var(--success), #5FA54F);
+            color: white;
+            border: none;
+            padding: 14px 30px;
+            border-radius: 25px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(123, 201, 111, 0.3);
+            font-family: 'Poppins', sans-serif;
+        }
+
+        .check-answer-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(123, 201, 111, 0.4);
+        }
+
+        .feedback {
+            margin-top: 20px;
+            padding: 15px 20px;
+            border-radius: 10px;
+            font-weight: 600;
+            display: none;
+            animation: slideIn 0.4s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .feedback.success {
+            background: #E8F5E9;
+            color: #2E7D32;
+            border-left: 4px solid var(--success);
+            display: block;
+        }
+
+        .feedback.error {
+            background: #FFEBEE;
+            color: #C62828;
+            border-left: 4px solid #E57373;
+            display: block;
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 40px;
+            padding: 20px;
+            background: var(--card-bg);
+            border-radius: 15px;
+            color: var(--text-light);
+            box-shadow: 0 5px 20px rgba(0,0,0,0.1);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding: 15px;
+            }
+
+            h1 {
+                font-size: 1.6rem;
+            }
+
+            .subtitle {
+                font-size: 1rem;
+            }
+
+            header {
+                padding: 25px 20px;
+            }
+
+            .instructions {
+                padding: 20px;
+            }
+
+            .instructions h2 {
+                font-size: 1.2rem;
+            }
+
+            .instructions li {
+                font-size: 1rem;
+                margin-bottom: 15px;
+            }
+
+            .google-maps-btn {
+                padding: 16px 28px;
+                font-size: 1.1rem;
+                width: 100%;
+                justify-content: center;
+            }
+
+            .scenario {
+                padding: 20px;
+                margin-bottom: 20px;
+            }
+
+            .scenario-header {
+                flex-direction: row;
+                gap: 12px;
+            }
+
+            .scenario-number {
+                width: 45px;
+                height: 45px;
+                font-size: 1.3rem;
+                flex-shrink: 0;
+            }
+
+            .scenario-title h3 {
+                font-size: 1.2rem;
+            }
+
+            .scenario-subtitle {
+                font-size: 0.9rem;
+            }
+
+            .scenario-context {
+                padding: 18px;
+            }
+
+            .scenario-context p {
+                font-size: 1.05rem;
+                line-height: 1.8;
+            }
+
+            .info-box {
+                padding: 15px;
+                font-size: 0.95rem;
+            }
+
+            .form-grid {
+                grid-template-columns: 1fr;
+                gap: 18px;
+            }
+
+            .form-group label {
+                font-size: 1.05rem;
+                margin-bottom: 2px;
+            }
+
+            .form-group input,
+            .form-group select {
+                padding: 16px;
+                font-size: 1.1rem;
+                border-radius: 10px;
+                min-height: 52px;
+            }
+
+            .check-answer-btn {
+                width: 100%;
+                padding: 18px;
+                font-size: 1.15rem;
+                margin-top: 10px;
+            }
+
+            .feedback {
+                font-size: 1rem;
+                padding: 16px;
+            }
+
+            .tip-box {
+                padding: 18px;
+            }
+
+            .tip-box h4 {
+                font-size: 1.05rem;
+            }
+
+            .tip-box li {
+                font-size: 0.95rem;
+            }
+
+            footer {
+                padding: 20px 15px;
+                font-size: 0.95rem;
+            }
+        }
+
+        .tip-box {
+            background: linear-gradient(135deg, #E3F2FD 0%, #BBDEFB 100%);
+            border-radius: 10px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .tip-box h4 {
+            color: var(--primary);
+            margin-bottom: 10px;
+            font-family: 'Poppins', sans-serif;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-box ul {
+            padding-left: 20px;
+            color: var(--text-dark);
+        }
+
+        .tip-box li {
+            margin-bottom: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><span class="emoji">🚂</span>Exercice Google Maps</h1>
+            <p class="subtitle">Apprendre à planifier des trajets en train dans le canton de Vaud</p>
+        </header>
+
+        <div class="instructions">
+            <h2><span class="emoji">📋</span>Comment utiliser Google Maps</h2>
+            <ol>
+                <li>Cliquez sur le bouton <strong>"Ouvrir Google Maps"</strong> ci-dessous</li>
+                <li>Entrez la <strong>gare de départ</strong> (exemple : Gare de Lausanne)</li>
+                <li>Entrez la <strong>gare d'arrivée</strong> (exemple : Gare de Montreux)</li>
+                <li>Cliquez sur l'icône <strong>train 🚂</strong> pour choisir le transport en commun</li>
+                <li>Cliquez sur <strong>"Partir maintenant"</strong> et choisissez :
+                    <ul style="margin-top: 10px;">
+                        <li><strong>"Arriver à"</strong> : pour choisir l'heure d'arrivée</li>
+                        <li>Sélectionnez le <strong>jour</strong> et l'<strong>heure</strong></li>
+                    </ul>
+                </li>
+                <li>Trouvez l'heure de départ et la durée du trajet</li>
+                <li>Complétez les informations dans le formulaire ci-dessous</li>
+            </ol>
+            
+            <a href="https://www.google.com/maps/dir/" target="_blank" class="google-maps-btn">
+                <span>📍</span>
+                Ouvrir Google Maps
+            </a>
+
+            <div class="tip-box">
+                <h4><span class="emoji">💡</span>Astuce importante</h4>
+                <ul>
+                    <li>Cherchez toujours <strong>"Gare de [ville]"</strong> (exemple : Gare de Vevey)</li>
+                    <li>Vérifiez que vous avez sélectionné le mode <strong>train</strong> 🚂</li>
+                    <li>Attention : l'heure indiquée est l'heure d'<strong>arrivée</strong> au rendez-vous</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Scénario 1 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">1</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous médical</h3>
+                    <p class="scenario-subtitle">Lausanne → Montreux</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Lausanne</strong>. Vous avez un rendez-vous à la <strong>gare de Montreux</strong> le <strong>lundi</strong> à <strong>14h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Lausanne ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Montreux <strong>AVANT 14h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="1">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 30 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 2 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">2</div>
+                <div class="scenario-title">
+                    <h3>Entretien d'embauche</h3>
+                    <p class="scenario-subtitle">Morges → Lausanne</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Morges</strong>. Vous avez un rendez-vous à la <strong>gare de Lausanne</strong> le <strong>mardi</strong> à <strong>09h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Morges ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Lausanne <strong>AVANT 09h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="2">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 15 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 3 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">3</div>
+                <div class="scenario-title">
+                    <h3>Réunion importante</h3>
+                    <p class="scenario-subtitle">Vevey → Yverdon-les-Bains</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Vevey</strong>. Vous avez un rendez-vous à la <strong>gare d'Yverdon-les-Bains</strong> le <strong>mercredi</strong> à <strong>15h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Vevey ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare d'Yverdon-les-Bains <strong>AVANT 15h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="3">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 45 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 4 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">4</div>
+                <div class="scenario-title">
+                    <h3>Visite chez un client</h3>
+                    <p class="scenario-subtitle">Nyon → Lausanne</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Nyon</strong>. Vous avez un rendez-vous à la <strong>gare de Lausanne</strong> le <strong>jeudi</strong> à <strong>11h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Nyon ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Lausanne <strong>AVANT 11h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="4">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 20 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 5 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">5</div>
+                <div class="scenario-title">
+                    <h3>Cours de formation</h3>
+                    <p class="scenario-subtitle">Lausanne → Aigle</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Lausanne</strong>. Vous avez un rendez-vous à la <strong>gare d'Aigle</strong> le <strong>vendredi</strong> à <strong>13h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Lausanne ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare d'Aigle <strong>AVANT 13h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="5">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 35 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 6 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">6</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous administratif</h3>
+                    <p class="scenario-subtitle">Renens → Nyon</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Renens</strong>. Vous avez un rendez-vous à la <strong>gare de Nyon</strong> le <strong>lundi</strong> à <strong>10h15</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Renens ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Nyon <strong>AVANT 10h15</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="6">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 25 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 7 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">7</div>
+                <div class="scenario-title">
+                    <h3>Formation professionnelle</h3>
+                    <p class="scenario-subtitle">Montreux → Lausanne</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Montreux</strong>. Vous avez un rendez-vous à la <strong>gare de Lausanne</strong> le <strong>mardi</strong> à <strong>08h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Montreux ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Lausanne <strong>AVANT 08h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="7">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 20 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 8 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">8</div>
+                <div class="scenario-title">
+                    <h3>Consultation spécialisée</h3>
+                    <p class="scenario-subtitle">Yverdon-les-Bains → Lausanne</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Yverdon-les-Bains</strong>. Vous avez un rendez-vous à la <strong>gare de Lausanne</strong> le <strong>mercredi</strong> à <strong>16h45</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare d'Yverdon-les-Bains ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Lausanne <strong>AVANT 16h45</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="8">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 35 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 9 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">9</div>
+                <div class="scenario-title">
+                    <h3>Présentation client</h3>
+                    <p class="scenario-subtitle">Lausanne → Vevey</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Lausanne</strong>. Vous avez un rendez-vous à la <strong>gare de Vevey</strong> le <strong>jeudi</strong> à <strong>14h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Lausanne ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Vevey <strong>AVANT 14h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="9">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 15 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 10 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">10</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous bancaire</h3>
+                    <p class="scenario-subtitle">Aigle → Montreux</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Aigle</strong>. Vous avez un rendez-vous à la <strong>gare de Montreux</strong> le <strong>vendredi</strong> à <strong>11h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare d'Aigle ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Montreux <strong>AVANT 11h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="10">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 12 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 11 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">11</div>
+                <div class="scenario-title">
+                    <h3>Visite médicale</h3>
+                    <p class="scenario-subtitle">Morges → Nyon</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Morges</strong>. Vous avez un rendez-vous à la <strong>gare de Nyon</strong> le <strong>lundi</strong> à <strong>15h15</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Morges ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Nyon <strong>AVANT 15h15</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="11">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 18 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 12 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">12</div>
+                <div class="scenario-title">
+                    <h3>Atelier professionnel</h3>
+                    <p class="scenario-subtitle">Vevey → Morges</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Vevey</strong>. Vous avez un rendez-vous à la <strong>gare de Morges</strong> le <strong>mardi</strong> à <strong>10h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Vevey ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Morges <strong>AVANT 10h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="12">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 25 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 13 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">13</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous juridique</h3>
+                    <p class="scenario-subtitle">Nyon → Morges</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Nyon</strong>. Vous avez un rendez-vous à la <strong>gare de Morges</strong> le <strong>mercredi</strong> à <strong>13h45</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Nyon ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Morges <strong>AVANT 13h45</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="13">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 18 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 14 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">14</div>
+                <div class="scenario-title">
+                    <h3>Séance de travail</h3>
+                    <p class="scenario-subtitle">Lausanne → Renens</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Lausanne</strong>. Vous avez un rendez-vous à la <strong>gare de Renens</strong> le <strong>jeudi</strong> à <strong>09h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Lausanne ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Renens <strong>AVANT 09h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="14">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 5 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 15 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">15</div>
+                <div class="scenario-title">
+                    <h3>Consultation d'expert</h3>
+                    <p class="scenario-subtitle">Montreux → Vevey</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Montreux</strong>. Vous avez un rendez-vous à la <strong>gare de Vevey</strong> le <strong>vendredi</strong> à <strong>16h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Montreux ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Vevey <strong>AVANT 16h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="15">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 8 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 16 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">16</div>
+                <div class="scenario-title">
+                    <h3>Conférence</h3>
+                    <p class="scenario-subtitle">Yverdon-les-Bains → Morges</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Yverdon-les-Bains</strong>. Vous avez un rendez-vous à la <strong>gare de Morges</strong> le <strong>lundi</strong> à <strong>14h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare d'Yverdon-les-Bains ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Morges <strong>AVANT 14h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="16">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 40 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 17 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">17</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous d'affaires</h3>
+                    <p class="scenario-subtitle">Aigle → Vevey</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Aigle</strong>. Vous avez un rendez-vous à la <strong>gare de Vevey</strong> le <strong>mardi</strong> à <strong>11h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare d'Aigle ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Vevey <strong>AVANT 11h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="17">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 20 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 18 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">18</div>
+                <div class="scenario-title">
+                    <h3>Rendez-vous scolaire</h3>
+                    <p class="scenario-subtitle">Renens → Morges</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Renens</strong>. Vous avez un rendez-vous à la <strong>gare de Morges</strong> le <strong>mercredi</strong> à <strong>15h00</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Renens ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Morges <strong>AVANT 15h00</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="18">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 12 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 19 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">19</div>
+                <div class="scenario-title">
+                    <h3>Entretien technique</h3>
+                    <p class="scenario-subtitle">Morges → Renens</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Morges</strong>. Vous avez un rendez-vous à la <strong>gare de Renens</strong> le <strong>jeudi</strong> à <strong>10h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Morges ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare de Renens <strong>AVANT 10h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="19">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 10 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <!-- Scénario 20 -->
+        <div class="scenario">
+            <div class="scenario-header">
+                <div class="scenario-number">20</div>
+                <div class="scenario-title">
+                    <h3>Réunion de suivi</h3>
+                    <p class="scenario-subtitle">Vevey → Aigle</p>
+                </div>
+            </div>
+
+            <div class="scenario-context">
+                <p>Vous habitez à <strong>Vevey</strong>. Vous avez un rendez-vous à la <strong>gare d'Aigle</strong> le <strong>vendredi</strong> à <strong>13h30</strong>.</p>
+                <p style="margin-top: 10px;">À quelle heure devez-vous partir de la gare de Vevey ?</p>
+            </div>
+
+            <div class="info-box">
+                <p><strong>⚠️ Important :</strong> Vous devez arriver à la gare d'Aigle <strong>AVANT 13h30</strong></p>
+            </div>
+
+            <form class="scenario-form" data-scenario="20">
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label><span class="icon">🚀</span>Heure de départ du train</label>
+                        <input type="time" name="heure-depart" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">🏁</span>Heure d'arrivée du train</label>
+                        <input type="time" name="heure-arrivee" required>
+                    </div>
+                    <div class="form-group">
+                        <label><span class="icon">⏱️</span>Durée totale du trajet</label>
+                        <input type="text" name="duree" placeholder="Ex: 20 min" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="check-answer-btn">✓ Vérifier mes réponses</button>
+                <div class="feedback"></div>
+            </form>
+        </div>
+
+        <footer>
+            <p><strong>Exercice Google Maps - Trajets en train dans le canton de Vaud</strong></p>
+            <p style="margin-top: 10px;">Bon apprentissage ! 🎓</p>
+        </footer>
+    </div>
+
+    <script>
+        // Gestion des formulaires
+        document.querySelectorAll('.scenario-form').forEach(form => {
+            form.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const feedback = this.querySelector('.feedback');
+                const formData = new FormData(this);
+                
+                // Vérification basique que tous les champs sont remplis
+                let allFilled = true;
+                for (let [key, value] of formData.entries()) {
+                    if (!value || value.trim() === '') {
+                        allFilled = false;
+                        break;
+                    }
+                }
+                
+                if (allFilled) {
+                    feedback.className = 'feedback success';
+                    feedback.innerHTML = '✓ Bravo ! Vous avez complété tous les champs. Vérifiez que les informations correspondent à ce que vous avez trouvé sur Google Maps.';
+                } else {
+                    feedback.className = 'feedback error';
+                    feedback.innerHTML = '✗ Attention ! Vous devez remplir tous les champs avant de vérifier vos réponses.';
+                }
+                
+                // Scroll vers le feedback
+                feedback.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+            });
+        });
+
+        // Animation au scroll
+        const scenarios = document.querySelectorAll('.scenario');
+        
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver(function(entries) {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '0';
+                    entry.target.style.transform = 'translateY(20px)';
+                    
+                    setTimeout(() => {
+                        entry.target.style.transition = 'all 0.6s ease';
+                        entry.target.style.opacity = '1';
+                        entry.target.style.transform = 'translateY(0)';
+                    }, 100);
+                    
+                    observer.unobserve(entry.target);
+                }
+            });
+        }, observerOptions);
+
+        scenarios.forEach(scenario => {
+            observer.observe(scenario);
+        });
+    </script>
+</body>
+</html>
