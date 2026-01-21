@@ -276,8 +276,25 @@ input:focus{
     width:210mm;
     height:297mm;
   }
+  *{
+    -webkit-print-color-adjust:exact;
+    print-color-adjust:exact;
+  }
   body *{visibility:hidden}
   .letter,.letter *{visibility:visible}
+  .container,
+  .layout,
+  .panel,
+  .letter-wrap{
+    margin:0;
+    padding:0;
+    border:0;
+    box-shadow:none;
+    background:transparent;
+  }
+  .letter-wrap{
+    display:block;
+  }
   .letter{
     position:absolute;
     top:0;
@@ -285,7 +302,15 @@ input:focus{
     margin:0;
     box-shadow:none;
     page-break-inside:avoid;
+    width:210mm;
+    height:297mm;
   }
+  .sender{position:absolute;top:25mm;left:25mm}
+  .recipient{position:absolute;top:55mm;right:20mm;width:80mm}
+  .date{position:absolute;top:77mm;right:20mm;width:80mm}
+  .object{position:absolute;top:98mm;left:25mm;right:25mm;font-weight:bold}
+  .body{position:absolute;top:112mm;left:25mm;right:25mm;height:145mm}
+  .signature{position:absolute;bottom:25mm;right:25mm;width:65mm}
 }
 </style>
 
