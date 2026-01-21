@@ -142,6 +142,49 @@ button{
   width:65mm;
 }
 
+@media (max-width: 720px){
+  .container{padding:16px}
+  h1{font-size:22px}
+  .consigne{font-size:13px}
+  .form{grid-template-columns:1fr;gap:10px}
+  input{padding:12px;font-size:16px}
+  .actions{gap:10px}
+  button{width:100%}
+  .preview-title{margin-top:16px}
+  .mobile-hint{
+    text-align:center;
+    color:#9ca3af;
+    font-size:12px;
+    margin-top:4px;
+  }
+  .letter-wrap{padding:12px}
+  .letter{
+    width:100%;
+    height:auto;
+    min-height:auto;
+    padding:16px;
+    font-size:15px;
+    line-height:1.6;
+    position:relative;
+  }
+  .sender,
+  .recipient,
+  .date,
+  .object,
+  .body,
+  .signature{
+    position:static;
+    width:auto;
+    height:auto;
+    margin-bottom:12px;
+  }
+  .recipient{margin-top:4px}
+  .date{text-align:right;margin-top:-6px}
+  .object{font-weight:bold;margin-top:6px}
+  .body p{margin-bottom:10px;text-align:left}
+  .signature{margin-bottom:0;text-align:right}
+}
+
 /* ===== IMPRESSION ===== */
 @media print{
   body *{visibility:hidden}
@@ -195,6 +238,7 @@ button{
 </div>
 
 <p class="preview-title">⬇️ Aperçu de la lettre ci-dessous</p>
+<p class="mobile-hint">Sur téléphone, l’aperçu s’adapte. La mise en page A4 est appliquée à l’impression.</p>
 
 <!-- LETTRE -->
 <div class="letter-wrap">

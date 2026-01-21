@@ -85,6 +85,30 @@ h1{
   line-height:1.45;
 }
 
+@media (max-width: 720px){
+  .container{padding:16px}
+  h1{font-size:22px}
+  .consigne{font-size:13px}
+  .toolbar{gap:8px}
+  .toolbar button{width:100%}
+  .page{
+    width:100%;
+    height:auto;
+    min-height:70vh;
+    padding:16px;
+  }
+  .editor{
+    font-size:16px;
+    line-height:1.5;
+  }
+  .mobile-hint{
+    text-align:center;
+    color:#9ca3af;
+    font-size:12px;
+    margin:8px 0 0;
+  }
+}
+
 /* ===== IMPRESSION ===== */
 @media print{
 
@@ -124,6 +148,7 @@ h1{
 2️⃣ Choisissez <strong>Enregistrer en PDF</strong><br>
 3️⃣ Format : <strong>A4 – Aucune marge</strong>
 </div>
+<div class="mobile-hint">Sur telephone, la page s adapte. Le format A4 est applique a l impression.</div>
 
 <!-- BARRE OUTILS -->
 <div class="toolbar">
