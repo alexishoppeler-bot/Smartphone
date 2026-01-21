@@ -4,32 +4,79 @@
 <meta charset="UTF-8">
 <title>Générateur de lettre de motivation</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
 *{box-sizing:border-box;margin:0;padding:0}
 
+:root{
+  --bg:#eef2f6;
+  --bg-accent:#dfe8f7;
+  --panel:#ffffff;
+  --ink:#0f172a;
+  --muted:#5b6475;
+  --line:#e2e8f0;
+  --accent:#0f766e;
+  --accent-2:#2563eb;
+  --shadow:0 16px 40px rgba(15, 23, 42, 0.12);
+  --ui-font:"Manrope","Segoe UI",system-ui,sans-serif;
+  --letter-font:"Source Serif 4","Times New Roman",serif;
+}
+
 /* ===== ÉCRAN ===== */
 body{
-  font-family: Calibri, Arial, sans-serif;
-  background:#0b1220;
-  color:#e5e7eb;
+  font-family:var(--ui-font);
+  background:
+    radial-gradient(800px 360px at 10% -10%, #f8fafc 0%, transparent 60%),
+    radial-gradient(900px 420px at 90% 0%, var(--bg-accent) 0%, transparent 55%),
+    var(--bg);
+  color:var(--ink);
 }
 
 .container{
-  max-width:1100px;
+  max-width:1200px;
   margin:auto;
-  padding:20px;
+  padding:26px 20px 60px;
   min-height:100vh;
 }
 
-h1{text-align:center;margin-bottom:10px}
+h1{
+  text-align:center;
+  margin-bottom:8px;
+  font-size:28px;
+  font-weight:700;
+}
 
 .consigne{
   text-align:center;
-  color:#9ca3af;
+  color:var(--muted);
   font-size:14px;
-  line-height:1.45;
-  margin-bottom:18px;
+  line-height:1.6;
+  margin-bottom:22px;
+}
+
+.layout{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(0, 1fr));
+  gap:20px;
+  align-items:start;
+}
+
+.panel{
+  background:var(--panel);
+  border:1px solid var(--line);
+  border-radius:18px;
+  padding:18px;
+  box-shadow:var(--shadow);
+}
+
+.panel-title{
+  display:flex;
+  align-items:center;
+  gap:8px;
+  font-size:16px;
+  font-weight:700;
+  margin-bottom:12px;
 }
 
 /* FORMULAIRE */
@@ -37,7 +84,7 @@ h1{text-align:center;margin-bottom:10px}
   display:grid;
   grid-template-columns:1fr 1fr;
   gap:14px;
-  margin-bottom:10px;
+  margin-bottom:12px;
 }
 
 .field{
@@ -47,53 +94,85 @@ h1{text-align:center;margin-bottom:10px}
 }
 
 label{
-  font-size:14px;
-  color:#9ca3af;
+  font-size:13px;
+  color:var(--muted);
+  font-weight:600;
 }
 
 input{
-  background:#020617;
-  color:#e5e7eb;
-  border:1px solid #374151;
-  border-radius:8px;
-  padding:8px;
+  background:#f8fafc;
+  color:var(--ink);
+  border:1px solid var(--line);
+  border-radius:10px;
+  padding:10px 12px;
+  font-size:15px;
+}
+input:focus{
+  outline:2px solid rgba(37, 99, 235, 0.2);
+  border-color:var(--accent-2);
 }
 
 /* ACTIONS */
 .actions{
   display:flex;
-  justify-content:center;
+  justify-content:flex-start;
   gap:12px;
-  margin:16px 0;
+  margin:14px 0 6px;
   flex-wrap:wrap;
 }
 
-button{
-  padding:12px 18px;
-  border-radius:10px;
-  border:none;
-  background:#0f766e;
-  color:#ffffff;
-  font-size:15px;
+.btn{
+  padding:12px 16px;
+  border-radius:12px;
+  border:1px solid transparent;
+  font-size:14px;
+  font-weight:600;
   cursor:pointer;
+  transition:transform .15s ease, box-shadow .15s ease, border .15s ease;
 }
+.btn.primary{
+  background:linear-gradient(135deg, #0f766e, #14b8a6);
+  color:#ffffff;
+  box-shadow:0 12px 24px rgba(15, 118, 110, 0.28);
+}
+.btn.secondary{
+  background:#eef2ff;
+  color:#1e3a8a;
+  border-color:#c7d2fe;
+}
+.btn.ghost{
+  background:#ffffff;
+  color:#334155;
+  border-color:#cbd5f5;
+}
+.btn:hover{transform:translateY(-1px)}
 
 /* ===== LETTRE ===== */
 .preview-title{
-  text-align:center;
-  color:#22c55e;
-  margin:10px 0;
-  font-size:14px;
+  text-align:left;
+  color:var(--accent);
+  margin:0 0 8px;
+  font-size:13px;
+  font-weight:600;
+}
+
+.mobile-hint{
+  text-align:left;
+  color:var(--muted);
+  font-size:12px;
+  margin-bottom:10px;
 }
 
 .letter-wrap{
-  background:#ffffff;
+  background:#f8fafc;
   display:flex;
   justify-content:center;
   margin-top:10px;
-  border-radius:12px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.4);
-  padding:20px;
+  border-radius:16px;
+  border:1px solid var(--line);
+  box-shadow:inset 0 0 0 1px rgba(255,255,255,0.8);
+  padding:18px;
+  overflow:auto;
 }
 
 .letter{
@@ -105,6 +184,8 @@ button{
   color:#000;
   position:relative;
   background:#fff;
+  font-family:var(--letter-font);
+  box-shadow:0 24px 40px rgba(15, 23, 42, 0.2);
 }
 
 /* BLOCS */
@@ -142,21 +223,20 @@ button{
   width:65mm;
 }
 
+@media (max-width: 980px){
+  .layout{grid-template-columns:1fr}
+}
+
 @media (max-width: 720px){
-  .container{padding:16px}
+  .container{padding:18px 14px 40px}
   h1{font-size:22px}
   .consigne{font-size:13px}
+  .panel{padding:14px}
   .form{grid-template-columns:1fr;gap:10px}
   input{padding:12px;font-size:16px}
-  .actions{gap:10px}
-  button{width:100%}
-  .preview-title{margin-top:16px}
-  .mobile-hint{
-    text-align:center;
-    color:#9ca3af;
-    font-size:12px;
-    margin-top:4px;
-  }
+  .actions{flex-direction:column;gap:10px}
+  .btn{width:100%}
+  .preview-title{margin-top:6px}
   .letter-wrap{padding:12px}
   .letter{
     width:100%;
@@ -186,7 +266,16 @@ button{
 }
 
 /* ===== IMPRESSION ===== */
+@page{
+  size:A4;
+  margin:0;
+}
 @media print{
+  html, body{
+    background:#fff;
+    width:210mm;
+    height:297mm;
+  }
   body *{visibility:hidden}
   .letter,.letter *{visibility:visible}
   .letter{
@@ -194,6 +283,7 @@ button{
     top:0;
     left:0;
     margin:0;
+    box-shadow:none;
     page-break-inside:avoid;
   }
 }
@@ -215,34 +305,40 @@ button{
 4️⃣ Nom du fichier : <strong>LM_ENTREPRISE.pdf</strong>
 </div>
 
-<!-- FORMULAIRE -->
-<div class="form">
-  <div class="field"><label>Prénom Nom</label><input id="nom"></div>
-  <div class="field"><label>Adresse</label><input id="adresse"></div>
-  <div class="field"><label>NPA Ville</label><input id="ville"></div>
-  <div class="field"><label>Téléphone</label><input id="tel"></div>
-  <div class="field"><label>Email</label><input id="email"></div>
+<div class="layout">
+  <section class="panel">
+    <div class="panel-title">🧾 Vos informations</div>
+    <!-- FORMULAIRE -->
+    <div class="form">
+      <div class="field"><label>Prénom Nom</label><input id="nom"></div>
+      <div class="field"><label>Adresse</label><input id="adresse"></div>
+      <div class="field"><label>NPA Ville</label><input id="ville"></div>
+      <div class="field"><label>Téléphone</label><input id="tel"></div>
+      <div class="field"><label>Email</label><input id="email"></div>
 
-  <div class="field"><label>Entreprise</label><input id="entreprise"></div>
-  <div class="field"><label>Adresse entreprise</label><input id="adresseEnt"></div>
-  <div class="field"><label>NPA Ville entreprise</label><input id="villeEnt"></div>
+      <div class="field"><label>Entreprise</label><input id="entreprise"></div>
+      <div class="field"><label>Adresse entreprise</label><input id="adresseEnt"></div>
+      <div class="field"><label>NPA Ville entreprise</label><input id="villeEnt"></div>
 
-  <div class="field"><label>Poste</label><input id="poste"></div>
-</div>
+      <div class="field"><label>Poste</label><input id="poste"></div>
+    </div>
 
-<div class="actions">
-  <button onclick="setVersion('homme')">👨 Texte masculin</button>
-  <button onclick="setVersion('femme')">👩 Texte féminin</button>
-  <button onclick="resetDestinataire()">🔄 Effacer le destinataire</button>
-  <button onclick="window.print()">📄 Télécharger</button>
-</div>
+    <div class="actions">
+      <button class="btn secondary" onclick="setVersion('homme')">👨 Texte masculin</button>
+      <button class="btn secondary" onclick="setVersion('femme')">👩 Texte féminin</button>
+      <button class="btn ghost" onclick="resetDestinataire()">🔄 Effacer le destinataire</button>
+      <button class="btn primary" onclick="window.print()">📄 Télécharger le PDF</button>
+    </div>
+  </section>
 
-<p class="preview-title">⬇️ Aperçu de la lettre ci-dessous</p>
-<p class="mobile-hint">Sur téléphone, l’aperçu s’adapte. La mise en page A4 est appliquée à l’impression.</p>
+  <section class="panel">
+    <div class="panel-title">📄 Aperçu</div>
+    <p class="preview-title">Aperçu de la lettre (mise en page A4).</p>
+    <p class="mobile-hint">Sur téléphone, l’aperçu s’adapte. La mise en page A4 est appliquée à l’impression.</p>
 
-<!-- LETTRE -->
-<div class="letter-wrap">
-<div class="letter">
+    <!-- LETTRE -->
+    <div class="letter-wrap">
+    <div class="letter">
 
   <div class="sender">
     <strong id="l-nom"></strong><br>
@@ -271,8 +367,9 @@ button{
   </div>
 
 </div>
+    </div>
+  </section>
 </div>
-
 </div>
 
 <script>
