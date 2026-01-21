@@ -1,0 +1,182 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>MiniWord</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ===== ÉCRAN ===== */
+body{
+  font-family: Calibri, Arial, sans-serif;
+  background:#0b1220;
+  color:#e5e7eb;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+  min-height:100vh;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+.consigne{
+  text-align:center;
+  color:#9ca3af;
+  font-size:14px;
+  line-height:1.45;
+  margin-bottom:14px;
+}
+
+/* BARRE OUTILS */
+.toolbar{
+  display:flex;
+  justify-content:center;
+  gap:10px;
+  margin-bottom:16px;
+  flex-wrap:wrap;
+}
+
+.toolbar button{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #374151;
+  background:#020617;
+  color:#e5e7eb;
+  cursor:pointer;
+  font-size:14px;
+}
+
+.toolbar button:hover{
+  background:#0f766e;
+}
+
+/* ===== PAGE A4 ===== */
+.page-wrap{
+  display:flex;
+  justify-content:center;
+}
+
+.page{
+  width:210mm;
+  height:297mm;
+  background:#ffffff;
+  color:#000;
+  padding:25mm 25mm 20mm 25mm;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  border-radius:6px;
+  overflow:hidden;
+}
+
+/* ZONE ÉDITION */
+.editor{
+  width:100%;
+  height:100%;
+  outline:none;
+  border:none;
+  font-size:12pt;
+  line-height:1.45;
+}
+
+/* ===== IMPRESSION ===== */
+@media print{
+
+  body *{
+    visibility:hidden;
+  }
+
+  .page,
+  .page *{
+    visibility:visible;
+  }
+
+  .page{
+    position:absolute;
+    top:0;
+    left:0;
+    margin:0;
+    width:210mm;
+    height:297mm;
+    padding:25mm 25mm 20mm 25mm;
+    page-break-inside:avoid;
+  }
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>MiniWord</h1>
+
+<div class="consigne">
+📄 <strong>Enregistrer en PDF</strong><br>
+1️⃣ Appuyez sur <strong>Ctrl + P</strong><br>
+2️⃣ Choisissez <strong>Enregistrer en PDF</strong><br>
+3️⃣ Format : <strong>A4 – Aucune marge</strong>
+</div>
+
+<!-- BARRE OUTILS -->
+<div class="toolbar">
+  <button onclick="cmd('bold')"><b>Gras</b></button>
+  <button onclick="cmd('italic')"><i>Italique</i></button>
+  <button onclick="cmd('underline')"><u>Souligné</u></button>
+  <button onclick="cmd('justifyLeft')">Gauche</button>
+  <button onclick="cmd('justifyCenter')">Centre</button>
+  <button onclick="cmd('justifyRight')">Droite</button>
+  <button onclick="cmd('justifyFull')">Justifier</button>
+  <button onclick="window.print()">📄 Télécharger</button>
+</div>
+
+<!-- PAGE -->
+<div class="page-wrap">
+  <div class="page">
+    <div class="editor" id="editor" contenteditable="true">
+      <!-- Texte libre ici -->
+    </div>
+  </div>
+</div>
+
+</div>
+
+<script>
+/* ===== COMMANDES TEXTE ===== */
+function cmd(command){
+  document.execCommand(command,false,null);
+  saveText();
+}
+
+/* ===== SAUVEGARDE AUTO ===== */
+const STORAGE_KEY="miniword_text";
+
+function saveText(){
+  localStorage.setItem(STORAGE_KEY,
+    document.getElementById("editor").innerHTML
+  );
+}
+
+function restoreText(){
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(saved){
+    document.getElementById("editor").innerHTML=saved;
+  }
+}
+
+/* sauvegarde en tapant */
+document.getElementById("editor").addEventListener("input",saveText);
+
+/* restauration au chargement */
+document.addEventListener("DOMContentLoaded",restoreText);
+</script>
+
+</body>
+</html>

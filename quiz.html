@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Quiz professionnel</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+.consigne{
+  text-align:center;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+
+/* PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+}
+
+/* QUESTION */
+.card{
+  background:var(--card);
+  padding:18px;
+  border-radius:14px;
+  border:2px solid transparent;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.question{
+  font-size:18px;
+  margin-bottom:14px;
+}
+
+/* RÉPONSES */
+.answers{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+}
+.answer{
+  padding:10px 12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#020617;
+  cursor:pointer;
+  font-weight:bold;
+}
+.answer.disabled{
+  opacity:.5;
+  cursor:default;
+}
+.answer.correct{border-color:var(--ok)}
+.answer.wrong{border-color:var(--err)}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+
+#replayBtn{
+  margin-top:16px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Quiz professionnel</h1>
+<div class="consigne">
+Choisis la bonne réponse.
+</div>
+
+<!-- PROGRESSION -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div class="card" id="card">
+  <div class="question" id="question"></div>
+  <div class="answers" id="answers"></div>
+</div>
+
+<!-- FIN (VERROUILLÉE AVANT LA FIN) -->
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+  <button id="replayBtn">🔁 Rejouer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   QUESTIONS (MODÈLE)
+   ========================= */
+const series = [
+  [
+    {
+      q:"Pourquoi est-il important de respecter les consignes au travail ?",
+      choices:["Pour travailler correctement","Pour finir plus tôt","Pour éviter les collègues"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si une consigne n’est pas claire ?",
+      choices:["Je demande des explications","Je fais au hasard","Je ne fais rien"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment réagis-tu face à un imprévu au travail ?",
+      choices:["Je m’adapte","Je panique","Je pars"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu termines ton travail plus tôt ?",
+      choices:["Je demande une autre tâche","Je quitte le poste","Je me cache"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi est-il important de travailler en équipe ?",
+      choices:["Pour être plus efficace","Pour parler","Pour éviter le travail"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu en cas de conflit avec un collègue ?",
+      choices:["Je discute calmement","Je crie","J’ignore"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment montres-tu ton professionnalisme ?",
+      choices:["Par mon attitude et mon travail","Par mes vêtements","Par mes pauses"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu fais une erreur ?",
+      choices:["Je la signale","Je la cache","Je continue"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi faut-il respecter les horaires ?",
+      choices:["Pour assurer l’organisation","Pour finir vite","Pour éviter le chef"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu risques d’être en retard ?",
+      choices:["Je préviens","Je n’arrive pas","Je mens"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment assures-tu la sécurité au travail ?",
+      choices:["En respectant les règles","En travaillant vite","En improvisant"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu vois une situation dangereuse ?",
+      choices:["Je la signale","Je regarde","Je pars"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi faut-il préparer le matériel avant de commencer ?",
+      choices:["Pour gagner du temps","Pour faire une pause","Pour attendre"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu après avoir utilisé un outil ?",
+      choices:["Je le range","Je le laisse","Je le jette"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment organises-tu ta journée de travail ?",
+      choices:["En respectant les priorités","En improvisant","En attendant"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu as trop de tâches ?",
+      choices:["Je demande de l’aide","Je pars","Je refuse"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi est-il important de communiquer au travail ?",
+      choices:["Pour éviter les erreurs","Pour parler","Pour perdre du temps"],
+      answer:0
+    },
+    {
+      q:"À qui t’adresses-tu en cas de problème ?",
+      choices:["À mon responsable","À personne","Aux clients"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment réagis-tu face à une critique constructive ?",
+      choices:["Je l’accepte","Je me fâche","Je l’ignore"],
+      answer:0
+    },
+    {
+      q:"Pourquoi faut-il rester calme au travail ?",
+      choices:["Pour bien travailler","Pour finir vite","Pour partir"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Que fais-tu pour maintenir un bon rythme de travail ?",
+      choices:["Je m’organise","Je me presse","Je ralentis"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu pendant ta pause ?",
+      choices:["Je me repose","Je travaille","Je dérange"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi est-il important de laisser un poste propre ?",
+      choices:["Pour la personne suivante","Pour soi","Pour le chef seulement"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu avant de quitter ton poste ?",
+      choices:["Je vérifie","Je pars vite","J’oublie"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment montres-tu ton respect envers les collègues ?",
+      choices:["Par mon comportement","Par le silence","Par la vitesse"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si un collègue a besoin d’aide ?",
+      choices:["Je l’aide","Je refuse","J’ignore"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi faut-il suivre les procédures ?",
+      choices:["Pour garantir la qualité","Pour perdre du temps","Pour compliquer"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si une procédure change ?",
+      choices:["Je m’adapte","Je continue pareil","Je refuse"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment assures-tu un travail de qualité ?",
+      choices:["En étant attentif","En allant vite","En improvisant"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu n’as pas terminé à temps ?",
+      choices:["Je préviens","Je cache","Je pars"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi est-il important d’être fiable au travail ?",
+      choices:["Pour avoir confiance","Pour finir tôt","Pour être tranquille"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu pour gagner la confiance ?",
+      choices:["Je respecte mes engagements","Je parle beaucoup","Je promets"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment gères-tu la pression au travail ?",
+      choices:["En restant organisé","En paniquant","En abandonnant"],
+      answer:0
+    },
+    {
+      q:"Que fais-tu si tu es fatigué ?",
+      choices:["Je respecte la pause","Je continue mal","Je pars"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Pourquoi est-il important de signaler un problème ?",
+      choices:["Pour éviter des erreurs","Pour se plaindre","Pour arrêter"],
+      answer:0
+    },
+    {
+      q:"Quand signales-tu un problème ?",
+      choices:["Dès que possible","À la fin du mois","Jamais"],
+      answer:0
+    }
+  ],
+  [
+    {
+      q:"Comment contribues-tu à une bonne ambiance de travail ?",
+      choices:["Par une attitude positive","Par le silence","Par la critique"],
+      answer:0
+    },
+    {
+      q:"Pourquoi est-il important d’avoir une attitude professionnelle ?",
+      choices:["Pour bien s’intégrer","Pour finir tôt","Pour éviter le travail"],
+      answer:0
+    }
+  ]
+];
+
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+/* =========================
+   ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="quiz_v_final";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie:0, index:0, score:0, errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+/* ========================= */
+const questionEl=document.getElementById("question");
+const answersEl=document.getElementById("answers");
+const card=document.getElementById("card");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+const replayBtn=document.getElementById("replayBtn");
+
+const flat = series.flat();
+const totalQuestions = flat.length;
+
+let currentSerie = shuffle(series[state.serie]);
+
+function updateProgress(){
+  const done = state.score + state.errors;
+  progressLabel.textContent=`Progression : ${done} / ${totalQuestions}`;
+  progressFill.style.width=Math.round(done/totalQuestions*100)+"%";
+}
+
+function loadQuestion(){
+  answersEl.innerHTML="";
+  card.className="card";
+
+  const q = currentSerie[state.index];
+  questionEl.textContent=q.q;
+
+  shuffle(q.choices).forEach(choice=>{
+    const idx = q.choices.indexOf(choice);
+    const div=document.createElement("div");
+    div.className="answer";
+    div.textContent=choice;
+    div.onclick=()=>{
+      if(div.classList.contains("disabled")) return;
+
+      document.querySelectorAll(".answer")
+        .forEach(a=>a.classList.add("disabled"));
+
+      if(idx===q.answer){
+        div.classList.add("correct");
+        state.score++;
+      }else{
+        div.classList.add("wrong");
+        state.errors++;
+      }
+      save();
+      updateProgress();
+      setTimeout(next,600);
+    };
+    answersEl.appendChild(div);
+  });
+}
+
+function next(){
+  state.index++;
+  if(state.index<currentSerie.length){
+    save();
+    loadQuestion();
+  }else{
+    state.serie++;
+    state.index=0;
+    if(state.serie<series.length){
+      currentSerie = shuffle(series[state.serie]);
+      save();
+      loadQuestion();
+    }else{
+      showEnd();
+    }
+  }
+}
+
+function showEnd(){
+  card.style.display="none";
+  end.style.display="block";
+
+  const ratio=state.score/totalQuestions;
+
+  starsEl.textContent=
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===totalQuestions && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Score : ${state.score} / ${totalQuestions}<br>Erreurs : ${state.errors}`;
+}
+
+/* 🔁 REJOUER — SEULEMENT APRÈS LA FIN */
+replayBtn.onclick=()=>{
+  state={serie:0,index:0,score:0,errors:0};
+  localStorage.removeItem(STORAGE_KEY);
+  end.style.display="none";
+  card.style.display="block";
+  currentSerie=shuffle(series[0]);
+  updateProgress();
+  loadQuestion();
+};
+
+/* INIT */
+updateProgress();
+loadQuestion();
+</script>
+
+</body>
+</html>

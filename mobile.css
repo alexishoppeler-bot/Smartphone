@@ -1,0 +1,97 @@
+/* Mobile comfort layer for all pages */
+@media (max-width: 720px) {
+  body {
+    -webkit-text-size-adjust: 100%;
+  }
+
+  .container,
+  .wrapper,
+  .content,
+  .main,
+  .layout {
+    max-width: 100%;
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .list,
+  .grid,
+  .cards,
+  .card-grid,
+  .type-grid {
+    grid-template-columns: 1fr !important;
+  }
+
+  .row,
+  .toolbar,
+  .actions,
+  .controls,
+  .button-row {
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .card,
+  .tile,
+  .item,
+  .panel {
+    width: 100%;
+  }
+
+  button,
+  .btn,
+  input[type="button"],
+  input[type="submit"],
+  input[type="reset"] {
+    min-height: 44px;
+  }
+
+  input,
+  select,
+  textarea,
+  button {
+    font-size: 16px;
+  }
+
+  img,
+  video,
+  canvas,
+  svg,
+  iframe {
+    max-width: 100%;
+    height: auto;
+  }
+
+  table {
+    width: 100%;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .page {
+    width: 100% !important;
+    height: auto !important;
+    min-height: 70vh;
+    padding: 18px !important;
+  }
+
+  .page-wrap {
+    padding: 0 10px;
+  }
+}
+
+@media (max-width: 420px) {
+  h1 {
+    font-size: clamp(20px, 7vw, 28px);
+  }
+
+  h2 {
+    font-size: clamp(18px, 6vw, 24px);
+  }
+
+  .subtitle,
+  .consigne,
+  .hint {
+    font-size: 14px;
+  }
+}

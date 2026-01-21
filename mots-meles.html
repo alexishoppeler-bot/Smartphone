@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mots mêlés</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Arial, sans-serif;}
+.container{max-width:980px;margin:auto;padding:20px;}
+h1{text-align:center}
+.consigne{text-align:center;color:var(--muted);margin:10px 0 16px;}
+
+/* PROGRESSION */
+.progress-wrap{background:var(--card);padding:14px;border-radius:14px;margin-bottom:20px;}
+.progress-label{text-align:center;font-weight:bold;margin-bottom:8px;}
+.progress-bar{width:100%;height:14px;background:#020617;border-radius:10px;overflow:hidden;border:1px solid var(--border);}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--brand),#22c55e);}
+
+/* JEU */
+.game{display:grid;grid-template-columns:1fr 260px;gap:20px;}
+.grid{display:grid;grid-template-columns:repeat(10,1fr);gap:4px;}
+.cell{
+  background:#020617;border:1px solid var(--border);border-radius:6px;
+  aspect-ratio:1/1;display:flex;align-items:center;justify-content:center;
+  font-weight:bold;cursor:pointer;user-select:none;
+}
+.cell.selected{background:#134e4a}
+.cell.found{background:var(--ok)}
+
+.words{background:var(--card);padding:12px;border-radius:14px;}
+.word{padding:6px 8px;border-bottom:1px solid var(--border);}
+.word.found{text-decoration:line-through;opacity:.4;}
+
+/* FIN */
+.end{display:none;margin-top:30px;text-align:center;background:var(--card);padding:20px;border-radius:14px;}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+#replayBtn{
+  margin-top:14px;padding:10px 18px;font-size:16px;border-radius:10px;
+  border:1px solid var(--border);background:#020617;color:var(--text);cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Mots mêlés</h1>
+<div class="consigne">Trouve les mots (horizontal → ou vertical ↓). Sélection droite obligatoire.</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression globale : 0 / 0</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="game">
+  <div class="grid" id="grid"></div>
+  <div class="words" id="wordList"></div>
+</div>
+
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+  <button id="replayBtn">🔁 Rejouer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   SÉRIES — 5 MOTS CHACUNE
+   (SANS "HORAIRES")
+   ========================= */
+const SERIES = [
+  ["TRAVAIL","PAUSE","EQUIPE","MATERIEL","SECURITE"],
+  ["NETTOYAGE","BUREAU","GANTS","PROPRE","RANGER"],
+  ["CHEF","HORAIRE","PONCTUEL","RETARD","ABSENT"],
+  ["NETTOYER","LAVER","ESSUYER","BALAYER","VIDER"],
+  ["ENTRER","SORTIR","COMMENCER","TERMINER","CONTINUER"],
+  ["CALME","SERIEUX","ATTENTIF","RAPIDE","LENT"],
+  ["CASQUE","MASQUE","VESTE","CHAUSSURES","PROTECTION"],
+  ["LIRE","SIGNER","COMPRENDRE","RESPECTER","APPLIQUER"],
+  ["MATIN","MIDI","SOIR","JOUR","SEMAINE"],
+  ["AIDE","DEMANDER","EXPLIQUER","MONTRER","VERIFIER"],
+
+  ["ORDRE","REGLE","CONSIGNE","PROCEDURE","DIRECTIVE"],
+  ["PROPRE","SALE","RANGEMENT","NETTOYAGE","HYGIENE"],
+  ["COLLEGUE","EQUIPE","RESPONSABLE","CHEF","ENTREPRISE"],
+  ["OUTIL","BALAI","CHIFFON","PRODUIT","MACHINE"],
+  ["HEURE","MINUTE","TEMPS","DUREE","PLANNING"],
+  ["PRESENT","ABSENCE","RETARD","JUSTIFIER","PREVENIR"],
+  ["PARLER","ECOUTER","REPONDRE","QUESTIONNER","INFORMER"],
+  ["COMMENCER","PREPARER","ORGANISER","EXECUTER","FINIR"],
+  ["CALME","STRESS","FATIGUE","PAUSE","REPOS"],
+  ["SECURITE","RISQUE","DANGER","ALERTE","PRUDENCE"],
+
+  ["QUALITE","ERREUR","CONTROLE","VERIFICATION","CORRECTION"],
+  ["RAPIDE","LENT","EFFICACE","PRECIS","ATTENTIF"],
+  ["POSTE","LIEU","SALLE","ENTREE","SORTIE"],
+  ["TENUE","VETEMENT","UNIFORME","GANTS","CHAUSSURES"],
+  ["JOURNEE","SEMAINE","MOIS","HORAIRE","TEMPS"],
+  ["ORGANISATION","PRIORITE","ORDRE","METHODE","PLAN"],
+  ["AIDER","SOUTENIR","COLLABORER","PARTAGER","COOPERER"],
+  ["SECURISER","PROTEGER","PREVENIR","EVITER","CONTROLER"],
+  ["PONCTUEL","FIABLE","SERIEUX","MOTIVE","REGULIER"],
+  ["MISSION","TACHE","ROLE","FONCTION","OBJECTIF"],
+
+  ["ATTENTION","CONCENTRATION","PRECISION","DETAIL","SOINS"],
+  ["AUTONOMIE","AIDE","GUIDE","SUPPORT","CONSEIL"],
+  ["EFFORT","ENGAGEMENT","MOTIVATION","DISCIPLINE","RIGUEUR"],
+  ["DESINFECTER","LAVER","SECHER","ESSUYER","RANGER"],
+  ["VERIFIER","TESTER","CONFIRMER","VALIDER","CORRIGER"],
+  ["MESSAGE","INFORMATION","ECHANGE","CONTACT","DIALOGUE"],
+  ["BUT","OBJECTIF","RESULTAT","PROGRES","SUCCES"],
+  ["AMELIORER","CORRIGER","ADAPTER","MODIFIER","AJUSTER"],
+  ["SUIVRE","RESPECTER","APPLIQUER","REALISER","ACCOMPLIR"],
+  ["TRAVAIL","EFFORT","QUALITE","SERIEUX","RESULTAT"],
+
+  ["DEBUT","ETAPE","PHASE","PROCESSUS","FIN"],
+  ["RESPONSABLE","AUTONOME","FIABLE","ENGAGE","PRESENT"],
+  ["COMMUNIQUER","EXPLIQUER","SIGNALER","INFORMER","PREVENIR"],
+  ["PLANNING","ORGANISATION","PRIORITE","ORDRE","METHODE"],
+  ["PROBLEME","SOLUTION","AIDE","SUIVI","RESULTAT"],
+  ["ENVIRONNEMENT","POSTE","LIEU","BUREAU","SALLE"],
+  ["STABILITE","REGULARITE","CONTINUITE","FIABILITE","DUREE"],
+  ["NORMALE","URGENCE","IMPORTANT","PRIORITAIRE","SECONDAIRE"],
+  ["SECURITE","HYGIENE","QUALITE","DISCIPLINE","RESPECT"],
+  ["PROFESSIONNEL","SERIEUX","ORGANISE","EFFICACE","FIABLE"],
+
+  ["CONTRAT","EMPLOI","POSTE","MISSION","ENTREPRISE"],
+  ["FORMATION","APPRENTISSAGE","EXERCICE","PRATIQUE","PROGRES"],
+  ["ADAPTATION","CHANGEMENT","SITUATION","CONTEXTE","REACTION"],
+  ["CONTROLE","SUIVI","BILAN","EVALUATION","RESULTAT"],
+  ["EQUIPEMENT","MATERIEL","OUTIL","MACHINE","PRODUIT"],
+  ["ENTRER","SORTIR","CIRCULER","ATTENDRE","PASSER"],
+  ["CALENDRIER","DATE","HEURE","HORAIRE","PLANNING"],
+  ["QUALITE","PRECISION","SOINS","RIGUEUR","DETAIL"],
+  ["AIDE","SOUTIEN","ACCOMPAGNEMENT","CONSEIL","GUIDE"],
+  ["ENGAGEMENT","VOLONTE","MOTIVATION","EFFORT","DISCIPLINE"]
+];
+
+
+
+const SIZE = 10;
+const LETTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+const DIRECTIONS = [
+  {dx:1, dy:0}, // →
+  {dx:0, dy:1}  // ↓
+];
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+/* =========================
+   ÉTAT GLOBAL (sauvegarde)
+   ========================= */
+const STORAGE_KEY="mot_meles_multi_v2_safe";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie: 0,
+  foundGlobal: {},  // { "TRAVAIL": true, ... }
+  errors: 0
+};
+function save(){ localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); }
+
+/* ========================= */
+const gridEl=document.getElementById("grid");
+const wordList=document.getElementById("wordList");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+const replayBtn=document.getElementById("replayBtn");
+
+const TOTAL_WORDS = SERIES.flat().length;
+
+/* =========================
+   GRILLE LOGIQUE (matrix)
+   ========================= */
+let matrix = [];   // lettres ("" si vide)
+let cells = [];    // divs
+let selecting = [];
+let mouseDown = false;
+
+// Pour forcer une sélection en ligne droite (h/v)
+let selDir = null; // {dx,dy}
+let selStart = null;
+
+function emptyMatrix(){
+  matrix = Array.from({length: SIZE}, () => Array.from({length: SIZE}, () => ""));
+}
+
+function fillRandomLetters(){
+  for(let y=0;y<SIZE;y++){
+    for(let x=0;x<SIZE;x++){
+      if(!matrix[y][x]){
+        matrix[y][x] = LETTERS[Math.floor(Math.random()*LETTERS.length)];
+      }
+    }
+  }
+}
+
+function renderGrid(){
+  gridEl.innerHTML="";
+  cells = [];
+  for(let y=0;y<SIZE;y++){
+    for(let x=0;x<SIZE;x++){
+      const c = document.createElement("div");
+      c.className="cell";
+      c.textContent = matrix[y][x];
+      c.dataset.x = x;
+      c.dataset.y = y;
+
+      c.onmousedown = () => { mouseDown=true; startSelection(); trySelect(c); };
+      c.onmouseenter = () => { if(mouseDown) trySelect(c); };
+      c.onmouseup = () => { mouseDown=false; finishSelection(); };
+
+      gridEl.appendChild(c);
+      cells.push(c);
+    }
+  }
+
+  // reset mouse si on lâche hors grille
+  document.onmouseup = () => { mouseDown=false; };
+}
+
+function renderWordList(words){
+  wordList.innerHTML="";
+  words.forEach(w=>{
+    const d=document.createElement("div");
+    d.className="word";
+    d.id="word-"+w;
+    d.textContent=w;
+    if(state.foundGlobal[w]) d.classList.add("found");
+    wordList.appendChild(d);
+  });
+}
+
+function updateProgress(){
+  const done = Object.keys(state.foundGlobal).length;
+  progressLabel.textContent = `Progression globale : ${done} / ${TOTAL_WORDS}`;
+  progressFill.style.width = Math.round(done / TOTAL_WORDS * 100) + "%";
+}
+
+/* =========================
+   Placement fiable : pas d'écrasement
+   ========================= */
+function canPlace(word, x, y, dir){
+  for(let i=0;i<word.length;i++){
+    const nx = x + dir.dx*i;
+    const ny = y + dir.dy*i;
+    if(nx<0||ny<0||nx>=SIZE||ny>=SIZE) return false;
+    const existing = matrix[ny][nx];
+    if(existing && existing !== word[i]) return false; // conflit
+  }
+  return true;
+}
+
+function doPlace(word, x, y, dir){
+  for(let i=0;i<word.length;i++){
+    const nx = x + dir.dx*i;
+    const ny = y + dir.dy*i;
+    matrix[ny][nx] = word[i];
+  }
+}
+
+function placeAllWords(words){
+  // Plusieurs essais pour garantir placement
+  for(let attempt=0; attempt<50; attempt++){
+    emptyMatrix();
+    let ok = true;
+
+    for(const w of words){
+      let placed = false;
+      const dirs = shuffle(DIRECTIONS);
+      for(let tries=0; tries<500 && !placed; tries++){
+        const dir = dirs[Math.floor(Math.random()*dirs.length)];
+        const x = Math.floor(Math.random()*SIZE);
+        const y = Math.floor(Math.random()*SIZE);
+        if(canPlace(w, x, y, dir)){
+          doPlace(w, x, y, dir);
+          placed = true;
+        }
+      }
+      if(!placed){ ok = false; break; }
+    }
+
+    if(ok){
+      fillRandomLetters();
+      return true;
+    }
+  }
+  return false;
+}
+
+/* =========================
+   Sélection droite (h/v) obligatoire
+   ========================= */
+function startSelection(){
+  // nettoyer sélection visuelle précédente
+  selecting.forEach(c=>c.classList.remove("selected"));
+  selecting = [];
+  selDir = null;
+  selStart = null;
+}
+
+function isSameCell(a,b){
+  return a.dataset.x===b.dataset.x && a.dataset.y===b.dataset.y;
+}
+
+function trySelect(cell){
+  // pas re-sélectionner
+  if(selecting.some(c=>isSameCell(c, cell))) return;
+
+  const x = parseInt(cell.dataset.x,10);
+  const y = parseInt(cell.dataset.y,10);
+
+  if(selecting.length===0){
+    selStart = {x,y};
+    selecting.push(cell);
+    cell.classList.add("selected");
+    return;
+  }
+
+  if(selecting.length===1){
+    const dx = x - selStart.x;
+    const dy = y - selStart.y;
+
+    // doit être strictement horizontal OU vertical
+    if(dx!==0 && dy!==0) return;
+
+    // direction unitaire
+    selDir = {dx: Math.sign(dx), dy: Math.sign(dy)};
+    // doit avancer au moins d'une case
+    if(selDir.dx===0 && selDir.dy===0) return;
+
+    // et être aligné sur la ligne
+    selecting.push(cell);
+    cell.classList.add("selected");
+    return;
+  }
+
+  // après : doit suivre la même direction et être consécutif
+  const last = selecting[selecting.length-1];
+  const lx = parseInt(last.dataset.x,10);
+  const ly = parseInt(last.dataset.y,10);
+
+  if(x === lx + selDir.dx && y === ly + selDir.dy){
+    selecting.push(cell);
+    cell.classList.add("selected");
+  }
+}
+
+function finishSelection(){
+  if(selecting.length<2){
+    startSelection();
+    return;
+  }
+
+  const currentWords = SERIES[state.serie];
+  const text = selecting.map(c=>c.textContent).join("");
+  const rev  = selecting.map(c=>c.textContent).reverse().join("");
+  const found = currentWords.find(w => !state.foundGlobal[w] && (w===text || w===rev));
+
+  if(found){
+    selecting.forEach(c=>{
+      c.classList.remove("selected");
+      c.classList.add("found");
+    });
+    state.foundGlobal[found] = true;
+    const wEl = document.getElementById("word-"+found);
+    if(wEl) wEl.classList.add("found");
+  }else{
+    selecting.forEach(c=>c.classList.remove("selected"));
+    state.errors++;
+  }
+
+  selecting = [];
+  selDir = null;
+  selStart = null;
+
+  save();
+  updateProgress();
+  checkSerieEnd();
+}
+
+function checkSerieEnd(){
+  const currentWords = SERIES[state.serie];
+  const doneSerie = currentWords.every(w=>state.foundGlobal[w]);
+
+  if(doneSerie){
+    state.serie++;
+    save();
+    if(state.serie < SERIES.length){
+      loadSerie();
+    }else{
+      showEnd();
+    }
+  }
+}
+
+/* =========================
+   Chargement série
+   ========================= */
+function loadSerie(){
+  end.style.display="none";
+
+  const words = shuffle([...SERIES[state.serie]]);
+  renderWordList(words);
+
+  const placed = placeAllWords(words);
+  if(!placed){
+    // fallback : on affiche quand même une grille aléatoire
+    emptyMatrix(); fillRandomLetters();
+  }
+  renderGrid();
+  updateProgress();
+}
+
+/* =========================
+   Fin
+   ========================= */
+function showEnd(){
+  end.style.display="block";
+
+  const ratio = Object.keys(state.foundGlobal).length / TOTAL_WORDS;
+
+  starsEl.textContent =
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":"⭐";
+
+  let medal="";
+  if(ratio===1 && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else{
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent = medal;
+
+  result.innerHTML = `Mots trouvés : ${TOTAL_WORDS}/${TOTAL_WORDS}<br>Erreurs : ${state.errors}`;
+}
+
+/* 🔒 Rejouer seulement après la fin */
+replayBtn.onclick = () => {
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+};
+
+/* INIT */
+updateProgress();
+loadSerie();
+</script>
+
+</body>
+</html>
+

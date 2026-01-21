@@ -1,0 +1,2174 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Activit&#233;s Wordwall - Types de jeu</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&family=Manrope:wght@400;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root{
+      --ink:#0f2c2c;
+      --muted:#4a5d5d;
+      --paper:#f7f2ea;
+      --accent:#ff6b4a;
+      --accent-2:#1b8f8a;
+      --chip:#fff7ef;
+      --card:#fffdf9;
+      --stroke:#e3d7c6;
+      --shadow:0 12px 30px rgba(15,44,44,0.12);
+    }
+    *{box-sizing:border-box;}
+    body{
+      margin:0;
+      font-family:"Manrope", "Segoe UI", sans-serif;
+      color:var(--ink);
+      background:
+        radial-gradient(1200px 700px at 10% -10%, #ffe8d2 0%, transparent 60%),
+        radial-gradient(900px 600px at 90% 10%, #d7f4f2 0%, transparent 55%),
+        var(--paper);
+    }
+    header{padding:40px 20px 24px;}
+    .hero{
+      max-width:1100px;
+      margin:0 auto;
+      padding:28px 26px 18px;
+      background:linear-gradient(135deg, #ffffff 0%, #fff4e7 60%, #f4fffe 100%);
+      border:1px solid var(--stroke);
+      border-radius:24px;
+      box-shadow:var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+    .hero::after{
+      content:"";
+      position:absolute;
+      right:-40px;
+      top:-40px;
+      width:180px;
+      height:180px;
+      background:conic-gradient(from 140deg, var(--accent), #ffd166, #9de3dc, var(--accent));
+      opacity:0.15;
+      border-radius:50%;
+    }
+    .eyebrow{letter-spacing:0.18em;text-transform:uppercase;font-size:0.72rem;color:var(--accent-2);font-weight:700;}
+    h1{font-family:"Fraunces", serif;font-size:2.1rem;margin:10px 0 10px;}
+    .lead{font-size:1.05rem;color:var(--muted);margin:0 0 12px;}
+    .summary{font-size:0.95rem;color:var(--muted);margin:0 0 10px;font-weight:600;}
+    .search{margin:0 0 12px;}
+    .search input{width:100%;max-width:520px;padding:10px 14px;border-radius:999px;border:1px solid var(--stroke);font-size:1rem;box-shadow:0 8px 18px rgba(15,44,44,0.08);}
+    .search input:focus{outline:2px solid #ffe3d4;border-color:#f1b89a;}
+    .container{max-width:1100px;margin:0 auto;padding:0 20px 50px;}
+    .type-grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(200px, 1fr));gap:12px;margin:8px 0 14px;}
+    .type-card,.type-card:visited{display:flex;flex-direction:column;gap:6px;padding:14px;border-radius:16px;border:1px solid var(--stroke);background:var(--chip);color:var(--ink);text-decoration:none;box-shadow:0 8px 18px rgba(15,44,44,0.08);transition:transform 0.2s ease, box-shadow 0.2s ease, background 0.2s ease;}
+    .type-card:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(15,44,44,0.16);background:#fff4e7;}
+    .type-title{font-weight:700;font-size:1rem;}
+    .type-count{font-size:0.85rem;color:var(--accent-2);font-weight:600;}
+    .actions{display:flex;gap:12px;align-items:center;margin:6px 0 6px;}
+    .ghost-btn{border:1px dashed var(--accent-2);background:transparent;color:var(--accent-2);padding:9px 14px;border-radius:999px;cursor:pointer;font-weight:600;}
+    .section{margin-top:18px;}
+    .section-header{display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+    h2{font-family:"Fraunces", serif;font-size:1.4rem;margin:0;}
+    .count{color:var(--muted);font-size:0.9rem;}
+    .toggle-btn{border:1px solid var(--stroke);background:white;color:var(--ink);padding:6px 10px;border-radius:999px;cursor:pointer;font-weight:600;font-size:0.85rem;}
+    .type-instruction{margin:0 0 12px;color:var(--muted);font-size:0.95rem;}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit, minmax(220px, 1fr));gap:12px;}
+    .card{display:flex;flex-direction:column;gap:8px;padding:14px;background:var(--card);border:1px solid var(--stroke);border-radius:16px;text-decoration:none;color:inherit;min-height:78px;box-shadow:0 8px 18px rgba(15,44,44,0.08);transition:transform 0.2s ease, box-shadow 0.2s ease;animation:rise 0.6s ease both;position:relative;}
+    .card-title{font-weight:700;}
+    .card-meta{font-size:0.85rem;color:var(--accent-2);font-weight:600;}
+    .card:hover{transform:translateY(-3px);box-shadow:0 10px 22px rgba(15,44,44,0.16);}
+    .is-hidden{display:none;}
+    .is-collapsed .grid{display:none;}
+    .done-toggle{align-self:flex-end;margin-top:auto;background:#eef7f6;border:1px solid #b9ddd9;color:#176e6a;padding:4px 10px;border-radius:999px;font-size:0.75rem;font-weight:700;cursor:pointer;}
+    .card.is-done{border-color:#7fc6c1;background:#f5fffe;}
+    .card.is-selected{border-color:var(--accent);box-shadow:0 12px 24px rgba(15,44,44,0.18);}
+    .card.is-done .done-toggle{background:#1b8f8a;color:white;border-color:#1b8f8a;}
+    #back-to-top{position:fixed;right:20px;bottom:20px;border:none;background:var(--accent);color:white;padding:10px 14px;border-radius:999px;cursor:pointer;box-shadow:0 10px 20px rgba(15,44,44,0.2);display:none;}
+    #back-to-top.show{display:block;}
+    @keyframes rise{from{opacity:0; transform:translateY(8px);}to{opacity:1; transform:translateY(0);}}
+    @media (max-width:700px){header{padding:28px 16px 18px;}.hero{padding:22px 18px;}h1{font-size:1.6rem;}.section-header{flex-direction:column; align-items:flex-start;}}
+  </style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+  <header>
+    <div class="hero">
+      <div class="eyebrow">Activit&#233;s assign&#233;es</div>
+      <h1>Wordwall - activit&#233;s par type de jeu</h1>
+      <p class="lead">Clique sur un type de jeu pour afficher ses exercices.</p>
+      <div class="summary">Total : 258 activit&#233;s</div>
+      <div class="search"><input id="search-input" type="search" placeholder="Rechercher un exercice..." autocomplete="off" /></div>
+      <div class="actions">
+        <button class="ghost-btn" id="show-all">Voir toutes les activit&#233;s</button>
+      </div>
+      <div class="type-grid">
+<a class="type-card" href="#diagramme-etiquete" data-target="diagramme-etiquete">
+  <div class="type-title">Diagramme &#233;tiquet&#233;</div>
+  <div class="type-count">10 activit&#233;s</div>
+</a>
+<a class="type-card" href="#tapez-la-reponse" data-target="tapez-la-reponse">
+  <div class="type-title">Tapez la r&#233;ponse</div>
+  <div class="type-count">8 activit&#233;s</div>
+</a>
+<a class="type-card" href="#quiz" data-target="quiz">
+  <div class="type-title">Quiz</div>
+  <div class="type-count">43 activit&#233;s</div>
+</a>
+<a class="type-card" href="#epeler-le-mot" data-target="epeler-le-mot">
+  <div class="type-title">&#201;peler le mot</div>
+  <div class="type-count">2 activit&#233;s</div>
+</a>
+<a class="type-card" href="#completez-la-phrase" data-target="completez-la-phrase">
+  <div class="type-title">Compl&#233;tez la phrase</div>
+  <div class="type-count">18 activit&#233;s</div>
+</a>
+<a class="type-card" href="#anagramme" data-target="anagramme">
+  <div class="type-title">Anagramme</div>
+  <div class="type-count">10 activit&#233;s</div>
+</a>
+<a class="type-card" href="#pendu" data-target="pendu">
+  <div class="type-title">Pendu</div>
+  <div class="type-count">6 activit&#233;s</div>
+</a>
+<a class="type-card" href="#demeler" data-target="demeler">
+  <div class="type-title">D&#233;m&#234;ler</div>
+  <div class="type-count">36 activit&#233;s</div>
+</a>
+<a class="type-card" href="#des-paires" data-target="des-paires">
+  <div class="type-title">Des paires</div>
+  <div class="type-count">2 activit&#233;s</div>
+</a>
+<a class="type-card" href="#paire-ou-pas-de-paire" data-target="paire-ou-pas-de-paire">
+  <div class="type-title">Paire ou pas de paire</div>
+  <div class="type-count">14 activit&#233;s</div>
+</a>
+<a class="type-card" href="#classement-par-rang" data-target="classement-par-rang">
+  <div class="type-title">Classement par rang</div>
+  <div class="type-count">2 activit&#233;s</div>
+</a>
+<a class="type-card" href="#apparier" data-target="apparier">
+  <div class="type-title">Apparier</div>
+  <div class="type-count">43 activit&#233;s</div>
+</a>
+<a class="type-card" href="#trier-par-groupe" data-target="trier-par-groupe">
+  <div class="type-title">Trier par groupe</div>
+  <div class="type-count">12 activit&#233;s</div>
+</a>
+<a class="type-card" href="#ouvrir-la-boite" data-target="ouvrir-la-boite">
+  <div class="type-title">Ouvrir la bo&#238;te</div>
+  <div class="type-count">3 activit&#233;s</div>
+</a>
+<a class="type-card" href="#vrai-ou-faux" data-target="vrai-ou-faux">
+  <div class="type-title">Vrai ou faux</div>
+  <div class="type-count">4 activit&#233;s</div>
+</a>
+<a class="type-card" href="#trouver-la-correspondance" data-target="trouver-la-correspondance">
+  <div class="type-title">Trouver la correspondance</div>
+  <div class="type-count">11 activit&#233;s</div>
+</a>
+<a class="type-card" href="#speaking-cards" data-target="speaking-cards">
+  <div class="type-title">Speaking cards</div>
+  <div class="type-count">6 activit&#233;s</div>
+</a>
+<a class="type-card" href="#cartes-aleatoires" data-target="cartes-aleatoires">
+  <div class="type-title">Cartes al&#233;atoires</div>
+  <div class="type-count">18 activit&#233;s</div>
+</a>
+<a class="type-card" href="#fiches-de-revision" data-target="fiches-de-revision">
+  <div class="type-title">Fiches de r&#233;vision</div>
+  <div class="type-count">7 activit&#233;s</div>
+</a>
+<a class="type-card" href="#mots-croises" data-target="mots-croises">
+  <div class="type-title">Mots crois&#233;s</div>
+  <div class="type-count">1 activit&#233;</div>
+</a>
+<a class="type-card" href="#regarder-et-memoriser" data-target="regarder-et-memoriser">
+  <div class="type-title">Regarder et m&#233;moriser</div>
+  <div class="type-count">1 activit&#233;</div>
+</a>
+<a class="type-card" href="#quiz-televise" data-target="quiz-televise">
+  <div class="type-title">Quiz t&#233;l&#233;vis&#233;</div>
+  <div class="type-count">1 activit&#233;</div>
+</a>
+      </div>
+    </div>
+  </header>
+  <main class="container">
+    
+<section class="section type-section is-collapsed" id="diagramme-etiquete">
+  <div class="section-header">
+    <h2>Diagramme &#233;tiquet&#233;</h2>
+    <div class="count">10 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Glissez les &#233;tiquettes au bon endroit sur l&#39;image.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/100192/871/225" data-url="https://wordwall.net/play/100192/871/225" target="_blank" rel="noopener">
+  <div class="card-title">Rep&#233;rer informations dans un e-mail</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/91878/297/753" data-url="https://wordwall.net/play/91878/297/753" target="_blank" rel="noopener">
+  <div class="card-title">Avertir mon absence</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/884/617" data-url="https://wordwall.net/play/83796/884/617" target="_blank" rel="noopener">
+  <div class="card-title">La salle de classe</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93879/604/918" data-url="https://wordwall.net/play/93879/604/918" target="_blank" rel="noopener">
+  <div class="card-title">Copie de La t&#234;te</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/926/915" data-url="https://wordwall.net/play/83796/926/915" target="_blank" rel="noopener">
+  <div class="card-title">La fiche personnelle</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92348/043/904" data-url="https://wordwall.net/play/92348/043/904" target="_blank" rel="noopener">
+  <div class="card-title">Structure d&#39;un email</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/610/740" data-url="https://wordwall.net/play/92346/610/740" target="_blank" rel="noopener">
+  <div class="card-title">La salle de bain</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/447/200" data-url="https://wordwall.net/play/92346/447/200" target="_blank" rel="noopener">
+  <div class="card-title">Le chariot de nettoyage</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/601/209" data-url="https://wordwall.net/play/92346/601/209" target="_blank" rel="noopener">
+  <div class="card-title">La cuisine</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/020/513" data-url="https://wordwall.net/play/83797/020/513" target="_blank" rel="noopener">
+  <div class="card-title">Les pi&#232;ces</div>
+  <div class="card-meta">Diagramme &#233;tiquet&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="tapez-la-reponse">
+  <div class="section-header">
+    <h2>Tapez la r&#233;ponse</h2>
+    <div class="count">8 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Tapez la r&#233;ponse au clavier puis validez.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/91471/314/873" data-url="https://wordwall.net/play/91471/314/873" target="_blank" rel="noopener">
+  <div class="card-title">Utiliser le clavier</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/99539/110/806" data-url="https://wordwall.net/play/99539/110/806" target="_blank" rel="noopener">
+  <div class="card-title">Taper la phrase - Phrase</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/99927/113/528" data-url="https://wordwall.net/play/99927/113/528" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire ch&#244;mage</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93724/859/395" data-url="https://wordwall.net/play/93724/859/395" target="_blank" rel="noopener">
+  <div class="card-title">Clavier - Prendre, accepter ou refuser un RDV</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/91879/827/130" data-url="https://wordwall.net/play/91879/827/130" target="_blank" rel="noopener">
+  <div class="card-title">Avertir de mon absence</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93047/438/670" data-url="https://wordwall.net/play/93047/438/670" target="_blank" rel="noopener">
+  <div class="card-title">Demande un jour de cong&#233;</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93881/854/467" data-url="https://wordwall.net/play/93881/854/467" target="_blank" rel="noopener">
+  <div class="card-title">Verbes PC pour raconter</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94561/039/451" data-url="https://wordwall.net/play/94561/039/451" target="_blank" rel="noopener">
+  <div class="card-title">Aimer</div>
+  <div class="card-meta">Tapez la r&#233;ponse</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="quiz">
+  <div class="section-header">
+    <h2>Quiz</h2>
+    <div class="count">43 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Choisissez la bonne r&#233;ponse parmi les options.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/93047/422/591" data-url="https://wordwall.net/play/93047/422/591" target="_blank" rel="noopener">
+  <div class="card-title">Demande un jour de cong&#233;</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81150/089/189" data-url="https://wordwall.net/play/81150/089/189" target="_blank" rel="noopener">
+  <div class="card-title">L&#39;importance du CV et LM</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83856/335/830" data-url="https://wordwall.net/play/83856/335/830" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre les certificats de travail</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81149/196/352" data-url="https://wordwall.net/play/81149/196/352" target="_blank" rel="noopener">
+  <div class="card-title">Les &#233;tapes pour trouver un emploi</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78510/160/289" data-url="https://wordwall.net/play/78510/160/289" target="_blank" rel="noopener">
+  <div class="card-title">Dire-citer ses qualit&#233;s</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77820/075/228" data-url="https://wordwall.net/play/77820/075/228" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; se trouve un objet</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/938/299" data-url="https://wordwall.net/play/93878/938/299" target="_blank" rel="noopener">
+  <div class="card-title">Synonymes, antonymes, d&#233;riv&#233;s</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80522/678/302" data-url="https://wordwall.net/play/80522/678/302" target="_blank" rel="noopener">
+  <div class="card-title">Tri de d&#233;chets</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/750/430" data-url="https://wordwall.net/play/83798/750/430" target="_blank" rel="noopener">
+  <div class="card-title">Quiz num&#233;rique</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/967/498" data-url="https://wordwall.net/play/83796/967/498" target="_blank" rel="noopener">
+  <div class="card-title">s&#39;habiller</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/892/953" data-url="https://wordwall.net/play/83796/892/953" target="_blank" rel="noopener">
+  <div class="card-title">Ma famille</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77825/831/332" data-url="https://wordwall.net/play/77825/831/332" target="_blank" rel="noopener">
+  <div class="card-title">G&#233;n&#233;rale</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/100131/649/420" data-url="https://wordwall.net/play/100131/649/420" target="_blank" rel="noopener">
+  <div class="card-title">Quiz sur le langage familier</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/296/594" data-url="https://wordwall.net/play/93878/296/594" target="_blank" rel="noopener">
+  <div class="card-title">LE FUTUR PROCHE I (Quiz)</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77825/688/452" data-url="https://wordwall.net/play/77825/688/452" target="_blank" rel="noopener">
+  <div class="card-title">Dans la classe</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77823/551/917" data-url="https://wordwall.net/play/77823/551/917" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; vous avez mal</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81405/947/836" data-url="https://wordwall.net/play/81405/947/836" target="_blank" rel="noopener">
+  <div class="card-title">Les moyens de transport</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/410/532" data-url="https://wordwall.net/play/81406/410/532" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/456/963" data-url="https://wordwall.net/play/81406/456/963" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78075/354/843" data-url="https://wordwall.net/play/78075/354/843" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81408/910/399" data-url="https://wordwall.net/play/81408/910/399" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre l&#39;heure</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81408/881/431" data-url="https://wordwall.net/play/81408/881/431" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre l&#39;heure</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77832/218/661" data-url="https://wordwall.net/play/77832/218/661" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre et r&#233;pondre aux questions</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78208/318/116" data-url="https://wordwall.net/play/78208/318/116" target="_blank" rel="noopener">
+  <div class="card-title">Saluer et prendre cong&#233;</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81924/439/815" data-url="https://wordwall.net/play/81924/439/815" target="_blank" rel="noopener">
+  <div class="card-title">Saluer et prendre cong&#233;</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93879/855/809" data-url="https://wordwall.net/play/93879/855/809" target="_blank" rel="noopener">
+  <div class="card-title">A2 les m&#233;dias 1</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/91110/154/474" data-url="https://wordwall.net/play/91110/154/474" target="_blank" rel="noopener">
+  <div class="card-title">G&#233;n&#233;ral bureautique</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87737/465/876" data-url="https://wordwall.net/play/87737/465/876" target="_blank" rel="noopener">
+  <div class="card-title">Partie 4 : Clavier - Saisie et &#233;dition de texte</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87737/439/241" data-url="https://wordwall.net/play/87737/439/241" target="_blank" rel="noopener">
+  <div class="card-title">Partie 3 : Clavier - Navigation et manipulation des fen&#234;tres</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87737/371/321" data-url="https://wordwall.net/play/87737/371/321" target="_blank" rel="noopener">
+  <div class="card-title">Partie 2 : Clavier - Fonctions de base</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87731/607/167" data-url="https://wordwall.net/play/87731/607/167" target="_blank" rel="noopener">
+  <div class="card-title">Partie 1 : Souris</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/713/709" data-url="https://wordwall.net/play/83798/713/709" target="_blank" rel="noopener">
+  <div class="card-title">Mini quiz informatique 2</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/693/753" data-url="https://wordwall.net/play/83798/693/753" target="_blank" rel="noopener">
+  <div class="card-title">Mini quiz informatique - d&#233;butant</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/597/917" data-url="https://wordwall.net/play/83797/597/917" target="_blank" rel="noopener">
+  <div class="card-title">Mini quiz informatique 2</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/590/386" data-url="https://wordwall.net/play/83797/590/386" target="_blank" rel="noopener">
+  <div class="card-title">Mini quiz informatique - avanc&#233;</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81382/268/373" data-url="https://wordwall.net/play/81382/268/373" target="_blank" rel="noopener">
+  <div class="card-title">Compr&#233;hension oral - chauffeur livreur</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77825/563/412" data-url="https://wordwall.net/play/77825/563/412" target="_blank" rel="noopener">
+  <div class="card-title">Manger et boire/ aliments et boissons</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/864/398" data-url="https://wordwall.net/play/92346/864/398" target="_blank" rel="noopener">
+  <div class="card-title">le travail : vocabulaire</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/397/349" data-url="https://wordwall.net/play/92346/397/349" target="_blank" rel="noopener">
+  <div class="card-title">Les pictogrammes de s&#233;curit&#233;</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92610/284/366" data-url="https://wordwall.net/play/92610/284/366" target="_blank" rel="noopener">
+  <div class="card-title">Qui fait quoi ?</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/596/702" data-url="https://wordwall.net/play/83796/596/702" target="_blank" rel="noopener">
+  <div class="card-title">V&#234;tements et accessoires</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77824/382/936" data-url="https://wordwall.net/play/77824/382/936" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77825/634/744" data-url="https://wordwall.net/play/77825/634/744" target="_blank" rel="noopener">
+  <div class="card-title">Les v&#234;tements</div>
+  <div class="card-meta">Quiz</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="epeler-le-mot">
+  <div class="section-header">
+    <h2>&#201;peler le mot</h2>
+    <div class="count">2 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">&#201;pelez le mot lettre par lettre.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/91879/051/952" data-url="https://wordwall.net/play/91879/051/952" target="_blank" rel="noopener">
+  <div class="card-title">Avertir de mon absence oral 1 (mots cl&#233;s)</div>
+  <div class="card-meta">&#201;peler le mot</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93047/225/442" data-url="https://wordwall.net/play/93047/225/442" target="_blank" rel="noopener">
+  <div class="card-title">Je demande un jour de cong&#233;</div>
+  <div class="card-meta">&#201;peler le mot</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="completez-la-phrase">
+  <div class="section-header">
+    <h2>Compl&#233;tez la phrase</h2>
+    <div class="count">18 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Compl&#233;tez la phrase avec le bon mot.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/93047/010/923" data-url="https://wordwall.net/play/93047/010/923" target="_blank" rel="noopener">
+  <div class="card-title">Je demande un jour de cong&#233; - Phrase</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/91877/910/303" data-url="https://wordwall.net/play/91877/910/303" target="_blank" rel="noopener">
+  <div class="card-title">Avertir de mon absence 1 - Phrase</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/347/160" data-url="https://wordwall.net/play/93878/347/160" target="_blank" rel="noopener">
+  <div class="card-title">Pr&#233;positions de temps</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/364/487" data-url="https://wordwall.net/play/93878/364/487" target="_blank" rel="noopener">
+  <div class="card-title">Copie de Pass&#233; compos&#233; ou imparfait? A2</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/513/214" data-url="https://wordwall.net/play/93878/513/214" target="_blank" rel="noopener">
+  <div class="card-title">Sant&#233;, texte</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78075/132/230" data-url="https://wordwall.net/play/78075/132/230" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville - Phrase</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/763/239" data-url="https://wordwall.net/play/83798/763/239" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire num&#233;rique - Phrase</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80136/489/417" data-url="https://wordwall.net/play/80136/489/417" target="_blank" rel="noopener">
+  <div class="card-title">Expressions plongeur</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80136/387/470" data-url="https://wordwall.net/play/80136/387/470" target="_blank" rel="noopener">
+  <div class="card-title">Expressions ma&#231;on</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81868/029/486" data-url="https://wordwall.net/play/81868/029/486" target="_blank" rel="noopener">
+  <div class="card-title">Expressions - peintre</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80136/058/909" data-url="https://wordwall.net/play/80136/058/909" target="_blank" rel="noopener">
+  <div class="card-title">Expressions peintre</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81871/285/543" data-url="https://wordwall.net/play/81871/285/543" target="_blank" rel="noopener">
+  <div class="card-title">Expressions - chauffeur livreur</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80136/353/107" data-url="https://wordwall.net/play/80136/353/107" target="_blank" rel="noopener">
+  <div class="card-title">Expressions chauffeur livreur</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/560/997" data-url="https://wordwall.net/play/83796/560/997" target="_blank" rel="noopener">
+  <div class="card-title">Au restaurant</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92611/218/823" data-url="https://wordwall.net/play/92611/218/823" target="_blank" rel="noopener">
+  <div class="card-title">M&#233;tiers</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83858/734/863" data-url="https://wordwall.net/play/83858/734/863" target="_blank" rel="noopener">
+  <div class="card-title">Expliquer_dernier_travail_passe</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82327/191/419" data-url="https://wordwall.net/play/82327/191/419" target="_blank" rel="noopener">
+  <div class="card-title">Les professions</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77815/988/776" data-url="https://wordwall.net/play/77815/988/776" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Compl&#233;tez la phrase</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="anagramme">
+  <div class="section-header">
+    <h2>Anagramme</h2>
+    <div class="count">10 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Remettez les lettres dans le bon ordre.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/93047/332/196" data-url="https://wordwall.net/play/93047/332/196" target="_blank" rel="noopener">
+  <div class="card-title">Demander un jour de cong&#233;</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92614/865/560" data-url="https://wordwall.net/play/92614/865/560" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/811/387" data-url="https://wordwall.net/play/93878/811/387" target="_blank" rel="noopener">
+  <div class="card-title">Copie de L&#39;&#233;cole 1</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80284/112/973" data-url="https://wordwall.net/play/80284/112/973" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; vous avez mal</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/737/949" data-url="https://wordwall.net/play/81406/737/949" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93727/039/667" data-url="https://wordwall.net/play/93727/039/667" target="_blank" rel="noopener">
+  <div class="card-title">Prendre, accepter ou refuser un RDV</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83799/012/280" data-url="https://wordwall.net/play/83799/012/280" target="_blank" rel="noopener">
+  <div class="card-title">Les mois</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82996/046/594" data-url="https://wordwall.net/play/82996/046/594" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre la date - Les mois</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/79341/083/658" data-url="https://wordwall.net/play/79341/083/658" target="_blank" rel="noopener">
+  <div class="card-title">Saluer et prendre cong&#233;</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/638/389" data-url="https://wordwall.net/play/92346/638/389" target="_blank" rel="noopener">
+  <div class="card-title">Les meubles</div>
+  <div class="card-meta">Anagramme</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="pendu">
+  <div class="section-header">
+    <h2>Pendu</h2>
+    <div class="count">6 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Devinez le mot en proposant des lettres.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/93047/161/713" data-url="https://wordwall.net/play/93047/161/713" target="_blank" rel="noopener">
+  <div class="card-title">Je demande un jour de cong&#233;</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/501/152" data-url="https://wordwall.net/play/81406/501/152" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78067/010/362" data-url="https://wordwall.net/play/78067/010/362" target="_blank" rel="noopener">
+  <div class="card-title">Nettoyage</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92610/468/816" data-url="https://wordwall.net/play/92610/468/816" target="_blank" rel="noopener">
+  <div class="card-title">Qui fait quoi ?</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77823/444/878" data-url="https://wordwall.net/play/77823/444/878" target="_blank" rel="noopener">
+  <div class="card-title">fruits et l&#233;gumes 4</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/555/100" data-url="https://wordwall.net/play/81406/555/100" target="_blank" rel="noopener">
+  <div class="card-title">Les moyens de transport</div>
+  <div class="card-meta">Pendu</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="demeler">
+  <div class="section-header">
+    <h2>D&#233;m&#234;ler</h2>
+    <div class="count">36 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Remettez les mots dans le bon ordre.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92134/702/946" data-url="https://wordwall.net/play/92134/702/946" target="_blank" rel="noopener">
+  <div class="card-title">Absence</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/91876/496/326" data-url="https://wordwall.net/play/91876/496/326" target="_blank" rel="noopener">
+  <div class="card-title">Avertir de mon absence 5</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92133/904/977" data-url="https://wordwall.net/play/92133/904/977" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/99661/171/648" data-url="https://wordwall.net/play/99661/171/648" target="_blank" rel="noopener">
+  <div class="card-title">lois travail</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83860/489/577" data-url="https://wordwall.net/play/83860/489/577" target="_blank" rel="noopener">
+  <div class="card-title">T&#226;ches de travail en &#233;quipe</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83795/729/587" data-url="https://wordwall.net/play/83795/729/587" target="_blank" rel="noopener">
+  <div class="card-title">Je parle de la m&#233;t&#233;o</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/100132/657/279" data-url="https://wordwall.net/play/100132/657/279" target="_blank" rel="noopener">
+  <div class="card-title">Transports</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78070/080/216" data-url="https://wordwall.net/play/78070/080/216" target="_blank" rel="noopener">
+  <div class="card-title">Comment s’orienter dans la ville</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93724/242/145" data-url="https://wordwall.net/play/93724/242/145" target="_blank" rel="noopener">
+  <div class="card-title">Prendre, accepter ou refuser un RDV</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83859/082/187" data-url="https://wordwall.net/play/83859/082/187" target="_blank" rel="noopener">
+  <div class="card-title">Formuler questions sur le lieu de travail</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80276/611/469" data-url="https://wordwall.net/play/80276/611/469" target="_blank" rel="noopener">
+  <div class="card-title">Se pr&#233;senter avec des mots simples</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82107/323/372" data-url="https://wordwall.net/play/82107/323/372" target="_blank" rel="noopener">
+  <div class="card-title">Me pr&#233;senter</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94696/797/178" data-url="https://wordwall.net/play/94696/797/178" target="_blank" rel="noopener">
+  <div class="card-title">Date de naissance</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78096/317/169" data-url="https://wordwall.net/play/78096/317/169" target="_blank" rel="noopener">
+  <div class="card-title">Se pr&#233;senter avec des mots simples</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93881/035/571" data-url="https://wordwall.net/play/93881/035/571" target="_blank" rel="noopener">
+  <div class="card-title">Raconter</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78077/356/920" data-url="https://wordwall.net/play/78077/356/920" target="_blank" rel="noopener">
+  <div class="card-title">Dire ce que vous aimez</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85646/620/908" data-url="https://wordwall.net/play/85646/620/908" target="_blank" rel="noopener">
+  <div class="card-title">Serveuse</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85648/952/635" data-url="https://wordwall.net/play/85648/952/635" target="_blank" rel="noopener">
+  <div class="card-title">Plaquiste</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85646/675/365" data-url="https://wordwall.net/play/85646/675/365" target="_blank" rel="noopener">
+  <div class="card-title">Pl&#226;tre</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85646/742/207" data-url="https://wordwall.net/play/85646/742/207" target="_blank" rel="noopener">
+  <div class="card-title">Paysagiste</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80518/461/349" data-url="https://wordwall.net/play/80518/461/349" target="_blank" rel="noopener">
+  <div class="card-title">Consignes - Paysagiste</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80520/727/591" data-url="https://wordwall.net/play/80520/727/591" target="_blank" rel="noopener">
+  <div class="card-title">Consignes - Peintre</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85648/550/984" data-url="https://wordwall.net/play/85648/550/984" target="_blank" rel="noopener">
+  <div class="card-title">Chauffeur</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/85646/593/871" data-url="https://wordwall.net/play/85646/593/871" target="_blank" rel="noopener">
+  <div class="card-title">Nettoyage</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80511/925/715" data-url="https://wordwall.net/play/80511/925/715" target="_blank" rel="noopener">
+  <div class="card-title">Consignes -Nettoyage</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80517/348/984" data-url="https://wordwall.net/play/80517/348/984" target="_blank" rel="noopener">
+  <div class="card-title">Consignes - aide de cuisine</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77824/466/166" data-url="https://wordwall.net/play/77824/466/166" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94421/892/771" data-url="https://wordwall.net/play/94421/892/771" target="_blank" rel="noopener">
+  <div class="card-title">Magasiniers</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94332/986/497" data-url="https://wordwall.net/play/94332/986/497" target="_blank" rel="noopener">
+  <div class="card-title">Pr&#233;paratrice de commande</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94320/848/994" data-url="https://wordwall.net/play/94320/848/994" target="_blank" rel="noopener">
+  <div class="card-title">Demande de vacances</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92615/401/683" data-url="https://wordwall.net/play/92615/401/683" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/99041/512/255" data-url="https://wordwall.net/play/99041/512/255" target="_blank" rel="noopener">
+  <div class="card-title">IMPARFAITS TRAVAIL</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83857/116/187" data-url="https://wordwall.net/play/83857/116/187" target="_blank" rel="noopener">
+  <div class="card-title">Donner ses disponibilit&#233;s</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83856/960/693" data-url="https://wordwall.net/play/83856/960/693" target="_blank" rel="noopener">
+  <div class="card-title">Dire l&#39;heure d&#233;but et fin de travail</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94333/033/613" data-url="https://wordwall.net/play/94333/033/613" target="_blank" rel="noopener">
+  <div class="card-title">Aide de cuisine</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94332/852/822" data-url="https://wordwall.net/play/94332/852/822" target="_blank" rel="noopener">
+  <div class="card-title">Finance</div>
+  <div class="card-meta">D&#233;m&#234;ler</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="des-paires">
+  <div class="section-header">
+    <h2>Des paires</h2>
+    <div class="count">2 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Associez les &#233;l&#233;ments qui vont ensemble.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92615/555/567" data-url="https://wordwall.net/play/92615/555/567" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s</div>
+  <div class="card-meta">Des paires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78069/494/767" data-url="https://wordwall.net/play/78069/494/767" target="_blank" rel="noopener">
+  <div class="card-title">Nettoyage</div>
+  <div class="card-meta">Des paires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="paire-ou-pas-de-paire">
+  <div class="section-header">
+    <h2>Paire ou pas de paire</h2>
+    <div class="count">14 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">D&#233;cidez si les deux cartes vont ensemble.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92615/793/526" data-url="https://wordwall.net/play/92615/793/526" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/710/253" data-url="https://wordwall.net/play/93878/710/253" target="_blank" rel="noopener">
+  <div class="card-title">Adjectifs contraires 1</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87730/566/862" data-url="https://wordwall.net/play/87730/566/862" target="_blank" rel="noopener">
+  <div class="card-title">Partie 1 : Souris</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87730/830/606" data-url="https://wordwall.net/play/87730/830/606" target="_blank" rel="noopener">
+  <div class="card-title">Partie 2 : Clavier - Fonctions de base</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87730/934/135" data-url="https://wordwall.net/play/87730/934/135" target="_blank" rel="noopener">
+  <div class="card-title">Partie 4 : Clavier - Saisie et &#233;dition de texte</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87730/887/194" data-url="https://wordwall.net/play/87730/887/194" target="_blank" rel="noopener">
+  <div class="card-title">Partie 3 : Clavier - Navigation et manipulation des fen&#234;tres</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80519/139/392" data-url="https://wordwall.net/play/80519/139/392" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences - Paysagiste</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80520/364/207" data-url="https://wordwall.net/play/80520/364/207" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s paysagiste</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80521/119/477" data-url="https://wordwall.net/play/80521/119/477" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s - Aide peintre</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80520/979/978" data-url="https://wordwall.net/play/80520/979/978" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences - Aide peintre</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80514/031/922" data-url="https://wordwall.net/play/80514/031/922" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences - nettoyage</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80519/688/222" data-url="https://wordwall.net/play/80519/688/222" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s - nettoyage</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80517/936/414" data-url="https://wordwall.net/play/80517/936/414" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences Aide de cuisine</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80519/955/829" data-url="https://wordwall.net/play/80519/955/829" target="_blank" rel="noopener">
+  <div class="card-title">Qualit&#233;s - aide de cuisine</div>
+  <div class="card-meta">Paire ou pas de paire</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="classement-par-rang">
+  <div class="section-header">
+    <h2>Classement par rang</h2>
+    <div class="count">2 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Classez les &#233;l&#233;ments dans le bon ordre.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/91012/117/171" data-url="https://wordwall.net/play/91012/117/171" target="_blank" rel="noopener">
+  <div class="card-title">&#201;tapes du sc&#233;nario &quot;Je fais une postulation spontan&#233;e&quot; - Classer</div>
+  <div class="card-meta">Classement par rang</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92131/730/589" data-url="https://wordwall.net/play/92131/730/589" target="_blank" rel="noopener">
+  <div class="card-title">Absences - Classer</div>
+  <div class="card-meta">Classement par rang</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="apparier">
+  <div class="section-header">
+    <h2>Apparier</h2>
+    <div class="count">43 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Associez chaque &#233;l&#233;ment &#224; sa correspondance.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/83859/796/621" data-url="https://wordwall.net/play/83859/796/621" target="_blank" rel="noopener">
+  <div class="card-title">Dire-citer ses qualit&#233;s</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81622/044/782" data-url="https://wordwall.net/play/81622/044/782" target="_blank" rel="noopener">
+  <div class="card-title">Dire-citer ses qualit&#233;s</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81149/615/243" data-url="https://wordwall.net/play/81149/615/243" target="_blank" rel="noopener">
+  <div class="card-title">Les &#233;tapes pour trouver un emploi</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81622/956/721" data-url="https://wordwall.net/play/81622/956/721" target="_blank" rel="noopener">
+  <div class="card-title">Nombres / 1 - 30</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81623/917/198" data-url="https://wordwall.net/play/81623/917/198" target="_blank" rel="noopener">
+  <div class="card-title">Nombres / 91 - 120</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81623/588/962" data-url="https://wordwall.net/play/81623/588/962" target="_blank" rel="noopener">
+  <div class="card-title">Nombres / 61 - 90</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81623/106/638" data-url="https://wordwall.net/play/81623/106/638" target="_blank" rel="noopener">
+  <div class="card-title">Nombres / 31 - 60</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81627/647/529" data-url="https://wordwall.net/play/81627/647/529" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; se trouve un objet</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/001/307" data-url="https://wordwall.net/play/83797/001/307" target="_blank" rel="noopener">
+  <div class="card-title">Indicateurs de lieu</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81407/148/964" data-url="https://wordwall.net/play/81407/148/964" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; se trouve un objet</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93879/684/330" data-url="https://wordwall.net/play/93879/684/330" target="_blank" rel="noopener">
+  <div class="card-title">Les consignes, images, &#233;crit et oral</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/618/384" data-url="https://wordwall.net/play/83796/618/384" target="_blank" rel="noopener">
+  <div class="card-title">Objets utiles</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83801/758/444" data-url="https://wordwall.net/play/83801/758/444" target="_blank" rel="noopener">
+  <div class="card-title">Un peu de fran&#231;ais familier...</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/057/387" data-url="https://wordwall.net/play/83797/057/387" target="_blank" rel="noopener">
+  <div class="card-title">Le Fran&#231;ais Familier</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/99111/655/673" data-url="https://wordwall.net/play/99111/655/673" target="_blank" rel="noopener">
+  <div class="card-title">Imparfait</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82998/347/154" data-url="https://wordwall.net/play/82998/347/154" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre dans des situations famili&#232;res des consignes br&#232;ves, simples et claires</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/663/861" data-url="https://wordwall.net/play/93878/663/861" target="_blank" rel="noopener">
+  <div class="card-title">Activit&#233;s quotidiennes</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/846/688" data-url="https://wordwall.net/play/83798/846/688" target="_blank" rel="noopener">
+  <div class="card-title">Routine en fran&#231;ais</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/449/468" data-url="https://wordwall.net/play/83796/449/468" target="_blank" rel="noopener">
+  <div class="card-title">Activit&#233;s quotidiennes</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93879/730/398" data-url="https://wordwall.net/play/93879/730/398" target="_blank" rel="noopener">
+  <div class="card-title">Le vocabulaire de la classe : oral</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/593/818" data-url="https://wordwall.net/play/93878/593/818" target="_blank" rel="noopener">
+  <div class="card-title">le mat&#233;riel scolaire</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93879/649/806" data-url="https://wordwall.net/play/93879/649/806" target="_blank" rel="noopener">
+  <div class="card-title">Le corps humain (oral et images)</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93725/162/780" data-url="https://wordwall.net/play/93725/162/780" target="_blank" rel="noopener">
+  <div class="card-title">Prendre, accepter ou refuser un RDV</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81407/317/794" data-url="https://wordwall.net/play/81407/317/794" target="_blank" rel="noopener">
+  <div class="card-title">Dates de naissance</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81405/102/605" data-url="https://wordwall.net/play/81405/102/605" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre l&#39;heure</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81404/858/760" data-url="https://wordwall.net/play/81404/858/760" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre l&#39;heure</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/733/332" data-url="https://wordwall.net/play/83798/733/332" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire informatique cours n&#176;1</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/575/696" data-url="https://wordwall.net/play/92346/575/696" target="_blank" rel="noopener">
+  <div class="card-title">Le nettoyage</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81705/176/249" data-url="https://wordwall.net/play/81705/176/249" target="_blank" rel="noopener">
+  <div class="card-title">Ecouter les consignes nettoyage</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80513/372/231" data-url="https://wordwall.net/play/80513/372/231" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences nettoyage</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/943/206" data-url="https://wordwall.net/play/83796/943/206" target="_blank" rel="noopener">
+  <div class="card-title">Les aliments</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78308/046/395" data-url="https://wordwall.net/play/78308/046/395" target="_blank" rel="noopener">
+  <div class="card-title">La boulangerie</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92608/646/830" data-url="https://wordwall.net/play/92608/646/830" target="_blank" rel="noopener">
+  <div class="card-title">Liste des t&#226;ches principales</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92347/855/656" data-url="https://wordwall.net/play/92347/855/656" target="_blank" rel="noopener">
+  <div class="card-title">Les professions et leur verbe</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/666/512" data-url="https://wordwall.net/play/92346/666/512" target="_blank" rel="noopener">
+  <div class="card-title">La maison les pi&#232;ces</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/634/961" data-url="https://wordwall.net/play/83796/634/961" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81622/326/366" data-url="https://wordwall.net/play/81622/326/366" target="_blank" rel="noopener">
+  <div class="card-title">M&#233;tiers</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78075/758/132" data-url="https://wordwall.net/play/78075/758/132" target="_blank" rel="noopener">
+  <div class="card-title">Dans la cuisine</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78075/423/135" data-url="https://wordwall.net/play/78075/423/135" target="_blank" rel="noopener">
+  <div class="card-title">Dans l&#39;appartement</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83000/769/454" data-url="https://wordwall.net/play/83000/769/454" target="_blank" rel="noopener">
+  <div class="card-title">Les nombres</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81406/827/368" data-url="https://wordwall.net/play/81406/827/368" target="_blank" rel="noopener">
+  <div class="card-title">Les moyens de transport</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81405/654/356" data-url="https://wordwall.net/play/81405/654/356" target="_blank" rel="noopener">
+  <div class="card-title">Les moyens de transport</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81408/922/607" data-url="https://wordwall.net/play/81408/922/607" target="_blank" rel="noopener">
+  <div class="card-title">Comprendre l&#39;heure</div>
+  <div class="card-meta">Apparier</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="trier-par-groupe">
+  <div class="section-header">
+    <h2>Trier par groupe</h2>
+    <div class="count">12 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Classez les &#233;l&#233;ments dans le bon groupe.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/82819/802/253" data-url="https://wordwall.net/play/82819/802/253" target="_blank" rel="noopener">
+  <div class="card-title">Compr&#233;hension d&#39;un CV</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83817/609/319" data-url="https://wordwall.net/play/83817/609/319" target="_blank" rel="noopener">
+  <div class="card-title">J&#39;habite / Je vais ...</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/861/748" data-url="https://wordwall.net/play/93878/861/748" target="_blank" rel="noopener">
+  <div class="card-title">Pr&#233;sent alpha</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/100046/969/291" data-url="https://wordwall.net/play/100046/969/291" target="_blank" rel="noopener">
+  <div class="card-title">Avoir mal &#224; la/au/&#224; l&#39;/aux</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82998/157/166" data-url="https://wordwall.net/play/82998/157/166" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; vous avez mal</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83858/032/651" data-url="https://wordwall.net/play/83858/032/651" target="_blank" rel="noopener">
+  <div class="card-title">Donner ses disponibilit&#233;s</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83817/582/427" data-url="https://wordwall.net/play/83817/582/427" target="_blank" rel="noopener">
+  <div class="card-title">Je viens... + pr&#233;position + (pays / ville d&#39;origine)</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/934/839" data-url="https://wordwall.net/play/83796/934/839" target="_blank" rel="noopener">
+  <div class="card-title">Les loisirs</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/82995/791/775" data-url="https://wordwall.net/play/82995/791/775" target="_blank" rel="noopener">
+  <div class="card-title">Dire ce que vous aimez</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83916/759/111" data-url="https://wordwall.net/play/83916/759/111" target="_blank" rel="noopener">
+  <div class="card-title">Formules de salutation et remerciement</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92607/977/798" data-url="https://wordwall.net/play/92607/977/798" target="_blank" rel="noopener">
+  <div class="card-title">M&#233;tiers par groupes</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77822/837/428" data-url="https://wordwall.net/play/77822/837/428" target="_blank" rel="noopener">
+  <div class="card-title">les v&#234;tements: masculin ou f&#233;minin?</div>
+  <div class="card-meta">Trier par groupe</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="ouvrir-la-boite">
+  <div class="section-header">
+    <h2>Ouvrir la bo&#238;te</h2>
+    <div class="count">3 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Ouvrez les bo&#238;tes et r&#233;pondez aux questions.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/78074/177/901" data-url="https://wordwall.net/play/78074/177/901" target="_blank" rel="noopener">
+  <div class="card-title">Dire o&#249; se trouve un objet</div>
+  <div class="card-meta">Ouvrir la bo&#238;te</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77824/516/943" data-url="https://wordwall.net/play/77824/516/943" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Ouvrir la bo&#238;te</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83858/375/493" data-url="https://wordwall.net/play/83858/375/493" target="_blank" rel="noopener">
+  <div class="card-title">Donner ses disponibilit&#233;s</div>
+  <div class="card-meta">Ouvrir la bo&#238;te</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="vrai-ou-faux">
+  <div class="section-header">
+    <h2>Vrai ou faux</h2>
+    <div class="count">4 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Indiquez si l&#39;affirmation est vraie ou fausse.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/94455/678/968" data-url="https://wordwall.net/play/94455/678/968" target="_blank" rel="noopener">
+  <div class="card-title">Vacances</div>
+  <div class="card-meta">Vrai ou faux</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94334/505/517" data-url="https://wordwall.net/play/94334/505/517" target="_blank" rel="noopener">
+  <div class="card-title">Aide de cuisine</div>
+  <div class="card-meta">Vrai ou faux</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94334/370/793" data-url="https://wordwall.net/play/94334/370/793" target="_blank" rel="noopener">
+  <div class="card-title">Finances</div>
+  <div class="card-meta">Vrai ou faux</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/94334/493/705" data-url="https://wordwall.net/play/94334/493/705" target="_blank" rel="noopener">
+  <div class="card-title">Pr&#233;paratrice de commande</div>
+  <div class="card-meta">Vrai ou faux</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="trouver-la-correspondance">
+  <div class="section-header">
+    <h2>Trouver la correspondance</h2>
+    <div class="count">11 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Faites correspondre les &#233;l&#233;ments.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/93878/523/170" data-url="https://wordwall.net/play/93878/523/170" target="_blank" rel="noopener">
+  <div class="card-title">Objets du quotidien</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83795/704/385" data-url="https://wordwall.net/play/83795/704/385" target="_blank" rel="noopener">
+  <div class="card-title">Les couleurs_Alpha</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/776/508" data-url="https://wordwall.net/play/93878/776/508" target="_blank" rel="noopener">
+  <div class="card-title">L&#39;&#233;cole 2</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83796/471/537" data-url="https://wordwall.net/play/83796/471/537" target="_blank" rel="noopener">
+  <div class="card-title">Les fournitures scolaires</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/93878/677/838" data-url="https://wordwall.net/play/93878/677/838" target="_blank" rel="noopener">
+  <div class="card-title">Corps et visage</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83798/961/233" data-url="https://wordwall.net/play/83798/961/233" target="_blank" rel="noopener">
+  <div class="card-title">Les directions</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/025/137" data-url="https://wordwall.net/play/83797/025/137" target="_blank" rel="noopener">
+  <div class="card-title">Les meubles</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/78006/194/595" data-url="https://wordwall.net/play/78006/194/595" target="_blank" rel="noopener">
+  <div class="card-title">Les t&#226;ches m&#233;nag&#232;res_ r&#233;vision</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77825/660/151" data-url="https://wordwall.net/play/77825/660/151" target="_blank" rel="noopener">
+  <div class="card-title">Dans la cuisine</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/83797/017/177" data-url="https://wordwall.net/play/83797/017/177" target="_blank" rel="noopener">
+  <div class="card-title">Les meubles</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/77824/225/279" data-url="https://wordwall.net/play/77824/225/279" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Trouver la correspondance</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="speaking-cards">
+  <div class="section-header">
+    <h2>Speaking cards</h2>
+    <div class="count">6 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Tirez une carte et r&#233;pondez &#224; l&#39;oral.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92345/892/483" data-url="https://wordwall.net/play/92345/892/483" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences cassier</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/952/759" data-url="https://wordwall.net/play/92344/952/759" target="_blank" rel="noopener">
+  <div class="card-title">Employ&#233; de production</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/667/287" data-url="https://wordwall.net/play/92344/667/287" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences concierge</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/607/293" data-url="https://wordwall.net/play/92344/607/293" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences couturi&#232;re</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/092/851" data-url="https://wordwall.net/play/92344/092/851" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences cuisine</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92343/911/952" data-url="https://wordwall.net/play/92343/911/952" target="_blank" rel="noopener">
+  <div class="card-title">comp&#233;tences cuisine</div>
+  <div class="card-meta">Speaking cards</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="cartes-aleatoires">
+  <div class="section-header">
+    <h2>Cartes al&#233;atoires</h2>
+    <div class="count">18 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Cliquez pour afficher une carte et r&#233;pondez.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92344/814/537" data-url="https://wordwall.net/play/92344/814/537" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences polyvalent</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/170/648" data-url="https://wordwall.net/play/92344/170/648" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences plongeur</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/222/803" data-url="https://wordwall.net/play/92344/222/803" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences ma&#231;on</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/345/796" data-url="https://wordwall.net/play/92344/345/796" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences paysagiste</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80479/889/851" data-url="https://wordwall.net/play/80479/889/851" target="_blank" rel="noopener">
+  <div class="card-title">Consignes Paysagiste sans texte</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/396/307" data-url="https://wordwall.net/play/92344/396/307" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences Peintre</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80481/268/304" data-url="https://wordwall.net/play/80481/268/304" target="_blank" rel="noopener">
+  <div class="card-title">Consignes aide peintre</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80481/322/708" data-url="https://wordwall.net/play/80481/322/708" target="_blank" rel="noopener">
+  <div class="card-title">Consignes aide peintre sans texte</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92344/456/296" data-url="https://wordwall.net/play/92344/456/296" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences chauffeur</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92342/105/852" data-url="https://wordwall.net/play/92342/105/852" target="_blank" rel="noopener">
+  <div class="card-title">Comp&#233;tences nettoyage</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80476/783/362" data-url="https://wordwall.net/play/80476/783/362" target="_blank" rel="noopener">
+  <div class="card-title">Consignes nettoyage</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/79159/368/884" data-url="https://wordwall.net/play/79159/368/884" target="_blank" rel="noopener">
+  <div class="card-title">vocabulaire nettoyage</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/551/650" data-url="https://wordwall.net/play/92346/551/650" target="_blank" rel="noopener">
+  <div class="card-title">Les verbes de la cuisine images</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/533/728" data-url="https://wordwall.net/play/92346/533/728" target="_blank" rel="noopener">
+  <div class="card-title">Les verbes de la cuisine</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/519/259" data-url="https://wordwall.net/play/92346/519/259" target="_blank" rel="noopener">
+  <div class="card-title">Les verbes de la cuisine (verbes)</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80479/542/959" data-url="https://wordwall.net/play/80479/542/959" target="_blank" rel="noopener">
+  <div class="card-title">Consignes aide de cuisine</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80479/553/208" data-url="https://wordwall.net/play/80479/553/208" target="_blank" rel="noopener">
+  <div class="card-title">Consignes aide de cuisine sans texte</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/92346/122/548" data-url="https://wordwall.net/play/92346/122/548" target="_blank" rel="noopener">
+  <div class="card-title">Verbes Comp&#233;tences</div>
+  <div class="card-meta">Cartes al&#233;atoires</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="fiches-de-revision">
+  <div class="section-header">
+    <h2>Fiches de r&#233;vision</h2>
+    <div class="count">7 activit&#233;s</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">R&#233;visez les cartes &#224; votre rythme.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/80480/330/793" data-url="https://wordwall.net/play/80480/330/793" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire paysagiste</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80480/986/863" data-url="https://wordwall.net/play/80480/986/863" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire - peintre</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81870/991/926" data-url="https://wordwall.net/play/81870/991/926" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire - chauffeur livreur</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80460/303/478" data-url="https://wordwall.net/play/80460/303/478" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire nettoyage</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/81624/965/447" data-url="https://wordwall.net/play/81624/965/447" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire nettoyage</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/80526/162/209" data-url="https://wordwall.net/play/80526/162/209" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire - cuisine</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+<a class="card" href="https://wordwall.net/play/87051/091/811" data-url="https://wordwall.net/play/87051/091/811" target="_blank" rel="noopener">
+  <div class="card-title">Vocabulaire outillages ma&#231;on</div>
+  <div class="card-meta">Fiches de r&#233;vision</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="mots-croises">
+  <div class="section-header">
+    <h2>Mots crois&#233;s</h2>
+    <div class="count">1 activit&#233;</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Compl&#233;tez la grille avec les bons mots.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/92609/311/666" data-url="https://wordwall.net/play/92609/311/666" target="_blank" rel="noopener">
+  <div class="card-title">Liste des t&#226;ches principales</div>
+  <div class="card-meta">Mots crois&#233;s</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="regarder-et-memoriser">
+  <div class="section-header">
+    <h2>Regarder et m&#233;moriser</h2>
+    <div class="count">1 activit&#233;</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">Observez puis m&#233;morisez les &#233;l&#233;ments.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/83796/591/631" data-url="https://wordwall.net/play/83796/591/631" target="_blank" rel="noopener">
+  <div class="card-title">Les v&#234;tements et accessoires_le tapis roulant</div>
+  <div class="card-meta">Regarder et m&#233;moriser</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>
+<section class="section type-section is-collapsed" id="quiz-televise">
+  <div class="section-header">
+    <h2>Quiz t&#233;l&#233;vis&#233;</h2>
+    <div class="count">1 activit&#233;</div>
+    <button class="toggle-btn" type="button">Afficher</button>
+  </div>
+  <p class="type-instruction">R&#233;pondez aux questions en mode quiz t&#233;l&#233;vis&#233;.</p>
+  <div class="grid">
+<a class="card" href="https://wordwall.net/play/77814/446/363" data-url="https://wordwall.net/play/77814/446/363" target="_blank" rel="noopener">
+  <div class="card-title">Les m&#233;tiers</div>
+  <div class="card-meta">Quiz t&#233;l&#233;vis&#233;</div>
+
+  <span class='done-toggle' role='button' tabindex='0' aria-pressed='false'>Fait</span>
+</a>
+  </div>
+</section>  </main>
+  <button id="back-to-top" aria-label="Retour en haut">Haut</button>
+  <script>
+    (function(){
+      var sections = Array.prototype.slice.call(document.querySelectorAll('.type-section'));
+      var cards = Array.prototype.slice.call(document.querySelectorAll('.type-card'));
+      var exerciseCards = Array.prototype.slice.call(document.querySelectorAll('.card'));
+      var toggles = Array.prototype.slice.call(document.querySelectorAll('.toggle-btn'));
+      var showAllBtn = document.getElementById('show-all');
+      var searchInput = document.getElementById('search-input');
+      var backToTop = document.getElementById('back-to-top');
+      var activeId = window.location.hash ? window.location.hash.substring(1) : null;
+      var storageKey = 'wordwall_done';
+      var selectedKey = 'wordwall_selected';
+      var doneMap = {};
+      var selectedUrl = '';
+
+      function loadDone(){
+        try{
+          doneMap = JSON.parse(localStorage.getItem(storageKey) || '{}');
+        }catch(e){
+          doneMap = {};
+        }
+      }
+
+      function saveDone(){
+        localStorage.setItem(storageKey, JSON.stringify(doneMap));
+      }
+
+      function loadSelected(){
+        selectedUrl = localStorage.getItem(selectedKey) || '';
+      }
+
+      function saveSelected(){
+        if (selectedUrl) {
+          localStorage.setItem(selectedKey, selectedUrl);
+        } else {
+          localStorage.removeItem(selectedKey);
+        }
+      }
+
+      function applySelectedState(){
+        exerciseCards.forEach(function(card){
+          var url = card.getAttribute('data-url');
+          if (!url) { return; }
+          card.classList.toggle('is-selected', url === selectedUrl);
+        });
+      }
+
+      function applyDoneState(){
+        exerciseCards.forEach(function(card){
+          var url = card.getAttribute('data-url');
+          if (!url) { return; }
+          var isDone = !!doneMap[url];
+          card.classList.toggle('is-done', isDone);
+          var toggle = card.querySelector('.done-toggle');
+          if (toggle) {
+            toggle.setAttribute('aria-pressed', isDone ? 'true' : 'false');
+            toggle.textContent = isDone ? 'Fait' : 'Marquer';
+          }
+        });
+      }
+
+      function setCollapsed(section, collapsed){
+        section.classList.toggle('is-collapsed', collapsed);
+        var btn = section.querySelector('.toggle-btn');
+        if (btn) { btn.textContent = collapsed ? 'Afficher' : 'Masquer'; }
+      }
+
+      function showAllCollapsed(){
+        sections.forEach(function(section){
+          section.classList.remove('is-hidden');
+          setCollapsed(section, true);
+        });
+      }
+
+      function showOne(id){
+        var target = document.getElementById(id);
+        if (!target) {
+          showAllCollapsed();
+          return;
+        }
+        sections.forEach(function(section){
+          if (section === target) {
+            section.classList.remove('is-hidden');
+            setCollapsed(section, false);
+          } else {
+            section.classList.add('is-hidden');
+            setCollapsed(section, true);
+          }
+        });
+        target.scrollIntoView({behavior:'smooth', block:'start'});
+      }
+
+      function filterByQuery(query){
+        var q = query.trim().toLowerCase();
+        sections.forEach(function(section){
+          var cardsInSection = Array.prototype.slice.call(section.querySelectorAll('.card'));
+          var visibleCount = 0;
+          cardsInSection.forEach(function(card){
+            var title = card.querySelector('.card-title');
+            var text = title ? title.textContent.toLowerCase() : '';
+            var match = q === '' || text.indexOf(q) !== -1;
+            card.style.display = match ? '' : 'none';
+            if (match) { visibleCount += 1; }
+          });
+          if (visibleCount === 0) {
+            section.classList.add('is-hidden');
+          } else {
+            section.classList.remove('is-hidden');
+            setCollapsed(section, false);
+          }
+        });
+      }
+
+      cards.forEach(function(card){
+        card.addEventListener('click', function(evt){
+          evt.preventDefault();
+          var id = card.getAttribute('data-target');
+          activeId = id;
+          if (searchInput) { searchInput.value = ''; }
+          history.replaceState(null, '', '#' + id);
+          showOne(id);
+        });
+      });
+
+      exerciseCards.forEach(function(card){
+        var toggle = card.querySelector('.done-toggle');
+        if (!toggle) { return; }
+        toggle.addEventListener('click', function(evt){
+          evt.preventDefault();
+          evt.stopPropagation();
+          var url = card.getAttribute('data-url');
+          if (!url) { return; }
+          doneMap[url] = !doneMap[url];
+          if (!doneMap[url]) { delete doneMap[url]; }
+          saveDone();
+          applyDoneState();
+        });
+        toggle.addEventListener('keydown', function(evt){
+          if (evt.key === 'Enter' || evt.key === ' ') {
+            evt.preventDefault();
+            toggle.click();
+          }
+        });
+      });
+
+      exerciseCards.forEach(function(card){
+        card.addEventListener('click', function(){
+          var url = card.getAttribute('data-url');
+          if (!url) { return; }
+          selectedUrl = url;
+          saveSelected();
+          applySelectedState();
+        });
+      });
+
+      toggles.forEach(function(btn){
+        btn.addEventListener('click', function(){
+          var section = btn.closest('.type-section');
+          if (!section) { return; }
+          var collapsed = section.classList.toggle('is-collapsed');
+          btn.textContent = collapsed ? 'Afficher' : 'Masquer';
+        });
+      });
+
+      if (showAllBtn) {
+        showAllBtn.addEventListener('click', function(){
+          activeId = null;
+          if (searchInput) { searchInput.value = ''; }
+          history.replaceState(null, '', ' ');
+          showAllCollapsed();
+          window.scrollTo({top:0, behavior:'smooth'});
+        });
+      }
+
+      if (searchInput) {
+        searchInput.addEventListener('input', function(){
+          var value = searchInput.value;
+          if (value.trim() === '') {
+            if (activeId) { showOne(activeId); } else { showAllCollapsed(); }
+            return;
+          }
+          filterByQuery(value);
+        });
+      }
+
+      if (backToTop) {
+        window.addEventListener('scroll', function(){
+          if (window.scrollY > 400) { backToTop.classList.add('show'); }
+          else { backToTop.classList.remove('show'); }
+        });
+        backToTop.addEventListener('click', function(){
+          window.scrollTo({top:0, behavior:'smooth'});
+        });
+      }
+
+      loadDone();
+      loadSelected();
+      applyDoneState();
+      applySelectedState();
+
+      if (activeId) { showOne(activeId); } else { showAllCollapsed(); }
+    })();
+  </script>
+</body>
+</html>
+

@@ -1,0 +1,562 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Démêler la phrase</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+.consigne{
+  text-align:center;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+
+/* PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+}
+
+/* CARTES */
+.grid{
+  display:grid;
+  grid-template-columns:1fr;
+  gap:16px;
+}
+.card{
+  background:var(--card);
+  padding:16px;
+  border-radius:14px;
+  border:2px solid transparent;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.target{
+  min-height:42px;
+  border:2px dashed var(--border);
+  border-radius:10px;
+  padding:8px;
+  margin-bottom:12px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+
+.words{
+  display:flex;
+  flex-wrap:wrap;
+  gap:8px;
+  justify-content:center;
+}
+
+.word-btn{
+  padding:6px 10px;
+  border-radius:8px;
+  border:1px solid var(--border);
+  background:#020617;
+  cursor:pointer;
+  font-weight:bold;
+}
+.word-btn.used{
+  opacity:.4;
+  text-decoration:line-through;
+  cursor:default;
+}
+
+.card-actions{text-align:center;margin-top:8px}
+.reset-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Démêler la phrase</h1>
+<div class="consigne">
+Clique les mots dans le bon ordre pour former la phrase.
+</div>
+
+<!-- PROGRESSION -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- CARTES -->
+<div class="grid" id="grid"></div>
+
+<!-- FIN -->
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   SÉRIES (PHRASES)
+   ========================= */
+const series = [
+  [
+    "Je suis ponctuel au travail",
+    "Je respecte les consignes",
+    "Je travaille en équipe"
+  ],
+  [
+    "Je prépare le matériel",
+    "Je respecte les horaires",
+    "Je termine mon travail"
+  ],
+  [
+    "Je commence à l’heure",
+    "Je fais mon travail correctement",
+    "Je respecte les règles"
+  ],
+  [
+    "Je nettoie mon poste de travail",
+    "Je range le matériel",
+    "Je laisse l’espace propre"
+  ],
+  [
+    "Je demande de l’aide si nécessaire",
+    "Je pose des questions",
+    "Je comprends les consignes"
+  ],
+  [
+    "Je travaille avec attention",
+    "Je fais attention à la sécurité",
+    "Je porte l’équipement"
+  ],
+  [
+    "Je m’organise pour la journée",
+    "Je respecte les priorités",
+    "Je termine les tâches"
+  ],
+  [
+    "Je travaille calmement",
+    "Je travaille avec sérieux",
+    "Je respecte mes collègues"
+  ],
+  [
+    "Je prends une pause",
+    "Je reviens à l’heure",
+    "Je continue le travail"
+  ],
+  [
+    "Je signale un problème",
+    "Je parle avec mon responsable",
+    "Je cherche une solution"
+  ],
+
+  [
+    "Je respecte les horaires de travail",
+    "Je commence à l’heure prévue",
+    "Je termine à l’heure"
+  ],
+  [
+    "Je prépare mon poste",
+    "Je vérifie le matériel",
+    "Je commence à travailler"
+  ],
+  [
+    "Je fais les tâches demandées",
+    "Je respecte les consignes",
+    "Je termine le travail"
+  ],
+  [
+    "Je travaille de manière organisée",
+    "Je fais attention aux détails",
+    "Je vérifie mon travail"
+  ],
+  [
+    "Je respecte les règles de sécurité",
+    "Je porte les protections",
+    "Je fais attention aux risques"
+  ],
+  [
+    "Je travaille avec mes collègues",
+    "Je communique calmement",
+    "Je respecte l’équipe"
+  ],
+  [
+    "Je nettoie après le travail",
+    "Je range les outils",
+    "Je laisse le poste propre"
+  ],
+  [
+    "Je demande des explications",
+    "Je écoute les consignes",
+    "Je applique les règles"
+  ],
+  [
+    "Je travaille sans me presser",
+    "Je fais attention",
+    "Je évite les erreurs"
+  ],
+  [
+    "Je respecte le planning",
+    "Je organise mon temps",
+    "Je termine les tâches"
+  ],
+
+  [
+    "Je fais mon travail avec soin",
+    "Je respecte les consignes données",
+    "Je vérifie le résultat"
+  ],
+  [
+    "Je respecte mes collègues",
+    "Je parle avec respect",
+    "Je garde une bonne ambiance"
+  ],
+  [
+    "Je travaille même quand c’est difficile",
+    "Je reste calme",
+    "Je continue le travail"
+  ],
+  [
+    "Je respecte les pauses",
+    "Je reviens à l’heure",
+    "Je reprends le travail"
+  ],
+  [
+    "Je fais attention à la sécurité",
+    "Je signale un danger",
+    "Je protège les autres"
+  ],
+  [
+    "Je m’organise avant de commencer",
+    "Je prépare le matériel",
+    "Je gagne du temps"
+  ],
+  [
+    "Je respecte les priorités du jour",
+    "Je commence par l’important",
+    "Je termine le reste"
+  ],
+  [
+    "Je travaille de façon autonome",
+    "Je demande de l’aide si besoin",
+    "Je continue seul"
+  ],
+  [
+    "Je fais attention à la qualité",
+    "Je corrige mes erreurs",
+    "Je améliore mon travail"
+  ],
+  [
+    "Je respecte les consignes écrites",
+    "Je respecte les consignes orales",
+    "Je applique les règles"
+  ],
+
+  [
+    "Je communique avec mon responsable",
+    "Je explique la situation",
+    "Je cherche une solution"
+  ],
+  [
+    "Je travaille efficacement",
+    "Je respecte les délais",
+    "Je termine à temps"
+  ],
+  [
+    "Je fais attention au matériel",
+    "Je utilise correctement les outils",
+    "Je évite la casse"
+  ],
+  [
+    "Je nettoie régulièrement",
+    "Je garde le poste propre",
+    "Je respecte l’hygiène"
+  ],
+  [
+    "Je travaille avec concentration",
+    "Je évite les distractions",
+    "Je reste attentif"
+  ],
+  [
+    "Je respecte les règles de l’entreprise",
+    "Je respecte les personnes",
+    "Je respecte le travail"
+  ],
+  [
+    "Je m’adapte aux consignes",
+    "Je m’adapte au poste",
+    "Je m’adapte à l’équipe"
+  ],
+  [
+    "Je travaille avec motivation",
+    "Je fais des efforts",
+    "Je progresse"
+  ],
+  [
+    "Je respecte le matériel commun",
+    "Je range après usage",
+    "Je laisse en bon état"
+  ],
+  [
+    "Je travaille de manière régulière",
+    "Je suis constant",
+    "Je suis fiable"
+  ],
+
+  [
+    "Je prends mes responsabilités",
+    "Je assume mes tâches",
+    "Je termine mon travail"
+  ],
+  [
+    "Je respecte les délais demandés",
+    "Je organise mon travail",
+    "Je finis à temps"
+  ],
+  [
+    "Je fais attention aux consignes de sécurité",
+    "Je respecte les procédures",
+    "Je évite les accidents"
+  ],
+  [
+    "Je travaille avec méthode",
+    "Je suis organisé",
+    "Je gagne en efficacité"
+  ],
+  [
+    "Je respecte les règles du poste",
+    "Je respecte le cadre",
+    "Je respecte l’équipe"
+  ],
+  [
+    "Je communique clairement",
+    "Je écoute les autres",
+    "Je réponds calmement"
+  ],
+  [
+    "Je m’engage dans mon travail",
+    "Je fais de mon mieux",
+    "Je reste motivé"
+  ],
+  [
+    "Je fais attention à mon comportement",
+    "Je reste poli",
+    "Je reste respectueux"
+  ],
+  [
+    "Je contrôle mon travail",
+    "Je corrige si nécessaire",
+    "Je valide le résultat"
+  ],
+  [
+    "Je contribue à une bonne ambiance",
+    "Je respecte les autres",
+    "Je travaille sereinement"
+  ]
+];
+
+
+function shuffle(arr){ return [...arr].sort(()=>Math.random()-0.5); }
+
+/* =========================
+   ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="demeler_phrase_click_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie:0, done:{}, score:0, errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+/* ========================= */
+const grid=document.getElementById("grid");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+
+const totalPhrases = series.flat().length;
+
+function updateProgress(){
+  const doneCount=Object.keys(state.done).length;
+  progressLabel.textContent=`Progression : ${doneCount} / ${totalPhrases}`;
+  progressFill.style.width=Math.round(doneCount/totalPhrases*100)+"%";
+}
+
+function loadSerie(){
+  grid.innerHTML="";
+  const data = shuffle(series[state.serie]);
+
+  data.forEach(phrase=>{
+    const words = phrase.split(" ");
+    let selected = [];
+
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.phrase=phrase;
+
+    const target=document.createElement("div");
+    target.className="target";
+    card.appendChild(target);
+
+    const pool=document.createElement("div");
+    pool.className="words";
+
+    shuffle(words).forEach(w=>{
+      const btn=document.createElement("div");
+      btn.className="word-btn";
+      btn.textContent=w;
+      btn.onclick=()=>{
+        if(btn.classList.contains("used")) return;
+        btn.classList.add("used");
+        selected.push(w);
+        const span=document.createElement("span");
+        span.textContent=w;
+        target.appendChild(span);
+        check(card, phrase, selected);
+      };
+      pool.appendChild(btn);
+    });
+
+    const actions=document.createElement("div");
+    actions.className="card-actions";
+    const reset=document.createElement("button");
+    reset.className="reset-btn";
+    reset.textContent="Reset";
+    reset.onclick=()=>{
+      selected=[];
+      target.innerHTML="";
+      card.classList.remove("ok","err");
+      pool.querySelectorAll(".word-btn").forEach(b=>b.classList.remove("used"));
+      delete state.done[phrase];
+      save();
+    };
+    actions.appendChild(reset);
+
+    card.appendChild(pool);
+    card.appendChild(actions);
+    grid.appendChild(card);
+  });
+
+  updateProgress();
+}
+
+function check(card, phrase, selected){
+  const targetWords = phrase.split(" ");
+  if(selected.length < targetWords.length) return;
+
+  const ok = selected.join(" ") === phrase;
+  card.classList.add(ok?"ok":"err");
+  state.done[phrase]=true;
+  ok?state.score++:state.errors++;
+  save();
+  updateProgress();
+
+  if(series[state.serie].every(p=>state.done[p])){
+    state.serie++;
+    save();
+    if(state.serie<series.length) loadSerie();
+    else showEnd();
+  }
+}
+
+function showEnd(){
+  end.style.display="block";
+  const ratio=state.score/totalPhrases;
+
+  starsEl.textContent=
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===totalPhrases && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Score : ${state.score} / ${totalPhrases}<br>Erreurs : ${state.errors}`;
+}
+
+/* INIT */
+updateProgress();
+loadSerie();
+</script>
+
+</body>
+</html>
+

@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Vrai / Faux</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+.container{
+  max-width:900px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+.consigne{
+  text-align:center;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+
+/* PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+}
+
+/* QUESTION */
+.card{
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+  border:2px solid transparent;
+  text-align:center;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.statement{
+  font-size:20px;
+  margin-bottom:20px;
+}
+
+/* BOUTONS */
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+.btn{
+  padding:14px 22px;
+  font-size:18px;
+  border-radius:12px;
+  border:2px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+  min-width:120px;
+}
+.btn.disabled{
+  opacity:.5;
+  cursor:default;
+}
+.btn.true.correct{border-color:var(--ok)}
+.btn.false.correct{border-color:var(--ok)}
+.btn.wrong{border-color:var(--err)}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+
+#replayBtn{
+  margin-top:16px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Vrai / Faux</h1>
+<div class="consigne">
+Lis la phrase et choisis la bonne réponse.
+</div>
+
+<!-- PROGRESSION -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- QUESTION -->
+<div class="card" id="card">
+  <div class="statement" id="statement"></div>
+  <div class="buttons">
+    <button class="btn true" id="btnTrue">VRAI</button>
+    <button class="btn false" id="btnFalse">FAUX</button>
+  </div>
+</div>
+
+<!-- FIN -->
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+  <button id="replayBtn">🔁 Rejouer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   DONNÉES (MODÈLE)
+   ========================= */
+const SERIES = [
+  [
+    { text:"Je dois respecter les horaires.", answer:true },
+    { text:"Je peux arriver quand je veux.", answer:false },
+    { text:"Je travaille en équipe.", answer:true }
+  ],
+  [
+    { text:"Je nettoie sans consignes.", answer:false },
+    { text:"Je prépare le matériel avant de commencer.", answer:true },
+    { text:"Je respecte les règles de sécurité.", answer:true }
+  ],
+  [
+    { text:"Je dois prévenir en cas de retard.", answer:true },
+    { text:"Je peux quitter le poste sans informer.", answer:false },
+    { text:"Je termine mon travail avant de partir.", answer:true }
+  ],
+  [
+    { text:"Je laisse mon poste propre.", answer:true },
+    { text:"Je range le matériel après usage.", answer:true },
+    { text:"Je peux laisser le désordre.", answer:false }
+  ],
+  [
+    { text:"Je porte les équipements de protection.", answer:true },
+    { text:"La sécurité n’est pas importante.", answer:false },
+    { text:"Je fais attention aux risques.", answer:true }
+  ],
+  [
+    { text:"Je respecte mes collègues.", answer:true },
+    { text:"Je travaille sans écouter personne.", answer:false },
+    { text:"Je demande de l’aide si besoin.", answer:true }
+  ],
+  [
+    { text:"Je commence le travail à l’heure.", answer:true },
+    { text:"Je prends une pause quand je veux.", answer:false },
+    { text:"Je respecte les temps de pause.", answer:true }
+  ],
+  [
+    { text:"Je signale un problème au responsable.", answer:true },
+    { text:"Je cache mes erreurs.", answer:false },
+    { text:"Je cherche une solution.", answer:true }
+  ],
+  [
+    { text:"Je travaille avec sérieux.", answer:true },
+    { text:"Je fais le minimum.", answer:false },
+    { text:"Je fais mon travail correctement.", answer:true }
+  ],
+  [
+    { text:"Je respecte les consignes écrites.", answer:true },
+    { text:"Je peux ignorer les règles.", answer:false },
+    { text:"Je suis attentif au travail.", answer:true }
+  ],
+
+  [
+    { text:"Je respecte le planning.", answer:true },
+    { text:"Je travaille sans organisation.", answer:false },
+    { text:"Je termine les tâches prévues.", answer:true }
+  ],
+  [
+    { text:"Je préviens en cas d’absence.", answer:true },
+    { text:"Je ne dis rien quand je suis absent.", answer:false },
+    { text:"Je respecte les procédures.", answer:true }
+  ],
+  [
+    { text:"Je nettoie le matériel après usage.", answer:true },
+    { text:"Je laisse le matériel sale.", answer:false },
+    { text:"Je respecte l’hygiène.", answer:true }
+  ],
+  [
+    { text:"Je travaille calmement.", answer:true },
+    { text:"Je crie au travail.", answer:false },
+    { text:"Je reste concentré.", answer:true }
+  ],
+  [
+    { text:"Je respecte les règles de l’entreprise.", answer:true },
+    { text:"Je fais comme je veux.", answer:false },
+    { text:"Je suis fiable.", answer:true }
+  ],
+
+  [
+    { text:"Je prépare mon poste avant de commencer.", answer:true },
+    { text:"Je commence sans préparation.", answer:false },
+    { text:"Je m’organise pour la journée.", answer:true }
+  ],
+  [
+    { text:"Je fais attention à la sécurité des autres.", answer:true },
+    { text:"Je prends des risques inutiles.", answer:false },
+    { text:"Je porte les protections.", answer:true }
+  ],
+  [
+    { text:"Je respecte mes horaires de travail.", answer:true },
+    { text:"Je pars quand je veux.", answer:false },
+    { text:"Je suis ponctuel.", answer:true }
+  ],
+  [
+    { text:"Je communique avec mon responsable.", answer:true },
+    { text:"Je ne dis rien en cas de problème.", answer:false },
+    { text:"Je informe correctement.", answer:true }
+  ],
+  [
+    { text:"Je travaille avec motivation.", answer:true },
+    { text:"Je n’ai aucune envie de travailler.", answer:false },
+    { text:"Je fais des efforts.", answer:true }
+  ],
+
+  [
+    { text:"Je respecte le matériel.", answer:true },
+    { text:"Je casse les outils.", answer:false },
+    { text:"Je utilise correctement les équipements.", answer:true }
+  ],
+  [
+    { text:"Je fais attention à la qualité.", answer:true },
+    { text:"La qualité n’est pas importante.", answer:false },
+    { text:"Je vérifie mon travail.", answer:true }
+  ],
+  [
+    { text:"Je m’adapte aux consignes.", answer:true },
+    { text:"Je refuse de changer.", answer:false },
+    { text:"Je reste flexible.", answer:true }
+  ],
+  [
+    { text:"Je respecte mes collègues.", answer:true },
+    { text:"Je manque de respect.", answer:false },
+    { text:"Je travaille en bonne entente.", answer:true }
+  ],
+  [
+    { text:"Je termine mon travail à temps.", answer:true },
+    { text:"Je laisse le travail inachevé.", answer:false },
+    { text:"Je respecte les délais.", answer:true }
+  ],
+
+  [
+    { text:"Je travaille de manière organisée.", answer:true },
+    { text:"Je travaille dans le désordre.", answer:false },
+    { text:"Je planifie mes tâches.", answer:true }
+  ],
+  [
+    { text:"Je prends mes responsabilités.", answer:true },
+    { text:"Je évite mes responsabilités.", answer:false },
+    { text:"Je assume mon travail.", answer:true }
+  ],
+  [
+    { text:"Je respecte les consignes orales.", answer:true },
+    { text:"Je n’écoute pas.", answer:false },
+    { text:"Je applique ce qui est demandé.", answer:true }
+  ],
+  [
+    { text:"Je contribue à une bonne ambiance.", answer:true },
+    { text:"Je crée des conflits.", answer:false },
+    { text:"Je reste respectueux.", answer:true }
+  ],
+  [
+    { text:"Je travaille avec méthode.", answer:true },
+    { text:"Je travaille au hasard.", answer:false },
+    { text:"Je suis efficace.", answer:true }
+  ]
+  // ➜ même logique à dupliquer si tu veux aller au-delà
+];
+
+
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+/* =========================
+   ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="vrai_faux_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie:0,
+  index:0,
+  score:0,
+  errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+/* ========================= */
+const statementEl=document.getElementById("statement");
+const card=document.getElementById("card");
+const btnTrue=document.getElementById("btnTrue");
+const btnFalse=document.getElementById("btnFalse");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+const replayBtn=document.getElementById("replayBtn");
+
+const TOTAL = SERIES.flat().length;
+let currentSerie = shuffle(SERIES[state.serie]);
+
+function updateProgress(){
+  const done = state.score + state.errors;
+  progressLabel.textContent=`Progression : ${done} / ${TOTAL}`;
+  progressFill.style.width=Math.round(done/TOTAL*100)+"%";
+}
+
+function loadQuestion(){
+  card.className="card";
+  btnTrue.classList.remove("disabled","correct","wrong");
+  btnFalse.classList.remove("disabled","correct","wrong");
+
+  const q = currentSerie[state.index];
+  statementEl.textContent = q.text;
+}
+
+function answer(value){
+  if(btnTrue.classList.contains("disabled")) return;
+
+  btnTrue.classList.add("disabled");
+  btnFalse.classList.add("disabled");
+
+  const q = currentSerie[state.index];
+  const correct = q.answer === value;
+
+  if(correct){
+    state.score++;
+    (value?btnTrue:btnFalse).classList.add("correct");
+  }else{
+    state.errors++;
+    (value?btnTrue:btnFalse).classList.add("wrong");
+  }
+
+  save();
+  updateProgress();
+  setTimeout(next,600);
+}
+
+btnTrue.onclick=()=>answer(true);
+btnFalse.onclick=()=>answer(false);
+
+function next(){
+  state.index++;
+  if(state.index < currentSerie.length){
+    save();
+    loadQuestion();
+  }else{
+    state.serie++;
+    state.index = 0;
+    if(state.serie < SERIES.length){
+      currentSerie = shuffle(SERIES[state.serie]);
+      save();
+      loadQuestion();
+    }else{
+      showEnd();
+    }
+  }
+}
+
+function showEnd(){
+  card.style.display="none";
+  end.style.display="block";
+
+  const ratio = state.score / TOTAL;
+
+  starsEl.textContent =
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===TOTAL && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Bonnes réponses : ${state.score} / ${TOTAL}<br>Erreurs : ${state.errors}`;
+}
+
+/* 🔒 Rejouer seulement à la fin */
+replayBtn.onclick=()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+};
+
+/* INIT */
+updateProgress();
+loadQuestion();
+</script>
+
+</body>
+</html>
+

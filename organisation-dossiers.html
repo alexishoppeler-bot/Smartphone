@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Explorateur Windows – Classement de documents</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box}
+body{
+  font-family:Segoe UI, Arial, sans-serif;
+  background:#0f172a;
+  color:#e5e7eb;
+  display:flex;
+  justify-content:center;
+  padding:20px;
+}
+.window{
+  width:1100px;
+  background:#020617;
+  border-radius:16px;
+  padding:20px;
+}
+h1{font-size:20px;margin-bottom:10px}
+
+/* CONSIGNE */
+.consigne{
+  background:#020617;
+  border:1px solid #334155;
+  border-radius:12px;
+  padding:12px;
+  margin-bottom:12px;
+  user-select:none;
+}
+.consigne *{user-select:none}
+.consigne ul{margin-left:20px}
+
+/* LAYOUT */
+.explorer{
+  display:flex;
+  gap:20px;
+}
+.panel{
+  flex:1;
+  background:#020617;
+  border:1px solid #1f2937;
+  border-radius:12px;
+  padding:15px;
+}
+.panel h2{font-size:16px;margin-bottom:10px}
+
+/* INPUT */
+input{
+  width:70%;
+  padding:6px 8px;
+  border-radius:6px;
+  border:none;
+  margin-right:5px;
+}
+
+/* DOSSIERS */
+.folder{
+  border:1px solid #334155;
+  border-radius:8px;
+  padding:8px 10px;
+  margin-bottom:6px;
+}
+.folder.valid{
+  border-color:#22c55e;
+  background:#052e2b;
+}
+
+/* DOCUMENT */
+.file{
+  border:1px solid #334155;
+  border-radius:8px;
+  padding:8px 10px;
+  cursor:grab;
+}
+.file.done{
+  text-decoration:line-through;
+  opacity:0.4;
+  cursor:default;
+}
+
+/* STATS */
+.stats{
+  margin-top:12px;
+  font-weight:600;
+}
+.message{
+  margin-top:12px;
+  text-align:center;
+  font-weight:700;
+  font-size:16px;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+
+<div class="window">
+
+<h1>📁 Explorateur Windows – Documents</h1>
+
+<div class="consigne" oncopy="return false" oncut="return false">
+  <p><strong>Crée les dossiers dans Documents.</strong></p>
+  <p>Écris exactement ces noms :</p>
+  <ul>
+    <li>Candidature</li>
+    <li>Factures</li>
+    <li>Images</li>
+    <li>Vidéos</li>
+    <li>Musique</li>
+    <li>Diplômes</li>
+    <li>Cours</li>
+  </ul>
+  <p>Puis range chaque document dans le bon dossier.</p>
+</div>
+
+<div class="explorer">
+
+  <!-- DOSSIERS -->
+  <div class="panel">
+    <h2>Dossiers</h2>
+    <input id="folderInput" placeholder="Nom du dossier">
+    <button onclick="createFolder()">Créer</button>
+    <div id="folders"></div>
+  </div>
+
+  <!-- DOCUMENT -->
+  <div class="panel">
+    <h2>Document</h2>
+    <div id="fileZone"></div>
+  </div>
+
+</div>
+
+<div class="stats" id="stats"></div>
+<div class="message" id="message"></div>
+
+</div>
+
+<script>
+// ========= UTIL =========
+function shuffle(array){
+  for(let i=array.length-1;i>0;i--){
+    const j=Math.floor(Math.random()*(i+1));
+    [array[i],array[j]]=[array[j],array[i]];
+  }
+}
+
+// ========= DONNÉES =========
+const requiredFolders = [
+  "Candidature","Factures","Images","Vidéos","Musique","Diplômes","Cours"
+];
+
+const baseFiles = [
+  // 🔹 CANDIDATURE
+  {n:"CV_Alex.pdf",t:"Candidature"},
+  {n:"LM_Migros.pdf",t:"Candidature"},
+  {n:"CV_Maria.pdf",t:"Candidature"},
+  {n:"LM_Coop.pdf",t:"Candidature"},
+  {n:"CV_2024.docx",t:"Candidature"},
+  {n:"lettre_spontanee.pdf",t:"Candidature"},
+  {n:"CV_photo.jpg",t:"Candidature"},          // piège image
+  {n:"video_cv.mp4",t:"Candidature"},          // piège vidéo
+
+  // 🔹 FACTURES
+  {n:"facture_tel.pdf",t:"Factures"},
+  {n:"facture_electricite.pdf",t:"Factures"},
+  {n:"facture_internet.pdf",t:"Factures"},
+  {n:"recu_migros.pdf",t:"Factures"},
+  {n:"facture_voiture.png",t:"Factures"},       // piège image
+  {n:"facture_assurance.pdf",t:"Factures"},
+  {n:"facture_cours_excel.pdf",t:"Factures"},   // piège mot cours
+
+  // 🔹 IMAGES
+  {n:"photo_identite.jpg",t:"Images"},
+  {n:"photo_cv.png",t:"Images"},                // piège candidature
+  {n:"scan_facture.jpg",t:"Images"},            // piège facture
+  {n:"image_travail.png",t:"Images"},
+  {n:"selfie_pro.jpg",t:"Images"},
+  {n:"photo_diplome.jpg",t:"Images"},            // piège diplôme
+  {n:"image_cours.jpg",t:"Images"},              // piège cours
+
+  // 🔹 VIDÉOS
+  {n:"video_cv.mp4",t:"Vidéos"},
+  {n:"video_entretien.mp4",t:"Vidéos"},
+  {n:"video_cours_windows.mp4",t:"Vidéos"},
+  {n:"presentation_travail.mov",t:"Vidéos"},
+  {n:"video_famille.mp4",t:"Vidéos"},
+  {n:"video_motivation.mp4",t:"Vidéos"},
+  {n:"film_test.avi",t:"Vidéos"},
+
+  // 🔹 MUSIQUE
+  {n:"musique1.mp3",t:"Musique"},
+  {n:"musique_travail.mp3",t:"Musique"},
+  {n:"audio_cours.mp3",t:"Musique"},             // piège cours
+  {n:"musique_relax.wav",t:"Musique"},
+  {n:"sonnerie_tel.mp3",t:"Musique"},
+  {n:"audio_motivation.mp3",t:"Musique"},
+  {n:"musique_fete.mp3",t:"Musique"},
+
+  // 🔹 DIPLÔMES
+  {n:"diplome_cuisine.pdf",t:"Diplômes"},
+  {n:"certificat_travail.pdf",t:"Diplômes"},
+  {n:"attestation_stage.pdf",t:"Diplômes"},
+  {n:"scan_diplome.png",t:"Diplômes"},            // piège image
+  {n:"certificat_langue.pdf",t:"Diplômes"},
+  {n:"diplome_cours_excel.pdf",t:"Diplômes"},     // piège mot cours
+  {n:"attestation_formation.pdf",t:"Diplômes"},
+
+  // 🔹 COURS
+  {n:"cours_windows.pdf",t:"Cours"},
+  {n:"cours_excel.pdf",t:"Cours"},
+  {n:"cours_francais.pdf",t:"Cours"},
+  {n:"support_cours.pdf",t:"Cours"},
+  {n:"cours_video.pdf",t:"Cours"},                // piège mot vidéo
+  {n:"cours_facture_exemple.pdf",t:"Cours"},      // piège facture
+  {n:"notes_cours.png",t:"Cours"}                  // piège image
+];
+
+
+// ========= ÉTAT + SAUVEGARDE =========
+let state = JSON.parse(localStorage.getItem("explorateur_sans_etoiles")) || {
+  folders:[],
+  index:0,
+  errors:0,
+  order:null,
+  tried:false
+};
+
+function save(){
+  localStorage.setItem("explorateur_sans_etoiles",JSON.stringify(state));
+}
+
+// Ordre aléatoire une seule fois
+if(!state.order){
+  state.order=[...baseFiles];
+  shuffle(state.order);
+  save();
+}
+
+// ========= DOSSIERS =========
+function createFolder(){
+  const i=document.getElementById("folderInput");
+  const name=i.value.trim();
+  i.value="";
+
+  if(!requiredFolders.includes(name)) return;
+  if(state.folders.includes(name)) return;
+
+  state.folders.push(name);
+  save();
+  renderFolders();
+  showFile();
+}
+
+function renderFolders(){
+  const zone=document.getElementById("folders");
+  zone.innerHTML="";
+  state.folders.forEach(name=>{
+    const d=document.createElement("div");
+    d.className="folder";
+    d.dataset.name=name;
+    d.textContent="📁 "+name;
+    d.ondragover=e=>e.preventDefault();
+    d.ondrop=drop;
+    zone.appendChild(d);
+  });
+}
+
+// ========= DOCUMENT =========
+function allFoldersCreated(){
+  return requiredFolders.every(f=>state.folders.includes(f));
+}
+
+function showFile(){
+  const zone=document.getElementById("fileZone");
+  zone.innerHTML="";
+  if(!allFoldersCreated()) return;
+  if(state.index>=state.order.length) return;
+
+  state.tried=false;
+
+  const f=state.order[state.index];
+  const d=document.createElement("div");
+  d.className="file";
+  d.textContent="📄 "+f.n;
+  d.draggable=true;
+  d.dataset.target=f.t;
+  d.ondragstart=e=>e.dataTransfer.setData("text",f.t);
+  zone.appendChild(d);
+}
+
+// ========= DEPOT =========
+function drop(e){
+  if(!allFoldersCreated()) return;
+
+  const target=e.dataTransfer.getData("text");
+  const folder=e.currentTarget;
+  const file=document.querySelector(".file");
+
+  if(folder.dataset.name===target){
+    file.classList.add("done");
+    state.index++;
+    state.tried=false;
+  }else{
+    state.errors++;
+    state.tried=true;
+  }
+
+  save();
+  updateStats();
+  showFile();
+  checkEnd();
+}
+
+// ========= FIN =========
+function checkEnd(){
+  if(state.index===state.order.length){
+    document.getElementById("message").textContent=
+      "🎉 Bravo ! Tous les documents sont bien rangés.";
+  }
+}
+
+// ========= STATS =========
+function updateStats(){
+  document.getElementById("stats").textContent=
+    "📄 Rangés : "+state.index+
+    " | ❌ Erreurs : "+state.errors;
+}
+
+// ========= INIT =========
+renderFolders();
+showFile();
+updateStats();
+</script>
+
+</body>
+</html>

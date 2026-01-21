@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Synonyme ou antonyme</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.container{max-width:900px;margin:auto;padding:20px}
+h1{text-align:center}
+.consigne{text-align:center;color:var(--muted);margin:10px 0 16px}
+
+/* PROGRESSION */
+.progress-wrap{background:var(--card);padding:14px;border-radius:14px;margin-bottom:20px}
+.progress-label{text-align:center;font-weight:bold;margin-bottom:8px}
+.progress-bar{width:100%;height:14px;background:#020617;border-radius:10px;overflow:hidden;border:1px solid var(--border)}
+.progress-fill{height:100%;width:0%;background:linear-gradient(90deg,var(--brand),#22c55e)}
+
+/* CARTE */
+.card{
+  background:var(--card);
+  padding:28px;
+  border-radius:18px;
+  border:2px solid transparent;
+  text-align:center;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.words{
+  font-size:26px;
+  font-weight:bold;
+  margin-bottom:26px;
+}
+
+/* BOUTONS */
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+}
+.btn{
+  padding:14px 28px;
+  font-size:18px;
+  border-radius:14px;
+  border:2px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+  min-width:180px;
+}
+.btn.disabled{opacity:.5;cursor:default}
+.btn.correct{border-color:var(--ok)}
+.btn.wrong{border-color:var(--err)}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+#replayBtn{
+  margin-top:16px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Synonyme ou antonyme</h1>
+<div class="consigne">
+Regarde les deux mots.  
+Dis si leur sens est le même ou contraire.
+</div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="card" id="card">
+  <div class="words" id="words"></div>
+  <div class="buttons">
+    <button class="btn" id="btnSyn">SYNONYME</button>
+    <button class="btn" id="btnAnt">ANTONYME</button>
+  </div>
+</div>
+
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+  <button id="replayBtn">🔁 Rejouer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   DONNÉES
+   ========================= */
+const ITEMS = [
+  { a:"rapide", b:"vite", type:"syn" },
+  { a:"propre", b:"sale", type:"ant" },
+  { a:"commencer", b:"débuter", type:"syn" },
+  { a:"ouvrir", b:"fermer", type:"ant" },
+  { a:"important", b:"essentiel", type:"syn" },
+  { a:"chaud", b:"froid", type:"ant" },
+  { a:"facile", b:"simple", type:"syn" },
+  { a:"plein", b:"vide", type:"ant" },
+  { a:"lent", b:"rapide", type:"ant" },
+  { a:"arriver", b:"venir", type:"syn" },
+
+  { a:"commencer", b:"terminer", type:"ant" },
+  { a:"propre", b:"nettoyer", type:"syn" },
+  { a:"grand", b:"petit", type:"ant" },
+  { a:"calme", b:"tranquille", type:"syn" },
+  { a:"ouvrir", b:"entrer", type:"syn" },
+  { a:"travailler", b:"bosser", type:"syn" },
+  { a:"tôt", b:"tard", type:"ant" },
+  { a:"fort", b:"faible", type:"ant" },
+  { a:"aider", b:"soutenir", type:"syn" },
+  { a:"sale", b:"propre", type:"ant" },
+
+  { a:"finir", b:"terminer", type:"syn" },
+  { a:"commencer", b:"finir", type:"ant" },
+  { a:"calme", b:"agité", type:"ant" },
+  { a:"triste", b:"content", type:"ant" },
+  { a:"rapide", b:"lent", type:"ant" },
+  { a:"facile", b:"difficile", type:"ant" },
+  { a:"proche", b:"loin", type:"ant" },
+  { a:"nettoyer", b:"salir", type:"ant" },
+  { a:"parler", b:"discuter", type:"syn" },
+  { a:"regarder", b:"voir", type:"syn" },
+
+  { a:"écouter", b:"entendre", type:"syn" },
+  { a:"partir", b:"quitter", type:"syn" },
+  { a:"entrer", b:"sortir", type:"ant" },
+  { a:"commencer", b:"démarrer", type:"syn" },
+  { a:"fatigué", b:"reposée", type:"ant" },
+  { a:"content", b:"heureux", type:"syn" },
+  { a:"vide", b:"rempli", type:"ant" },
+  { a:"ouvrir", b:"déplier", type:"syn" },
+  { a:"fermer", b:"clore", type:"syn" },
+  { a:"lourd", b:"léger", type:"ant" },
+
+  { a:"travailler", b:"fonctionner", type:"syn" },
+  { a:"aider", b:"empêcher", type:"ant" },
+  { a:"monter", b:"descendre", type:"ant" },
+  { a:"chaud", b:"tiède", type:"syn" },
+  { a:"propre", b:"rangé", type:"syn" },
+  { a:"sale", b:"malpropre", type:"syn" },
+  { a:"calme", b:"bruyant", type:"ant" },
+  { a:"vite", b:"rapidement", type:"syn" },
+  { a:"lent", b:"doucement", type:"syn" },
+  { a:"arrêter", b:"continuer", type:"ant" },
+
+  { a:"commencer", b:"lancer", type:"syn" },
+  { a:"finir", b:"arrêter", type:"syn" },
+  { a:"plein", b:"chargé", type:"syn" },
+  { a:"vide", b:"creux", type:"syn" },
+  { a:"fort", b:"puissant", type:"syn" },
+  { a:"faible", b:"fragile", type:"syn" },
+  { a:"ouvrir", b:"déverrouiller", type:"syn" },
+  { a:"fermer", b:"verrouiller", type:"syn" },
+  { a:"commencer", b:"stopper", type:"ant" },
+  { a:"propre", b:"désordre", type:"ant" },
+
+  { a:"travailler", b:"se reposer", type:"ant" },
+  { a:"rapide", b:"lentement", type:"ant" },
+  { a:"calme", b:"stressé", type:"ant" },
+  { a:"facile", b:"compliqué", type:"ant" },
+  { a:"important", b:"secondaire", type:"ant" },
+  { a:"ouvrir", b:"clôturer", type:"syn" },
+  { a:"arriver", b:"partir", type:"ant" },
+  { a:"proche", b:"éloigné", type:"ant" },
+  { a:"aider", b:"assister", type:"syn" },
+  { a:"finir", b:"compléter", type:"syn" }
+];
+
+
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
+
+/* =========================
+   ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="syn_ou_ant_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  index:0,
+  score:0,
+  errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+
+/* ========================= */
+const wordsEl=document.getElementById("words");
+const card=document.getElementById("card");
+const btnSyn=document.getElementById("btnSyn");
+const btnAnt=document.getElementById("btnAnt");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+const replayBtn=document.getElementById("replayBtn");
+
+const data = shuffle(ITEMS);
+const TOTAL = data.length;
+
+function updateProgress(){
+  const done = state.score + state.errors;
+  progressLabel.textContent=`Progression : ${done} / ${TOTAL}`;
+  progressFill.style.width=Math.round(done/TOTAL*100)+"%";
+}
+
+function load(){
+  card.className="card";
+  btnSyn.classList.remove("disabled","correct","wrong");
+  btnAnt.classList.remove("disabled","correct","wrong");
+
+  const item = data[state.index];
+  wordsEl.textContent = `${item.a} — ${item.b}`;
+}
+
+function answer(type){
+  if(btnSyn.classList.contains("disabled")) return;
+
+  btnSyn.classList.add("disabled");
+  btnAnt.classList.add("disabled");
+
+  const item = data[state.index];
+  const ok = item.type === type;
+
+  if(ok){
+    state.score++;
+    (type==="syn"?btnSyn:btnAnt).classList.add("correct");
+    card.classList.add("ok");
+  }else{
+    state.errors++;
+    (type==="syn"?btnSyn:btnAnt).classList.add("wrong");
+    card.classList.add("err");
+  }
+
+  save();
+  updateProgress();
+  setTimeout(next,700);
+}
+
+btnSyn.onclick=()=>answer("syn");
+btnAnt.onclick=()=>answer("ant");
+
+function next(){
+  state.index++;
+  if(state.index < TOTAL){
+    save();
+    load();
+  }else{
+    showEnd();
+  }
+}
+
+function showEnd(){
+  card.style.display="none";
+  end.style.display="block";
+
+  const ratio = state.score / TOTAL;
+
+  starsEl.textContent =
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===TOTAL && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Bonnes réponses : ${state.score} / ${TOTAL}<br>Erreurs : ${state.errors}`;
+}
+
+/* 🔒 Rejouer seulement à la fin */
+replayBtn.onclick=()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+};
+
+/* INIT */
+updateProgress();
+load();
+</script>
+
+</body>
+</html>
+

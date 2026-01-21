@@ -1,0 +1,330 @@
+﻿<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Générateur de lettre de motivation</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+/* ===== ÉCRAN ===== */
+body{
+  font-family: Calibri, Arial, sans-serif;
+  background:#0b1220;
+  color:#e5e7eb;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+  min-height:100vh;
+}
+
+h1{text-align:center;margin-bottom:10px}
+
+.consigne{
+  text-align:center;
+  color:#9ca3af;
+  font-size:14px;
+  line-height:1.45;
+  margin-bottom:18px;
+}
+
+/* FORMULAIRE */
+.form{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:14px;
+  margin-bottom:10px;
+}
+
+.field{
+  display:flex;
+  flex-direction:column;
+  gap:4px;
+}
+
+label{
+  font-size:14px;
+  color:#9ca3af;
+}
+
+input{
+  background:#020617;
+  color:#e5e7eb;
+  border:1px solid #374151;
+  border-radius:8px;
+  padding:8px;
+}
+
+/* ACTIONS */
+.actions{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  margin:16px 0;
+  flex-wrap:wrap;
+}
+
+button{
+  padding:12px 18px;
+  border-radius:10px;
+  border:none;
+  background:#0f766e;
+  color:#ffffff;
+  font-size:15px;
+  cursor:pointer;
+}
+
+/* ===== LETTRE ===== */
+.preview-title{
+  text-align:center;
+  color:#22c55e;
+  margin:10px 0;
+  font-size:14px;
+}
+
+.letter-wrap{
+  background:#ffffff;
+  display:flex;
+  justify-content:center;
+  margin-top:10px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.4);
+  padding:20px;
+}
+
+.letter{
+  width:210mm;
+  height:297mm;
+  padding:25mm 25mm 18mm 25mm;
+  font-size:12pt;
+  line-height:1.45;
+  color:#000;
+  position:relative;
+  background:#fff;
+}
+
+/* BLOCS */
+.sender{position:absolute;top:25mm;left:25mm}
+.recipient{position:absolute;top:55mm;right:20mm;width:80mm}
+.date{position:absolute;top:77mm;right:20mm;width:80mm}
+
+.object{
+  position:absolute;
+  top:98mm;
+  left:25mm;
+  right:25mm;
+  font-weight:bold;
+}
+
+/* CORPS */
+.body{
+  position:absolute;
+  top:112mm;
+  left:25mm;
+  right:25mm;
+  height:145mm;
+}
+
+.body p{
+  margin:0 0 3mm 0;
+  text-align:justify;
+}
+
+/* SIGNATURE */
+.signature{
+  position:absolute;
+  bottom:25mm;
+  right:25mm;
+  width:65mm;
+}
+
+/* ===== IMPRESSION ===== */
+@media print{
+  body *{visibility:hidden}
+  .letter,.letter *{visibility:visible}
+  .letter{
+    position:absolute;
+    top:0;
+    left:0;
+    margin:0;
+    page-break-inside:avoid;
+  }
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Générateur de lettre de motivation</h1>
+
+<div class="consigne">
+📄 <strong>Télécharger la lettre</strong><br>
+1️⃣ Cliquez sur <strong>📄 Télécharger</strong><br>
+2️⃣ Choisissez <strong>Enregistrer en PDF</strong><br>
+3️⃣ Format : <strong>A4 – Aucune marge</strong><br>
+4️⃣ Nom du fichier : <strong>LM_ENTREPRISE.pdf</strong>
+</div>
+
+<!-- FORMULAIRE -->
+<div class="form">
+  <div class="field"><label>Prénom Nom</label><input id="nom"></div>
+  <div class="field"><label>Adresse</label><input id="adresse"></div>
+  <div class="field"><label>NPA Ville</label><input id="ville"></div>
+  <div class="field"><label>Téléphone</label><input id="tel"></div>
+  <div class="field"><label>Email</label><input id="email"></div>
+
+  <div class="field"><label>Entreprise</label><input id="entreprise"></div>
+  <div class="field"><label>Adresse entreprise</label><input id="adresseEnt"></div>
+  <div class="field"><label>NPA Ville entreprise</label><input id="villeEnt"></div>
+
+  <div class="field"><label>Poste</label><input id="poste"></div>
+</div>
+
+<div class="actions">
+  <button onclick="setVersion('homme')">👨 Texte masculin</button>
+  <button onclick="setVersion('femme')">👩 Texte féminin</button>
+  <button onclick="resetDestinataire()">🔄 Effacer le destinataire</button>
+  <button onclick="window.print()">📄 Télécharger</button>
+</div>
+
+<p class="preview-title">⬇️ Aperçu de la lettre ci-dessous</p>
+
+<!-- LETTRE -->
+<div class="letter-wrap">
+<div class="letter">
+
+  <div class="sender">
+    <strong id="l-nom"></strong><br>
+    <span id="l-adresse"></span><br>
+    <span id="l-ville"></span><br>
+    <span id="l-tel"></span><br>
+    <span id="l-email"></span>
+  </div>
+
+  <div class="recipient">
+    <strong id="l-entreprise"></strong><br>
+    <span id="l-adresseEnt"></span><br>
+    <span id="l-villeEnt"></span>
+  </div>
+
+  <div class="date" id="l-date"></div>
+
+  <div class="object">
+    Objet : Candidature comme <span id="l-poste"></span>
+  </div>
+
+  <div class="body" id="letterBody"></div>
+
+  <div class="signature">
+    <strong id="l-signature"></strong>
+  </div>
+
+</div>
+</div>
+
+</div>
+
+<script>
+/* ===== TEXTES ===== */
+const LETTERS={
+  homme:[
+    "Madame, Monsieur,",
+    "Par la présente, je vous adresse ma candidature afin de rejoindre votre entreprise. Souhaitant m’investir dans un cadre professionnel structuré, je suis motivé à contribuer activement au bon fonctionnement de votre organisation.",
+    "Sérieux, organisé et rigoureux, je respecte les consignes de travail et les horaires. J’exécute les tâches confiées avec méthode et efficacité.",
+    "Appréciant le travail en équipe, je m’intègre facilement et collabore de manière constructive.",
+    "Je reste à votre disposition pour un entretien.",
+    "Je vous prie d’agréer, Madame, Monsieur, mes salutations distinguées."
+  ],
+  femme:[
+    "Madame, Monsieur,",
+    "Par la présente, je vous adresse ma candidature afin de rejoindre votre entreprise. Souhaitant m’investir dans un environnement professionnel structuré, je suis motivée à contribuer activement au bon fonctionnement de votre organisation.",
+    "Sérieuse, organisée et consciencieuse, je respecte les consignes de travail et les horaires. J’effectue les tâches confiées avec soin et efficacité.",
+    "Habituée au travail en équipe, je m’intègre facilement et communique de manière respectueuse.",
+    "Je reste à votre disposition pour un entretien.",
+    "Je vous prie d’agréer, Madame, Monsieur, mes salutations distinguées."
+  ]
+};
+
+/* ===== UTILITAIRES ===== */
+function v(id){return document.getElementById(id).value;}
+function l(id,val){document.getElementById(id).textContent=val;}
+
+const fields=["nom","adresse","ville","tel","email","entreprise","adresseEnt","villeEnt","poste"];
+const STORAGE_KEY="lm_autosave";
+
+/* ===== VERSION TEXTE ===== */
+function setVersion(type){
+  const body=document.getElementById("letterBody");
+  body.innerHTML="";
+  LETTERS[type].forEach(t=>{
+    const p=document.createElement("p");
+    p.textContent=t;
+    body.appendChild(p);
+  });
+}
+
+/* ===== SAUVEGARDE AUTO ===== */
+function saveData(){
+  const data={};
+  fields.forEach(id=>data[id]=v(id));
+  localStorage.setItem(STORAGE_KEY,JSON.stringify(data));
+}
+
+function restoreData(){
+  const saved=localStorage.getItem(STORAGE_KEY);
+  if(!saved) return;
+  const data=JSON.parse(saved);
+  fields.forEach(id=>{
+    if(data[id]!==undefined){
+      document.getElementById(id).value=data[id];
+    }
+  });
+}
+
+/* ===== RESET DESTINATAIRE ===== */
+function resetDestinataire(){
+  ["entreprise","adresseEnt","villeEnt"].forEach(id=>{
+    document.getElementById(id).value="";
+  });
+  update();
+  saveData();
+}
+
+/* ===== MAJ ===== */
+function update(){
+  l("l-nom",v("nom"));
+  l("l-adresse",v("adresse"));
+  l("l-ville",v("ville"));
+  l("l-tel",v("tel"));
+  l("l-email",v("email"));
+  l("l-entreprise",v("entreprise"));
+  l("l-adresseEnt",v("adresseEnt"));
+  l("l-villeEnt",v("villeEnt"));
+  l("l-poste",v("poste"));
+  l("l-signature",v("nom"));
+
+  document.getElementById("l-date").textContent=
+    `${v("ville")}, le ${new Date().toLocaleDateString("fr-CH")}`;
+
+  saveData();
+}
+
+/* ===== INIT ===== */
+fields.forEach(id=>document.getElementById(id).addEventListener("input",update));
+
+document.addEventListener("DOMContentLoaded",()=>{
+  restoreData();
+  setVersion("homme");
+  update();
+});
+</script>
+
+</body>
+</html>

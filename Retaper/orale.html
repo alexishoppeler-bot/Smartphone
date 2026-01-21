@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>🎧 Compréhension orale – Proactif</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{background:#0b1220;color:#e5e7eb;font-family:Arial;margin:0;padding:20px}
+.container{max-width:900px;margin:auto}
+.card{background:#11182e;padding:20px;border-radius:12px;margin-top:15px}
+select,button,textarea{padding:10px;font-size:18px;border-radius:8px;border:none;margin-top:10px}
+button{background:#2ecc71;color:#000;font-weight:bold;cursor:pointer}
+textarea{width:100%;height:140px;background:#0d1327;color:white}
+.success{color:#7CFF7C;font-weight:bold}
+.error{color:#ff6b6b;font-weight:bold}
+.progress{margin-top:8px;width:100%;background:#333;border-radius:8px;height:10px}
+.bar{background:#2ecc71;height:10px;border-radius:8px;width:0%}
+.hint{color:#9ca3af;margin-top:8px;font-size:14px}
+</style>
+
+  <link rel="stylesheet" href="../mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>🎧 Compréhension orale</h1>
+
+<div class="card" style="background:#0d1530">
+<h2>📢 Consignes</h2>
+<ul>
+<li>Écoute la phrase.</li>
+<li>Écris EXACTEMENT ce que tu entends.</li>
+<li>Respecte accents, apostrophes et ponctuation.</li>
+<li>Tu peux réécouter autant de fois que tu veux.</li>
+<li>Quand c’est correct → phrase suivante.</li>
+<li>Copier-coller interdit 💪</li>
+</ul>
+</div>
+
+<select id="gender">
+<option value="M">Homme</option>
+<option value="F">Femme</option>
+</select>
+
+<select id="job" onchange="updateStartState()"></select>
+
+<button id="startBtn" onclick="start()" disabled>DÉMARRER</button>
+<div id="status" class="hint"></div>
+
+<div class="card">
+Phrase <span id="n">0</span> / <span id="total">0</span>
+<div class="progress"><div class="bar" id="bar"></div></div>
+
+<button onclick="speak()" style="background:#38bdf8;color:#000">🔊 Écouter</button>
+
+<div class="hint">(La phrase n’est pas affichée – tu dois écouter 👂)</div>
+
+<textarea
+ id="input"
+ disabled
+ oninput="check()"
+ onpaste="return false"
+ oncopy="return false"
+ oncut="return false"
+ ondrop="return false"
+ oncontextmenu="return false">
+</textarea>
+
+<div id="fb"></div>
+</div>
+</div>
+
+<script>
+let DB=null,list=[],i=0,gender="M",score=0;
+const SAVEKEY="orale_proactif_save";
+const startBtn=document.getElementById("startBtn");
+const statusEl=document.getElementById("status");
+const jobSelect=document.getElementById("job");
+
+// Charger JSON
+fetch("phrases-metiers-je-hf.json")
+.then(r=>r.json())
+.then(json=>{
+ DB=json.metiers || json;
+ jobSelect.innerHTML='<option value="">-- Choisir un métier --</option>';
+ Object.keys(DB).forEach(m=>{
+  let o=document.createElement("option");
+  o.textContent=m;
+  o.value=m;
+  jobSelect.appendChild(o);
+ });
+ loadSave();
+ updateStartState();
+})
+.catch(()=>{
+ statusEl.textContent="❌ JSON introuvable";
+});
+
+// -------- RÈGLES FR --------
+function fixFR(t){
+ t=t.replace(/['’‘`´]/g,"'");
+ t=t.replace(/\ble (?=[aeiouyhâêîôûäëïöüéèàùœ])/gi,"l'");
+ t=t.replace(/\bla (?=[aeiouyhâêîôûäëïöüéèàùœ])/gi,"l'");
+ t=t.replace(/\bde les\b/gi,"des");
+ t=t.replace(/\bde le (?=[aeiouyhâêîôûäëïöüéèàùœ])/gi,"de l'");
+ t=t.replace(/\bde le\b/gi,"du");
+ t=t.replace(/\bà les\b/gi,"aux");
+ t=t.replace(/\bà le\b/gi,"au");
+ t=t.replace(/\bje ai/gi,"j'ai");
+ t=t.replace(/\bque (?=[aeiouyhâêîôûäëïöüéèàùœ])/gi,"qu'");
+ t=t.replace(/\bsi il/gi,"s'il");
+ t=t.replace(/\bce est/gi,"c'est");
+ return t.trim();
+}
+function normalize(s){
+ return s.replace(/['’‘`´]/g,"'")
+         .replace(/[–—-]/g,"-")
+         .trim();
+}
+
+// -------- START --------
+function start(){
+ if(!DB){
+  statusEl.textContent="Données non chargées.";
+  return;
+ }
+ gender=document.getElementById("gender").value;
+ const job=jobSelect.value;
+ if(!job){
+  statusEl.textContent="Choisis un métier pour démarrer.";
+  return;
+ }
+ list=[...DB[job]];
+ shuffle(list);
+ i=0;
+ score=0;
+ document.getElementById("total").textContent=list.length;
+ document.getElementById("input").disabled=false;
+ show();
+ save();
+}
+
+// -------- AFFICHER --------
+function show(){
+ if(!list.length){
+  document.getElementById("fb").textContent="Aucune phrase disponible.";
+  document.getElementById("input").disabled=true;
+  updateBar();
+  return;
+ }
+ document.getElementById("n").textContent=i+1;
+ document.getElementById("input").value="";
+ document.getElementById("fb").textContent="";
+ updateBar();
+ save();
+}
+
+// -------- CHECK --------
+function check(){
+ let correct=normalize(fixFR(list[i][gender]));
+ let user=normalize(fixFR(document.getElementById("input").value));
+
+ if(user===correct){
+  score++;
+  document.getElementById("fb").innerHTML="<span class='success'>✔ Correct</span>";
+  setTimeout(()=>{
+    i++;
+    if(i>=list.length){
+      document.getElementById("fb").innerHTML="🎉 Bravo ! Exercice terminé !";
+      document.getElementById("input").disabled=true;
+      save(true);
+      return;
+    }
+    show();
+  },400);
+ } else {
+  if(user.length>0)
+    document.getElementById("fb").innerHTML="<span class='error'>❗ Erreur</span>";
+  else document.getElementById("fb").textContent="";
+ }
+}
+
+// -------- BAR --------
+function updateBar(){
+ let p=list.length ? (i/list.length)*100 : 0;
+ document.getElementById("bar").style.width=p+"%";
+}
+
+// -------- SAUVEGARDE --------
+function save(done=false){
+ localStorage.setItem(SAVEKEY,JSON.stringify({
+  gender,job:document.getElementById("job").value,i,score,list,done
+ }));
+}
+function loadSave(){
+ let s=localStorage.getItem(SAVEKEY);
+ if(!s)return;
+ s=JSON.parse(s);
+ if(!s||!s.list)return;
+ gender=s.gender;
+ document.getElementById("gender").value=s.gender;
+ if(DB && DB[s.job]){
+  jobSelect.value=s.job;
+ }
+ list=s.list;i=s.i;score=s.score;
+ document.getElementById("total").textContent=list.length;
+ if(!s.done){
+  document.getElementById("input").disabled=false;
+  show();
+ }
+ updateStartState();
+}
+
+// -------- AUDIO Suisse --------
+let voices=[];
+speechSynthesis.onvoiceschanged=()=>voices=speechSynthesis.getVoices();
+
+function pickVoice(){
+ const rules=[
+  v=>v.lang==="fr-CH",
+  v=>v.name.toLowerCase().includes("swiss"),
+  v=>v.lang==="fr-FR",
+  v=>v.lang.startsWith("fr")
+];
+for(const r of rules){
+ let f=voices.find(r);
+ if(f)return f;
+}
+return voices[0]||null;
+}
+
+function speak(){
+ if(!list.length) return;
+ if(voices.length===0) voices=speechSynthesis.getVoices();
+ let v=pickVoice();
+ let u=new SpeechSynthesisUtterance(fixFR(list[i][gender]));
+ u.voice=v;
+ u.rate=0.95;
+ speechSynthesis.cancel();
+ speechSynthesis.speak(u);
+}
+
+// -------- Shuffle --------
+function shuffle(a){
+ for(let j=a.length-1;j>0;j--){
+  const r=Math.floor(Math.random()*(j+1));
+  [a[j],a[r]]=[a[r],a[j]];
+ }
+}
+
+function updateStartState(){
+ const ready=DB && jobSelect.value;
+ startBtn.disabled=!ready;
+ if(!ready){
+  statusEl.textContent="Choisis un métier pour démarrer.";
+ } else {
+  statusEl.textContent="";
+ }
+}
+</script>
+
+<script>
+// Bloque Ctrl+V
+document.addEventListener("keydown",e=>{
+ if((e.ctrlKey||e.metaKey)&&(e.key==="v"||e.key==="V")) e.preventDefault();
+});
+</script>
+
+</body>
+</html>

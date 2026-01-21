@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Mots à trous – Progression globale</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --panel:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+}
+
+*{box-sizing:border-box;margin:0;padding:0}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+  display:flex;
+  justify-content:center;
+}
+
+.container{
+  width:100%;
+  max-width:900px;
+  padding:20px;
+}
+
+h1{text-align:center;margin-bottom:6px}
+.consigne{text-align:center;color:var(--muted);margin-bottom:12px}
+
+.global{
+  background:var(--panel);
+  padding:10px;
+  margin-bottom:14px;
+  border-radius:6px;
+  text-align:center;
+}
+
+.progress{
+  height:6px;
+  background:#1f2937;
+  margin-top:6px;
+}
+.progress-bar{
+  height:100%;
+  background:var(--brand);
+  width:0%;
+  transition:.3s;
+}
+
+.series-title{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:12px;
+}
+
+.phrase{
+  background:#1f2937;
+  padding:12px;
+  margin-bottom:10px;
+}
+
+.choices{margin-top:8px}
+
+.choice{
+  display:inline-block;
+  padding:6px 10px;
+  background:#111827;
+  margin:4px;
+  cursor:pointer;
+  border:1px solid #374151;
+}
+
+.choice.ok{
+  background:rgba(22,163,74,.3);
+  border-color:var(--ok);
+  cursor:default;
+}
+
+.choice.err{
+  background:rgba(220,38,38,.3);
+  border-color:var(--err);
+}
+
+.end{
+  display:none;
+  text-align:center;
+  margin-top:20px;
+}
+
+button{
+  margin-top:10px;
+  padding:10px 16px;
+  background:var(--brand);
+  border:none;
+  color:white;
+  cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Mots à trous</h1>
+<div class="consigne">Lis la phrase et clique sur le bon mot.</div>
+
+<div class="global">
+  <div id="globalText"></div>
+  <div class="progress">
+    <div class="progress-bar" id="globalBar"></div>
+  </div>
+  <div id="stars"></div>
+</div>
+
+<div class="series-title" id="seriesTitle"></div>
+
+<div id="phrases"></div>
+
+<div class="end" id="end">
+  <h2>Bravo, exercice terminé 🎉</h2>
+  <p id="errorResult"></p>
+  <button onclick="resetAll()">Recommencer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   🔽 MODÈLE SIMPLE
+   ========================= */
+const series = [
+  {
+    titre:"Série 1",
+    data:[
+      { phrase:"Je suis ___ au travail.", solution:"ponctuel", choix:["ponctuel","pause","retard"] },
+      { phrase:"Je respecte les ___ de travail.", solution:"consignes", choix:["consignes","collègues","pauses"] },
+      { phrase:"Je travaille en ___.", solution:"équipe", choix:["équipe","pause","retard"] },
+      { phrase:"Je respecte les règles de ___.", solution:"sécurité", choix:["sécurité","pause","équipe"] },
+      { phrase:"Je prépare le ___ avant de commencer.", solution:"matériel", choix:["matériel","retard","pause"] }
+    ]
+  },
+  {
+    titre:"Série 2",
+    data:[
+      { phrase:"Je commence le travail à l’___.", solution:"heure", choix:["heure","pause","retard"] },
+      { phrase:"Je respecte les ___.", solution:"horaires", choix:["horaires","bureaux","pauses"] },
+      { phrase:"Je termine mon ___ à temps.", solution:"travail", choix:["travail","pause","retard"] },
+      { phrase:"Je prends une ___ à dix heures.", solution:"pause", choix:["pause","équipe","travail"] },
+      { phrase:"Je reviens de pause à l’___.", solution:"heure", choix:["heure","retard","matériel"] }
+    ]
+  },
+  {
+    titre:"Série 3",
+    data:[
+      { phrase:"Je nettoie les ___.", solution:"bureaux", choix:["bureaux","pauses","horaires"] },
+      { phrase:"Je laisse le poste ___.", solution:"propre", choix:["propre","retard","absent"] },
+      { phrase:"Je ___ le matériel après usage.", solution:"range", choix:["range","oublie","perds"] },
+      { phrase:"Je jette les ___.", solution:"déchets", choix:["déchets","horaires","collègues"] },
+      { phrase:"Je respecte le plan de ___.", solution:"nettoyage", choix:["nettoyage","pause","travail"] }
+    ]
+  },
+  {
+    titre:"Série 4",
+    data:[
+      { phrase:"Je porte des ___ de protection.", solution:"gants", choix:["gants","bureaux","pauses"] },
+      { phrase:"Je mets le ___ si nécessaire.", solution:"masque", choix:["masque","stylo","papier"] },
+      { phrase:"Je fais attention à la ___.", solution:"sécurité", choix:["sécurité","pause","vitesse"] },
+      { phrase:"Je signale un ___.", solution:"danger", choix:["danger","retard","collègue"] },
+      { phrase:"Je respecte les règles de ___.", solution:"sécurité", choix:["sécurité","travail","pause"] }
+    ]
+  },
+  {
+    titre:"Série 5",
+    data:[
+      { phrase:"Je travaille avec ___.", solution:"sérieux", choix:["sérieux","retard","pause"] },
+      { phrase:"Je suis ___ avec mes collègues.", solution:"respectueux", choix:["respectueux","absent","retard"] },
+      { phrase:"Je reste ___ au travail.", solution:"calme", choix:["calme","rapide","bruyant"] },
+      { phrase:"Je suis ___ et motivé.", solution:"attentif", choix:["attentif","fatigué","absent"] },
+      { phrase:"Je fais mon travail ___.", solution:"correctement", choix:["correctement","vite","mal"] }
+    ]
+  },
+  {
+    titre:"Série 6",
+    data:[
+      { phrase:"Je demande de l’___ si besoin.", solution:"aide", choix:["aide","pause","retard"] },
+      { phrase:"Je pose des ___.", solution:"questions", choix:["questions","pauses","erreurs"] },
+      { phrase:"Je ___ les consignes.", solution:"comprends", choix:["comprends","oublie","ignore"] },
+      { phrase:"Je ___ au chef.", solution:"parle", choix:["parle","fuis","cours"] },
+      { phrase:"Je ___ une solution.", solution:"cherche", choix:["cherche","évite","refuse"] }
+    ]
+  },
+  {
+    titre:"Série 7",
+    data:[
+      { phrase:"Je ___ à huit heures.", solution:"commence", choix:["commence","termine","pause"] },
+      { phrase:"Je ___ à midi.", solution:"termine", choix:["termine","commence","range"] },
+      { phrase:"Je travaille le ___.", solution:"matin", choix:["matin","soir","week-end"] },
+      { phrase:"Je travaille l’___.", solution:"après-midi", choix:["après-midi","matin","nuit"] },
+      { phrase:"Je travaille la ___.", solution:"semaine", choix:["semaine","pause","nuit"] }
+    ]
+  },
+  {
+    titre:"Série 8",
+    data:[
+      { phrase:"Je ___ le matériel.", solution:"prépare", choix:["prépare","oublie","jette"] },
+      { phrase:"Je ___ les outils.", solution:"vérifie", choix:["vérifie","perds","cache"] },
+      { phrase:"Je ___ avant de partir.", solution:"range", choix:["range","salit","ignore"] },
+      { phrase:"Je ___ le poste.", solution:"nettoie", choix:["nettoie","abandonne","casse"] },
+      { phrase:"Je ___ le travail.", solution:"termine", choix:["termine","commence","pause"] }
+    ]
+  },
+  {
+    titre:"Série 9",
+    data:[
+      { phrase:"Je suis ___ aujourd’hui.", solution:"présent", choix:["présent","absent","retard"] },
+      { phrase:"Je ne suis pas en ___.", solution:"retard", choix:["retard","pause","travail"] },
+      { phrase:"Je informe en cas d’___.", solution:"absence", choix:["absence","pause","travail"] },
+      { phrase:"Je respecte le ___.", solution:"planning", choix:["planning","désordre","hasard"] },
+      { phrase:"Je note les ___.", solution:"heures", choix:["heures","bureaux","outils"] }
+    ]
+  },
+  {
+    titre:"Série 10",
+    data:[
+      { phrase:"Je travaille avec une bonne ___.", solution:"organisation", choix:["organisation","pause","fatigue"] },
+      { phrase:"Je respecte les ___.", solution:"priorités", choix:["priorités","pauses","retards"] },
+      { phrase:"Je fais les tâches dans l’___.", solution:"ordre", choix:["ordre","désordre","hasard"] },
+      { phrase:"Je finis dans le ___ prévu.", solution:"temps", choix:["temps","retard","hasard"] },
+      { phrase:"Je suis ___ au travail.", solution:"fiable", choix:["fiable","absent","retard"] }
+    ]
+  }
+];
+
+/* ========================= */
+
+let serieIndex = Number(localStorage.getItem("mt_progress")) || 0;
+let solved = 0;
+let errorCount = Number(localStorage.getItem("mt_errors")) || 0;
+
+const phrasesDiv = document.getElementById("phrases");
+
+/* 🔀 mélange robuste */
+function shuffle(array){
+  return [...array].sort(() => Math.random() - 0.5);
+}
+
+function render(){
+  if(serieIndex >= series.length){
+    document.getElementById("end").style.display="block";
+    document.getElementById("errorResult").textContent =
+      `❌ Erreurs : ${errorCount}`;
+    return;
+  }
+
+  solved = 0;
+  phrasesDiv.innerHTML="";
+
+  const s = series[serieIndex];
+  document.getElementById("seriesTitle").textContent = s.titre;
+
+  s.data.forEach(item=>{
+    const d=document.createElement("div");
+    d.className="phrase";
+    d.innerHTML=item.phrase;
+
+    const choices=document.createElement("div");
+    choices.className="choices";
+
+    shuffle(item.choix).forEach(word=>{
+      const c=document.createElement("div");
+      c.className="choice";
+      c.textContent=word;
+
+      c.onclick=()=>{
+        if(c.classList.contains("ok")) return;
+
+        if(word === item.solution){
+          c.classList.add("ok");
+          choices.querySelectorAll(".choice").forEach(x=>x.style.pointerEvents="none");
+          solved++;
+
+          if(solved === 5){
+            serieIndex++;
+            localStorage.setItem("mt_progress", serieIndex);
+            updateGlobal();
+            setTimeout(render,400);
+          }
+        }else{
+          errorCount++;
+          localStorage.setItem("mt_errors", errorCount);
+          c.classList.add("err");
+          setTimeout(()=>c.classList.remove("err"),300);
+        }
+      };
+
+      choices.appendChild(c);
+    });
+
+    d.appendChild(choices);
+    phrasesDiv.appendChild(d);
+  });
+
+  updateGlobal();
+}
+
+function updateGlobal(){
+  const total = series.length;
+  const percent = (serieIndex / total) * 100;
+  document.getElementById("globalBar").style.width = percent + "%";
+
+  document.getElementById("globalText").textContent =
+    `Progression globale : ${serieIndex} / ${total} séries`;
+
+  const starsCount = Math.floor(serieIndex / 10);
+  document.getElementById("stars").textContent =
+    "⭐".repeat(starsCount);
+}
+
+function resetAll(){
+  localStorage.clear();
+  location.reload();
+}
+
+render();
+</script>
+
+</body>
+</html>

@@ -1,0 +1,1007 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tutoriel Jobup.ch - Guide Complet</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+        }
+        
+        .logo {
+            width: 150px;
+            height: 150px;
+            background: white;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            color: #2a5298;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .section {
+            margin-bottom: 50px;
+            animation: fadeIn 0.8s ease-in;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .section h2 {
+            color: #2a5298;
+            font-size: 2em;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h2::before {
+            content: '📌';
+            margin-right: 10px;
+        }
+        
+        .section h3 {
+            color: #1e3c72;
+            font-size: 1.5em;
+            margin: 25px 0 15px;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section h3::before {
+            content: '▶';
+            margin-right: 10px;
+            color: #667eea;
+        }
+        
+        .step-box {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            padding: 25px;
+            margin: 20px 0;
+            border-radius: 10px;
+            border-left: 5px solid #667eea;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+        }
+        
+        .step-box strong {
+            color: #2a5298;
+            font-size: 1.1em;
+        }
+        
+        .feature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 20px;
+            margin: 25px 0;
+        }
+        
+        .feature-card {
+            background: white;
+            padding: 25px;
+            border-radius: 10px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.3);
+            border-color: #667eea;
+        }
+        
+        .feature-card h4 {
+            color: #2a5298;
+            margin-bottom: 10px;
+            font-size: 1.3em;
+        }
+        
+        .video-container {
+            background: #f9f9f9;
+            padding: 30px;
+            border-radius: 10px;
+            margin: 25px 0;
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .video-wrapper {
+            position: relative;
+            padding-bottom: 56.25%;
+            height: 0;
+            overflow: hidden;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+        
+        .video-wrapper iframe {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .image-placeholder {
+            width: 100%;
+            height: 300px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            margin: 20px 0;
+            text-align: center;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        
+        .tips-box {
+            background: #fff3cd;
+            border-left: 5px solid #ffc107;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        .tips-box h4 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 1.2em;
+        }
+        
+        .tips-box ul {
+            margin-left: 20px;
+        }
+        
+        .tips-box li {
+            margin: 8px 0;
+            color: #856404;
+        }
+        
+        ul, ol {
+            margin: 15px 0 15px 30px;
+        }
+        
+        li {
+            margin: 10px 0;
+        }
+        
+        a {
+            color: #667eea;
+            text-decoration: none;
+            font-weight: bold;
+            transition: color 0.3s ease;
+        }
+        
+        a:hover {
+            color: #2a5298;
+            text-decoration: underline;
+        }
+        
+        .cta-button {
+            display: inline-block;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 15px 40px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 20px 10px;
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+            transition: all 0.3s ease;
+        }
+        
+        .cta-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(102, 126, 234, 0.6);
+            text-decoration: none;
+        }
+        
+        footer {
+            background: #1e3c72;
+            color: white;
+            text-align: center;
+            padding: 30px;
+            margin-top: 40px;
+        }
+        
+        footer a {
+            color: #fff;
+            text-decoration: underline;
+        }
+        
+        .stats-box {
+            background: linear-gradient(135deg, #e0f7fa 0%, #b2ebf2 100%);
+            padding: 25px;
+            border-radius: 10px;
+            margin: 20px 0;
+            text-align: center;
+        }
+        
+        .stat-item {
+            display: inline-block;
+            margin: 15px 30px;
+        }
+        
+        .stat-number {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #2a5298;
+            display: block;
+        }
+        
+        .stat-label {
+            font-size: 1em;
+            color: #555;
+        }
+        
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .feature-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+        }
+    </style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">J</div>
+            <h1>🎯 Guide Complet Jobup.ch</h1>
+            <p>La plateforme d'emploi n°1 en Suisse romande</p>
+            <p style="margin-top: 15px; font-size: 0.95em; opacity: 0.85;">
+                📚 Tutoriel créé par <strong>Proactif - Centre de formation, Vevey</strong>
+            </p>
+        </header>
+        
+        <div class="content">
+            <!-- Introduction -->
+            <div class="section">
+                <h2>Bienvenue sur Jobup.ch</h2>
+                <p>Jobup.ch est la plateforme d'emploi leader en Suisse romande depuis plus de 20 ans. Ce guide vous accompagne pas à pas pour tirer le meilleur parti de tous les outils disponibles et maximiser vos chances de décrocher le poste idéal.</p>
+                
+                <div class="stats-box">
+                    <div class="stat-item">
+                        <span class="stat-number">1300</span>
+                        <span class="stat-label">vues par annonce</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">19</span>
+                        <span class="stat-label">postulations moyennes</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="stat-number">30</span>
+                        <span class="stat-label">jours de validité</span>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Vidéo d'introduction -->
+            <div class="section">
+                <h2>🎬 Vidéo d'Introduction</h2>
+                <div class="video-container">
+                    <p style="margin-bottom: 20px;"><strong>Découvrez Jobup.ch en vidéo :</strong></p>
+                    <div class="video-wrapper">
+                        <iframe src="https://www.youtube.com/embed/F7o14p4Suec" allowfullscreen></iframe>
+                    </div>
+                    <p style="margin-top: 15px; font-size: 0.9em; color: #666;">
+                        Cette vidéo présente l'équipe Jobup.ch et les valeurs de l'entreprise
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Création de compte -->
+            <div class="section">
+                <h2>1️⃣ Créer votre compte candidat</h2>
+                
+                <div class="image-placeholder">
+                    🔐 Inscription Simple et Rapide
+                </div>
+                
+                <h3>Étapes de création</h3>
+                
+                <div class="step-box">
+                    <strong>Étape 1 :</strong> Rendez-vous sur <a href="https://www.jobup.ch" target="_blank">www.jobup.ch</a> et cliquez sur "Inscription"
+                </div>
+                
+                <div class="step-box">
+                    <strong>Étape 2 :</strong> Remplissez le formulaire d'inscription avec vos informations :
+                    <ul>
+                        <li>Adresse email valide</li>
+                        <li>Mot de passe sécurisé</li>
+                        <li>Informations personnelles de base</li>
+                    </ul>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Étape 3 :</strong> Vérifiez votre email et cliquez sur le lien d'activation reçu
+                </div>
+                
+                <div class="tips-box">
+                    <h4>💡 Conseil important</h4>
+                    <ul>
+                        <li>Vérifiez vos spams si vous ne recevez pas l'email d'activation</li>
+                        <li>L'activation peut prendre quelques minutes</li>
+                        <li>Utilisez une adresse email que vous consultez régulièrement</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Profil -->
+            <div class="section">
+                <h2>2️⃣ Compléter votre profil</h2>
+                
+                <div class="image-placeholder">
+                    👤 Profil Complet = Plus de Visibilité
+                </div>
+                
+                <h3>Pourquoi compléter votre profil ?</h3>
+                <p>Un profil complet vous permet d'être visible dans la base de CV consultée par les recruteurs. Vous pouvez être contacté directement pour des opportunités correspondant à votre profil.</p>
+                
+                <h3>Options de visibilité</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>✅ Profil Consultable</h4>
+                        <p>Votre profil est visible par tous les recruteurs. Maximisez vos chances d'être repéré.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🎭 Profil Anonyme</h4>
+                        <p>Visible par les recruteurs mais votre identité et vos employeurs restent masqués.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🔒 Profil Non-Consultable</h4>
+                        <p>Votre profil n'est pas visible. Vous postulez uniquement de manière active.</p>
+                    </div>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Import LinkedIn/Viadeo :</strong> Gagnez du temps en important directement les données de votre profil LinkedIn ou Viadeo en quelques clics !
+                </div>
+                
+                <h3>Générer un CV PDF</h3>
+                <p>Une fois votre profil complété, vous pouvez générer automatiquement un CV au format PDF depuis l'onglet "Mon Profil".</p>
+            </div>
+            
+            <!-- JobMailer -->
+            <div class="section">
+                <h2>3️⃣ Configurer vos alertes emploi (JobMailer)</h2>
+                
+                <div class="image-placeholder">
+                    📧 Recevez les Offres qui Vous Correspondent
+                </div>
+                
+                <h3>Qu'est-ce que le JobMailer ?</h3>
+                <p>Le JobMailer est un système d'alertes email qui vous informe automatiquement lorsqu'une offre correspondant à vos critères est publiée sur jobup.ch.</p>
+                
+                <h3>Configuration en 3 étapes</h3>
+                <ol>
+                    <li><strong>Sélectionnez les catégories d'emploi</strong> qui vous intéressent (sélection illimitée)</li>
+                    <li><strong>Choisissez la région</strong> où vous souhaitez travailler</li>
+                    <li><strong>Définissez la fréquence</strong> de réception des alertes (quotidienne, hebdomadaire...)</li>
+                </ol>
+                
+                <div class="tips-box">
+                    <h4>💡 Astuce Pro</h4>
+                    <ul>
+                        <li>Vous pouvez créer jusqu'à 5 JobMailers différents</li>
+                        <li>Idéal si vous recherchez plusieurs types de postes</li>
+                        <li>Mettez à jour régulièrement vos critères pour des résultats optimaux</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Documents -->
+            <div class="section">
+                <h2>4️⃣ Mettre en ligne vos documents</h2>
+                
+                <div class="image-placeholder">
+                    📄 CV, Lettres de Motivation, Diplômes
+                </div>
+                
+                <h3>Documents acceptés</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>📋 Types de fichiers</h4>
+                        <p>.doc, .docx, .pdf, .jpg, .gif, .png</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>💾 Limite de taille</h4>
+                        <p>1 Mo maximum par document</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🗂️ Nombre de documents</h4>
+                        <p>10 documents maximum</p>
+                    </div>
+                </div>
+                
+                <div class="step-box">
+                    <strong>CV de référence :</strong> Choisissez un CV principal qui sera visible dans la base CV. Ce CV doit refléter votre parcours global plutôt que cibler un emploi spécifique.
+                </div>
+                
+                <h3>Documents à préparer</h3>
+                <ul>
+                    <li>CV actualisé et professionnel</li>
+                    <li>Lettre(s) de motivation personnalisée(s)</li>
+                    <li>Diplômes et certificats</li>
+                    <li>Attestations de travail</li>
+                    <li>Portfolio ou réalisations (si applicable)</li>
+                </ul>
+            </div>
+            
+            <!-- Recherche d'emploi -->
+            <div class="section">
+                <h2>5️⃣ Rechercher des offres d'emploi</h2>
+                
+                <div class="image-placeholder">
+                    🔍 Recherche Avancée et Filtres Personnalisés
+                </div>
+                
+                <h3>Méthodes de recherche</h3>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🎯 Recherche par mot-clé</h4>
+                        <p>Tapez le titre du poste ou des compétences spécifiques</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>📍 Recherche par localisation</h4>
+                        <p>Sélectionnez une ou plusieurs régions de Suisse</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🏢 Recherche par catégorie</h4>
+                        <p>Parcourez les offres par secteur d'activité</p>
+                    </div>
+                </div>
+                
+                <h3>Filtres avancés</h3>
+                <ul>
+                    <li>Type de contrat (CDI, CDD, temporaire...)</li>
+                    <li>Taux d'occupation (temps plein, temps partiel)</li>
+                    <li>Niveau d'expérience requis</li>
+                    <li>Date de publication</li>
+                    <li>Langue de travail</li>
+                </ul>
+                
+                <div class="tips-box">
+                    <h4>💡 Conseils de recherche</h4>
+                    <ul>
+                        <li>Soyez précis dans vos mots-clés pour des résultats ciblés</li>
+                        <li>Élargissez votre recherche si peu de résultats</li>
+                        <li>Utilisez l'icône cœur ❤️ pour sauvegarder vos offres favorites</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Postuler -->
+            <div class="section">
+                <h2>6️⃣ Postuler efficacement</h2>
+                
+                <div class="image-placeholder">
+                    ✉️ Candidature en Un Clic
+                </div>
+                
+                <h3>Processus de candidature</h3>
+                
+                <div class="step-box">
+                    <strong>Option 1 :</strong> Postulation avec votre profil Jobup.ch
+                    <p>Utilisez vos documents déjà téléchargés et vos informations de profil pour postuler rapidement.</p>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Option 2 :</strong> Postulation par email
+                    <p>Envoyez votre candidature directement par email si vous préférez une approche plus personnalisée.</p>
+                </div>
+                
+                <h3>Suivi de vos candidatures</h3>
+                <p>Accédez à l'historique complet de vos candidatures depuis l'onglet "Mes candidatures" :</p>
+                <ul>
+                    <li>Visualisez toutes vos postulations récentes</li>
+                    <li>Consultez les candidatures archivées</li>
+                    <li>Recevez les messages des recruteurs dans votre boîte de réception intégrée</li>
+                </ul>
+            </div>
+            
+            <!-- Application mobile -->
+            <div class="section">
+                <h2>7️⃣ Application mobile</h2>
+                
+                <div class="image-placeholder">
+                    📱 Jobup.ch Dans Votre Poche
+                </div>
+                
+                <h3>Fonctionnalités mobiles</h3>
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🔔 Notifications push</h4>
+                        <p>Recevez instantanément les nouvelles offres correspondant à vos critères</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>👆 Postulation rapide</h4>
+                        <p>Postulez en un clic depuis votre smartphone (11% des candidatures)</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>💾 Synchronisation</h4>
+                        <p>Accédez à vos offres favorites sur tous vos appareils</p>
+                    </div>
+                </div>
+                
+                <p style="text-align: center; margin-top: 20px;">
+                    <a href="https://play.google.com/store/apps/details?id=ch.jobup.shell" target="_blank" class="cta-button">📱 Télécharger sur Android</a>
+                    <a href="https://apps.apple.com/app/jobup" target="_blank" class="cta-button">📱 Télécharger sur iOS</a>
+                </p>
+            </div>
+            
+            <!-- Ressources complémentaires -->
+            <div class="section">
+                <h2>8️⃣ Ressources complémentaires</h2>
+                
+                <h3>Job Coach & Académie</h3>
+                <p>Jobup.ch propose une section complète d'aide à la recherche d'emploi avec :</p>
+                <ul>
+                    <li>Guides de rédaction de CV et lettres de motivation</li>
+                    <li>Conseils pour l'entretien d'embauche</li>
+                    <li>Webinaires gratuits sur divers sujets RH</li>
+                    <li>Articles sur les tendances du marché du travail suisse</li>
+                </ul>
+                
+                <h3>Estimateur de salaire</h3>
+                <p>Utilisez l'outil de comparaison salariale pour connaître les salaires pratiqués en Suisse selon votre fonction et votre région. Cet outil vous aidera à préparer vos négociations salariales.</p>
+                
+                <h3>Profils d'entreprises</h3>
+                <p>Explorez les profils détaillés des entreprises qui recrutent :</p>
+                <ul>
+                    <li>Informations sur la culture d'entreprise</li>
+                    <li>Avis et évaluations d'employés</li>
+                    <li>Liste de toutes leurs offres d'emploi</li>
+                </ul>
+                
+                <div class="video-container">
+                    <p style="margin-bottom: 20px;"><strong>Découvrez toutes les ressources disponibles :</strong></p>
+                    <p style="text-align: center;">
+                        <a href="https://www.jobup.ch/fr/job-coach/" target="_blank" class="cta-button">🎓 Accéder au Job Coach</a>
+                    </p>
+                </div>
+            </div>
+            
+            <!-- FAQ -->
+            <div class="section">
+                <h2>❓ Questions Fréquentes (FAQ)</h2>
+                
+                <div class="step-box">
+                    <strong>Q : Jobup.ch est-il gratuit pour les candidats ?</strong>
+                    <p>R : Oui, absolument ! Jobup.ch est entièrement gratuit pour les demandeurs d'emploi et le restera. Contrairement à d'autres plateformes, aucun paiement n'est nécessaire pour accéder aux offres.</p>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Q : Combien de temps mes candidatures restent-elles visibles ?</strong>
+                    <p>R : Les annonces restent actives pendant 30 jours par défaut. Cette limitation garantit que les postes affichés sont réellement ouverts.</p>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Q : Je ne reçois pas mes alertes email, que faire ?</strong>
+                    <p>R : Vérifiez d'abord vos spams. Si le problème persiste, vérifiez les critères de votre JobMailer ou modifiez l'adresse email dans vos paramètres.</p>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Q : Comment modifier ou supprimer mon compte ?</strong>
+                    <p>R : Connectez-vous, cliquez sur "Paramètres" en haut à droite, puis suivez les instructions pour modifier vos informations ou supprimer votre compte.</p>
+                </div>
+                
+                <div class="step-box">
+                    <strong>Q : Mes données sont-elles sécurisées ?</strong>
+                    <p>R : Oui, Jobup.ch accorde une grande importance à la sécurité. La plateforme a fait appel à des sociétés spécialisées pour tester et garantir la protection de vos données personnelles.</p>
+                </div>
+            </div>
+            
+            <!-- Conseils finaux -->
+            <div class="section">
+                <h2>🌟 Conseils pour maximiser vos chances</h2>
+                
+                <div class="tips-box">
+                    <h4>Les 10 commandements du chercheur d'emploi sur Jobup.ch</h4>
+                    <ol>
+                        <li><strong>Profil complet tu complèteras</strong> - Un profil à 100% augmente considérablement votre visibilité</li>
+                        <li><strong>Régulièrement tu te connecteras</strong> - Mettez à jour votre profil fréquemment</li>
+                        <li><strong>Alertes email tu configureras</strong> - Ne ratez aucune opportunité</li>
+                        <li><strong>CV professionnel tu créeras</strong> - Soignez la présentation de vos documents</li>
+                        <li><strong>Rapidement tu postuleras</strong> - Les premiers candidats ont plus de chances</li>
+                        <li><strong>Lettres personnalisées tu rédigeras</strong> - Adaptez chaque candidature au poste</li>
+                        <li><strong>Application mobile tu utiliseras</strong> - Restez connecté où que vous soyez</li>
+                        <li><strong>Entreprises tu suivras</strong> - Utilisez la fonction "Mes entreprises"</li>
+                        <li><strong>Réseau tu développeras</strong> - Participez aux webinaires et événements</li>
+                        <li><strong>Patient et persévérant tu resteras</strong> - La recherche d'emploi prend du temps</li>
+                    </ol>
+                </div>
+            </div>
+            
+            <!-- Liens utiles -->
+            <div class="section">
+                <h2>🔗 Liens Utiles</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <h4>🌐 Site Web Principal</h4>
+                        <p><a href="https://www.jobup.ch" target="_blank">www.jobup.ch</a></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>📚 FAQ Complète</h4>
+                        <p><a href="https://www.jobup.ch/fr/job-coach/faqs/" target="_blank">Page d'aide et FAQ</a></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🎓 Job Coach</h4>
+                        <p><a href="https://www.jobup.ch/fr/job-coach/" target="_blank">Ressources et guides</a></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>📱 LinkedIn</h4>
+                        <p><a href="https://ch.linkedin.com/company/jobup-ch" target="_blank">Suivez Jobup.ch</a></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>📸 Instagram</h4>
+                        <p><a href="https://www.instagram.com/jobup.ch/" target="_blank">@jobup.ch</a></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <h4>🎵 TikTok</h4>
+                        <p><a href="https://www.tiktok.com/@jobup.ch" target="_blank">@jobup.ch</a></p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Exercices pratiques -->
+            <div class="section">
+                <h2>✍️ Exercices Pratiques</h2>
+                
+                <p style="font-size: 1.1em; margin-bottom: 30px;">
+                    Ces exercices vous permettront de mettre en pratique ce que vous avez appris. Réalisez-les à votre rythme et n'hésitez pas à demander de l'aide à votre formateur.
+                </p>
+                
+                <h3>Exercice 1 : Création et configuration du compte</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Créer votre compte et compléter votre profil à 100%
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Créez votre compte sur jobup.ch avec votre adresse email personnelle</li>
+                        <li>Validez votre compte via l'email de confirmation</li>
+                        <li>Complétez TOUS les champs de votre profil (données personnelles, formation, expériences)</li>
+                        <li>Choisissez votre option de visibilité (consultable, anonyme ou non-consultable)</li>
+                        <li>Vérifiez que votre profil est à 100% dans le bloc d'information</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> Profil complété à 100%, email validé, visibilité définie
+                </div>
+                
+                <h3>Exercice 2 : Upload et organisation des documents</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Mettre en ligne vos documents de candidature
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Préparez votre CV au format PDF (max 1 Mo)</li>
+                        <li>Téléchargez votre CV sur la plateforme</li>
+                        <li>Ajoutez une lettre de motivation type (PDF ou Word)</li>
+                        <li>Si disponibles, ajoutez 2-3 certificats ou diplômes</li>
+                        <li>Sélectionnez votre CV comme document principal pour la base CV</li>
+                        <li>Rendez visibles les documents appropriés aux recruteurs</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> Minimum 3 documents téléchargés, CV principal défini
+                </div>
+                
+                <h3>Exercice 3 : Configuration des JobMailers</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Créer 2 alertes email personnalisées
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li><strong>JobMailer 1 :</strong> Configurez une alerte pour votre métier principal
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Sélectionnez 2-3 catégories d'emploi pertinentes</li>
+                                <li>Choisissez votre région ou canton</li>
+                                <li>Fréquence : quotidienne</li>
+                            </ul>
+                        </li>
+                        <li><strong>JobMailer 2 :</strong> Créez une alerte pour un métier alternatif ou complémentaire
+                            <ul style="margin-left: 20px; margin-top: 5px;">
+                                <li>Sélectionnez 1-2 catégories différentes</li>
+                                <li>Élargissez la zone géographique</li>
+                                <li>Fréquence : hebdomadaire</li>
+                            </ul>
+                        </li>
+                        <li>Testez en consultant les offres correspondantes</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> 2 JobMailers actifs avec critères pertinents
+                </div>
+                
+                <h3>Exercice 4 : Recherche d'offres ciblée</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Maîtriser les outils de recherche et de filtrage
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Effectuez une recherche par mot-clé avec votre métier</li>
+                        <li>Appliquez au moins 3 filtres différents (région, type de contrat, taux d'occupation)</li>
+                        <li>Sauvegardez 5 offres intéressantes dans vos favoris (icône ❤️)</li>
+                        <li>Effectuez une nouvelle recherche dans une catégorie différente</li>
+                        <li>Comparez le nombre de résultats avec et sans filtres</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> 5 offres en favoris, utilisation des filtres maîtrisée
+                </div>
+                
+                <h3>Exercice 5 : Candidature complète</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Postuler à une offre d'emploi réelle
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Sélectionnez une offre qui correspond à votre profil parmi vos favoris</li>
+                        <li>Lisez attentivement l'annonce complète et les exigences</li>
+                        <li>Adaptez votre lettre de motivation si nécessaire</li>
+                        <li>Postulez en utilisant votre profil Jobup.ch</li>
+                        <li>Vérifiez que votre candidature apparaît dans "Mes candidatures"</li>
+                        <li>Notez la date de candidature dans un tableau de suivi personnel</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> 1 candidature envoyée et visible dans votre historique
+                </div>
+                
+                <h3>Exercice 6 : Installation et utilisation mobile</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Installer l'application mobile et activer les notifications
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Téléchargez l'application Jobup.ch sur votre smartphone (iOS ou Android)</li>
+                        <li>Connectez-vous avec vos identifiants</li>
+                        <li>Activez les notifications push dans les paramètres</li>
+                        <li>Vérifiez que vos favoris sont synchronisés</li>
+                        <li>Effectuez une recherche depuis l'application</li>
+                        <li>Testez la sauvegarde d'une offre en favori depuis le mobile</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> Application installée, notifications actives, synchronisation fonctionnelle
+                </div>
+                
+                <h3>Exercice 7 : Exploration des ressources</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Découvrir les outils complémentaires de Jobup.ch
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Accédez à la section "Job Coach" sur le site</li>
+                        <li>Lisez un article sur la rédaction de CV ou l'entretien d'embauche</li>
+                        <li>Utilisez l'estimateur de salaire pour votre fonction et votre région</li>
+                        <li>Notez la fourchette salariale obtenue</li>
+                        <li>Consultez le profil d'une entreprise qui vous intéresse</li>
+                        <li>Identifiez 3 informations utiles sur cette entreprise</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> 1 article lu, estimation salariale obtenue, profil entreprise consulté
+                </div>
+                
+                <h3>Exercice Bonus : Optimisation du profil</h3>
+                <div class="step-box">
+                    <strong>🎯 Objectif :</strong> Maximiser votre visibilité auprès des recruteurs
+                    <br><br>
+                    <strong>📋 Tâches à accomplir :</strong>
+                    <ol style="margin-top: 10px;">
+                        <li>Générez votre CV PDF depuis votre profil Jobup.ch</li>
+                        <li>Comparez-le avec votre CV original</li>
+                        <li>Ajoutez des mots-clés pertinents dans votre profil (compétences, logiciels, langues)</li>
+                        <li>Mettez à jour votre profil au moins une fois par semaine pendant 1 mois</li>
+                        <li>Si vous êtes à l'aise, testez le mode "profil consultable" pendant 2 semaines</li>
+                        <li>Suivez 5 entreprises qui vous intéressent pour recevoir leurs nouvelles offres</li>
+                    </ol>
+                    <br>
+                    <strong>✅ Critères de réussite :</strong> CV PDF généré, profil enrichi avec mots-clés, 5 entreprises suivies
+                </div>
+                
+                <div class="tips-box" style="margin-top: 40px;">
+                    <h4>📝 Fiche de suivi des exercices</h4>
+                    <p style="margin-bottom: 15px;"><strong>Cochez chaque exercice complété et notez la date :</strong></p>
+                    <table style="width: 100%; border-collapse: collapse;">
+                        <tr style="background: rgba(0,0,0,0.05);">
+                            <th style="padding: 10px; text-align: left; border: 1px solid #ddd;">Exercice</th>
+                            <th style="padding: 10px; text-align: center; border: 1px solid #ddd; width: 100px;">Complété</th>
+                            <th style="padding: 10px; text-align: center; border: 1px solid #ddd; width: 120px;">Date</th>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 1 : Création du compte</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 2 : Upload documents</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 3 : JobMailers</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 4 : Recherche d'offres</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 5 : Candidature complète</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 6 : Application mobile</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;">Exercice 7 : Ressources</td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                        <tr>
+                            <td style="padding: 10px; border: 1px solid #ddd;"><strong>Exercice Bonus : Optimisation</strong></td>
+                            <td style="padding: 10px; border: 1px solid #ddd; text-align: center;">☐</td>
+                            <td style="padding: 10px; border: 1px solid #ddd;"></td>
+                        </tr>
+                    </table>
+                </div>
+                
+                <div style="background: linear-gradient(135deg, #d4fc79 0%, #96e6a1 100%); padding: 25px; border-radius: 10px; margin-top: 30px; border-left: 5px solid #4caf50;">
+                    <h4 style="color: #2e7d32; margin-bottom: 15px; font-size: 1.3em;">🎯 Objectif final de la formation</h4>
+                    <p style="color: #2e7d32; font-size: 1.1em; margin-bottom: 10px;">
+                        À la fin de ces exercices, vous devriez avoir :
+                    </p>
+                    <ul style="color: #2e7d32; margin-left: 20px;">
+                        <li>Un compte Jobup.ch entièrement configuré et optimisé</li>
+                        <li>Au moins 5 documents professionnels en ligne</li>
+                        <li>2 JobMailers actifs qui vous envoient des offres pertinentes</li>
+                        <li>Envoyé au moins 1 candidature complète</li>
+                        <li>L'application mobile installée et fonctionnelle</li>
+                        <li>Une bonne compréhension de tous les outils disponibles</li>
+                    </ul>
+                    <p style="color: #2e7d32; font-size: 1em; margin-top: 15px; font-style: italic;">
+                        💪 Félicitations pour votre engagement dans votre recherche d'emploi !
+                    </p>
+                </div>
+            </div>
+            
+            <!-- Section Proactif -->
+            <div class="section">
+                <h2>🎓 Votre Centre de Formation - Proactif Vevey</h2>
+                
+                <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 40px; border-radius: 15px; color: white; text-align: center; box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);">
+                    <h3 style="color: white; font-size: 2em; margin-bottom: 20px;">📍 Proactif</h3>
+                    <p style="font-size: 1.2em; margin-bottom: 30px;">Centre de formation à la recherche d'emploi</p>
+                    
+                    <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 10px; backdrop-filter: blur(10px);">
+                        <p style="font-size: 1.1em; margin: 10px 0;">
+                            <strong>📍 Localisation :</strong> Vevey, Canton de Vaud
+                        </p>
+                        <p style="font-size: 1.1em; margin: 10px 0;">
+                            <strong>🎯 Mission :</strong> Accompagnement personnalisé dans votre recherche d'emploi
+                        </p>
+                        <p style="font-size: 1.1em; margin: 10px 0;">
+                            <strong>💼 Services :</strong> Formation, coaching, outils digitaux
+                        </p>
+                    </div>
+                    
+                    <div style="margin-top: 30px;">
+                        <p style="font-size: 1em; opacity: 0.9;">
+                            Ce tutoriel a été créé spécialement pour vous aider à utiliser<br>
+                            efficacement Jobup.ch dans le cadre de votre formation.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="tips-box" style="margin-top: 30px;">
+                    <h4>💡 Message de votre formateur</h4>
+                    <p>N'hésitez pas à poser vos questions durant les sessions de formation. Ce tutoriel est un support complémentaire à utiliser à votre rythme. La maîtrise de Jobup.ch est un atout essentiel pour votre recherche d'emploi en Suisse romande !</p>
+                </div>
+            </div>
+        </div>
+        
+        <footer>
+            <h3>Bonne chance dans votre recherche d'emploi ! 🍀</h3>
+            <p style="margin: 20px 0;">Jobup.ch - La plateforme d'emploi n°1 en Suisse romande</p>
+            <p style="font-size: 0.9em; opacity: 0.8;">
+                Ce tutoriel a été créé pour vous aider à maîtriser toutes les fonctionnalités de Jobup.ch.<br>
+                Pour plus d'informations, consultez le <a href="https://www.hefp.swiss/sites/default/files/documents/guide_dutilisation_jobup_1.pdf" target="_blank">Guide officiel PDF</a>
+            </p>
+            <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.3);">
+                <p style="font-size: 1.1em; margin-bottom: 10px;">📚 <strong>Tutoriel créé par votre formateur</strong></p>
+                <p style="font-size: 1em;">
+                    <strong>Proactif</strong> - Centre de formation<br>
+                    Vevey, Suisse<br>
+                    Formation à la recherche d'emploi
+                </p>
+            </div>
+        </footer>
+    </div>
+</body>
+</html>

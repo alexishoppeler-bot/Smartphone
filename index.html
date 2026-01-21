@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Plateforme Autonomie – Exercices</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+
+:root{
+  --bg-1:#0b0f1f;
+  --bg-2:#151a2f;
+  --ink:#f3f4f6;
+  --muted:#b6bccf;
+  --accent:#f59e0b;
+  --accent-2:#22d3ee;
+  --card:#0b1022;
+  --card-border:#2b3553;
+  --shadow:0 10px 30px rgba(6,10,24,.35);
+}
+
+body{
+  font-family: "Space Grotesk","Segoe UI",system-ui,sans-serif;
+  background:
+    radial-gradient(1200px 600px at 10% -10%, #1b2345 0%, transparent 60%),
+    radial-gradient(900px 500px at 90% 0%, #1f2f55 0%, transparent 55%),
+    linear-gradient(180deg,var(--bg-1),var(--bg-2));
+  color:var(--ink);
+  letter-spacing:.2px;
+}
+
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:28px 20px 60px;
+  position:relative;
+}
+
+h1{
+  text-align:center;
+  margin-bottom:8px;
+  font-size:34px;
+  font-weight:700;
+}
+
+.subtitle{
+  text-align:center;
+  color:var(--muted);
+  margin-bottom:28px;
+  font-size:15px;
+}
+
+/* SECTIONS */
+.section{
+  margin-bottom:30px;
+  animation:floatIn .6s ease both;
+}
+
+.section h2{
+  margin-bottom:10px;
+  font-size:20px;
+  color:#ffffff;
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+/* LISTE */
+.list{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+  gap:14px;
+}
+
+.card{
+  background:linear-gradient(180deg,var(--card),#0f1630);
+  border:1px solid var(--card-border);
+  border-radius:14px;
+  padding:16px 16px 14px;
+  text-decoration:none;
+  color:var(--ink);
+  box-shadow:var(--shadow);
+  transition:transform .18s ease, border .18s ease, background .18s ease, box-shadow .18s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.card:hover{
+  transform:translateY(-3px);
+  border-color:color-mix(in oklab, var(--accent) 55%, var(--card-border));
+  box-shadow:0 14px 36px rgba(6,10,24,.5);
+}
+
+.card::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background:linear-gradient(120deg, transparent 0%, rgba(245,158,11,.16) 45%, transparent 60%);
+  opacity:0;
+  transition:opacity .2s ease;
+  pointer-events:none;
+}
+
+.card:hover::after{
+  opacity:1;
+}
+
+.card span{
+  display:block;
+  margin-top:8px;
+  font-size:13px;
+  color:#cbd5f5;
+}
+
+.card:focus-visible{
+  outline:2px solid var(--accent-2);
+  outline-offset:2px;
+}
+
+.section:nth-of-type(1){animation-delay:.02s}
+.section:nth-of-type(2){animation-delay:.06s}
+.section:nth-of-type(3){animation-delay:.1s}
+.section:nth-of-type(4){animation-delay:.14s}
+.section:nth-of-type(5){animation-delay:.18s}
+.section:nth-of-type(6){animation-delay:.22s}
+.section:nth-of-type(7){animation-delay:.26s}
+
+@keyframes floatIn{
+  from{opacity:0;transform:translateY(12px)}
+  to{opacity:1;transform:translateY(0)}
+}
+
+@media (max-width:560px){
+  body{letter-spacing:.1px}
+  .container{padding:22px 14px 46px}
+  h1{font-size:26px}
+  .subtitle{font-size:14px;margin-bottom:20px}
+  .section{margin-bottom:22px}
+  .section h2{font-size:18px}
+  .list{grid-template-columns:1fr;gap:12px}
+  .card{padding:16px 18px}
+  .card span{font-size:12.5px}
+}
+
+@media (max-width:360px){
+  h1{font-size:24px}
+  .section h2{font-size:17px}
+  .card{padding:14px 16px}
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>🧠 Plateforme Autonomie</h1>
+<div class="subtitle">
+Exercices numériques – Recherche d’emploi – Windows
+</div>
+
+<!-- BUREAUTIQUE -->
+<div class="section">
+  <h2>🖥️ Bureautique</h2>
+  <div class="list">
+    <a class="card" href="miniword.html">MiniWord<span>Écrire / Ctrl + P / PDF</span></a>
+    <a class="card" href="organisation-dossiers.html">Organisation dossiers<span>Windows – dossiers</span></a>
+    <a class="card" href="envoie-mail.html">Modèles d'émail<span>Windows – Mails</span></a>
+    <a class="card" href="gmail.html">APP<span>Gmail</span></a>
+    <a class="card" href="appmail.html">APP<span>mail v.2</span></a>
+  </div>
+</div>
+
+<!-- LANGUE / TEXTE -->
+<div class="section">
+  <h2>✍️ Français – Texte</h2>
+  <div class="list">
+    <a class="card" href="Retaper/retaper.html">Retaper le texte<span>Exact / sans copier</span></a>
+    <a class="card" href="Retaper/orale.html">Retaper le texte<span>Exact / Écoute</span></a>
+    <a class="card" href="mots-trous.html">Mots à trous<span>Compléter</span></a>
+    <a class="card" href="mots-meles.html">Démêler mots<span>Ordre correct</span></a>
+    <a class="card" href="demeler-phrase.html">Démêler phrase<span>Construire une phrase</span></a>
+  </div>
+</div>
+
+<!-- JEUX LOGIQUES -->
+<div class="section">
+  <h2>🧩 Jeux & logique</h2>
+  <div class="list">
+    <a class="card" href="apparier.html">Apparier<span>Mots / définitions</span></a>
+    <a class="card" href="classement-par-rang.html">Classement<span>Ordre logique</span></a>
+    <a class="card" href="paire-pas-paire.html">Paire / Pas paire<span>Vocabulaire</span></a>
+    <a class="card" href="vrai-faux.html">Vrai / Faux<span>Compréhension</span></a>
+  </div>
+</div>
+
+<!-- QUIZ -->
+<div class="section">
+  <h2>❓ Quiz</h2>
+  <div class="list">
+    <a class="card" href="quiz.html">Quiz général<span>Choix multiples</span></a>
+  </div>
+</div>
+
+<!-- EMPLOI -->
+<div class="section">
+  <h2>💼 Recherche d’emploi</h2>
+  <div class="list">
+    <a class="card" href="lettre-motivation.html">Lettre de motivation<span>Générateur</span></a>
+    <a class="card" href="postulation.html">Postulation<span>Démarches</span></a>
+    <a class="card" href="Fide/Postuler/fide-postulation.html">Scénario<span>Je postule</span></a>
+  </div>
+</div>
+
+<!-- WORDWALL -->
+<div class="section">
+  <h2>🎲 Wordwall</h2>
+  <div class="list">
+    <a class="card" href="wordwall.html">Exercices en ligne<span>Entertainment</span></a>
+  </div>
+ </div>
+
+<!-- EMPLOI -->
+<div class="section">
+  <h2>💼 Alexis</h2>
+  <div class="list">
+    <a class="card" href="exercice_recherche_emploi.html">exercice de recherche d'emploi<span>Trouver une annonce</span></a>
+    <a class="card" href="tutoriel_jobup.html">JobUp<span>Explication de l'APP</span></a>
+  </div>
+</div>
+
+<!-- LIENS EXTERNES -->
+<div class="section">
+  <h2>🌐 Liens utiles (modele)</h2>
+  <div class="list">
+    <a class="card" href="https://exemple.com" target="_blank" rel="noopener">Nom du site<span>Description courte</span></a>
+    <a class="card" href="https://exemple.com" target="_blank" rel="noopener">Nom du site<span>Description courte</span></a>
+    <a class="card" href="https://exemple.com" target="_blank" rel="noopener">Nom du site<span>Description courte</span></a>
+  </div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

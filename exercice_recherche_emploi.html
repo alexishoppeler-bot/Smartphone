@@ -1,0 +1,1004 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Exercice : Recherche d'Annonce d'Emploi</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.95;
+        }
+
+        /* Timer */
+        .timer {
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            background: rgba(255,255,255,0.2);
+            padding: 10px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        /* Progress Bar */
+        .progress-container {
+            background: #f0f0f0;
+            height: 8px;
+            border-radius: 10px;
+            overflow: hidden;
+            margin: 20px 30px;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+            padding: 0 30px;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .section {
+            margin-bottom: 30px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .section h2 {
+            color: #667eea;
+            margin-bottom: 15px;
+            font-size: 22px;
+        }
+
+        /* Participant Info */
+        .participant-info {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .participant-info input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+
+        .participant-info input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .participant-info label {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .info-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            margin-bottom: 12px;
+            font-size: 16px;
+        }
+
+        .info-item:last-child {
+            margin-bottom: 0;
+        }
+
+        .info-label {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 120px;
+        }
+
+        .info-value {
+            color: #333;
+            font-weight: 600;
+        }
+
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 8px;
+            border-left: 4px solid #2196F3;
+            margin-bottom: 20px;
+        }
+
+        .instructions h3 {
+            color: #1976D2;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .instructions ol {
+            margin-left: 20px;
+            color: #555;
+        }
+
+        .instructions li {
+            margin-bottom: 8px;
+            line-height: 1.6;
+        }
+
+        /* Tips Box */
+        .tips-box {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+        }
+
+        .tips-box h4 {
+            color: #856404;
+            margin-bottom: 8px;
+        }
+
+        .tips-box ul {
+            margin-left: 20px;
+            color: #856404;
+        }
+
+        .tips-box li {
+            margin-bottom: 5px;
+        }
+
+        .question-form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+            transition: transform 0.2s;
+        }
+
+        .question-form:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        }
+
+        .question-form label {
+            display: block;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 10px;
+            font-size: 15px;
+        }
+
+        .question-form input[type="text"],
+        .question-form textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            font-family: inherit;
+            transition: border-color 0.3s;
+        }
+
+        .question-form input[type="text"]:focus,
+        .question-form textarea:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .question-form textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #667eea;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 28px;
+            margin-right: 10px;
+            font-size: 14px;
+            font-weight: bold;
+        }
+
+        .char-counter {
+            text-align: right;
+            font-size: 12px;
+            color: #999;
+            margin-top: 5px;
+        }
+
+        .required-mark {
+            color: #e74c3c;
+            margin-left: 5px;
+        }
+
+        .optional-mark {
+            color: #999;
+            font-size: 12px;
+            font-weight: normal;
+            margin-left: 5px;
+        }
+
+        /* Buttons */
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .submit-btn, .save-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            font-size: 18px;
+            font-weight: bold;
+            border-radius: 8px;
+            cursor: pointer;
+            flex: 1;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+
+        .save-btn {
+            background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+        }
+
+        .submit-btn:hover, .save-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(102, 126, 234, 0.4);
+        }
+
+        .submit-btn:active, .save-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn:disabled, .save-btn:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .success-message, .save-message {
+            display: none;
+            background: #4CAF50;
+            color: white;
+            padding: 20px;
+            border-radius: 8px;
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+            animation: slideIn 0.3s ease;
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .error-message {
+            background: #f44336;
+            color: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            display: none;
+        }
+
+        /* Export Options */
+        .export-options {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .export-options h3 {
+            margin-bottom: 15px;
+            color: #667eea;
+        }
+
+        .export-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .export-btn:hover {
+            background: #5568d3;
+        }
+
+        .footer {
+            background: #f8f9fa;
+            padding: 20px;
+            text-align: center;
+            color: #666;
+            font-size: 14px;
+        }
+
+        /* Admin Panel */
+        .admin-toggle {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            cursor: pointer;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            z-index: 1000;
+        }
+
+        .admin-panel {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.3);
+            z-index: 1001;
+            max-width: 500px;
+            width: 90%;
+        }
+
+        .admin-panel h3 {
+            color: #667eea;
+            margin-bottom: 20px;
+        }
+
+        .admin-input {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .admin-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
+        .admin-btn {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: bold;
+        }
+
+        .admin-btn-save {
+            background: #4CAF50;
+            color: white;
+        }
+
+        .admin-btn-cancel {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .timer {
+                position: static;
+                margin-top: 10px;
+                display: inline-block;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .section {
+                padding: 20px;
+            }
+
+            .button-group {
+                flex-direction: column;
+            }
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .admin-toggle, .timer, .button-group {
+                display: none;
+            }
+        }
+    </style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+    <div class="overlay" id="overlay"></div>
+    
+    <div class="container">
+        <div class="header">
+            <div class="timer" id="timer">⏱️ 00:00:00</div>
+            <h1>🔍 Exercice de Recherche d'Emploi</h1>
+            <p>Trouvez l'annonce et répondez aux questions</p>
+        </div>
+
+        <div class="progress-container">
+            <div class="progress-bar" id="progressBar"></div>
+        </div>
+        <div class="progress-text" id="progressText">0% complété (0/9 champs remplis)</div>
+
+        <div class="content">
+            <!-- Section 0: Info Participant -->
+            <div class="section">
+                <h2>👤 Vos Informations</h2>
+                <div class="participant-info">
+                    <label for="participantName">Nom et Prénom <span class="required-mark">*</span></label>
+                    <input type="text" id="participantName" placeholder="Entrez votre nom complet" required>
+                </div>
+            </div>
+
+            <!-- Section 1: Informations de recherche -->
+            <div class="section">
+                <h2>📋 Informations de l'Annonce à Rechercher</h2>
+                <div class="info-box">
+                    <div class="info-item">
+                        <span class="info-label">Poste :</span>
+                        <span class="info-value" id="poste">[À définir]</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Entreprise :</span>
+                        <span class="info-value" id="entreprise">[À définir]</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ville :</span>
+                        <span class="info-value" id="ville">[À définir]</span>
+                    </div>
+                </div>
+
+                <div class="instructions">
+                    <h3>📝 Instructions</h3>
+                    <ol>
+                        <li><strong>Accédez à Google Emploi :</strong>
+                            <ul style="margin-top: 8px; margin-bottom: 8px;">
+                                <li>Allez sur <a href="https://www.google.com/search?q=google+emploi" target="_blank" style="color: #1976D2; text-decoration: none; font-weight: bold;">Google.com</a></li>
+                                <li>Tapez dans la barre de recherche : <code style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px; font-size: 13px;">"[nom du poste] [entreprise] [ville]"</code></li>
+                                <li>Exemple : <code style="background: #e8f5e9; padding: 2px 6px; border-radius: 3px; font-size: 13px;">Assistant comptable ABC Paris</code></li>
+                            </ul>
+                        </li>
+                        <li><strong>Trouvez l'annonce dans les résultats Google Emploi</strong> (apparaît généralement en haut avec des cartes d'offres d'emploi)</li>
+                        <li><strong>Cliquez sur l'offre</strong> correspondant aux critères (poste, entreprise, ville)</li>
+                        <li><strong>Lisez attentivement l'annonce complète</strong> en cliquant sur "Voir l'offre" pour accéder au site source</li>
+                        <li><strong>Répondez aux questions ci-dessous</strong> en vous basant sur les informations de l'annonce</li>
+                    </ol>
+                </div>
+
+            </div>
+
+            <!-- Section 2: Formulaire de questions -->
+            <div class="section">
+                <h2>❓ Questions de Compréhension</h2>
+                
+                <form id="questionForm">
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">1</span>
+                            Quel est le lien URL de l'annonce que vous avez trouvée ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <input type="url" name="url" required placeholder="https://...">
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">2</span>
+                            Quelles sont les principales missions décrites dans l'annonce ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="missions" required placeholder="Décrivez les missions principales..." maxlength="1000"></textarea>
+                        <div class="char-counter"><span id="missions-count">0</span>/1000 caractères</div>
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">3</span>
+                            Quelles compétences ou qualifications sont requises ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="competences" required placeholder="Listez les compétences requises..." maxlength="1000"></textarea>
+                        <div class="char-counter"><span id="competences-count">0</span>/1000 caractères</div>
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">4</span>
+                            Quel type de contrat est proposé ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <input type="text" name="contrat" required placeholder="Ex: CDI, CDD, Stage, Alternance...">
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">5</span>
+                            Y a-t-il des informations sur le salaire ? Si oui, lesquelles ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="salaire" required placeholder="Informations sur la rémunération ou 'Non mentionné'..."></textarea>
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">6</span>
+                            Quels sont les avantages mentionnés dans l'annonce ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="avantages" required placeholder="Listez les avantages proposés..."></textarea>
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">7</span>
+                            Quelle est la date limite de candidature ?
+                            <span class="optional-mark">(optionnel)</span>
+                        </label>
+                        <input type="text" name="date_limite" placeholder="Date limite ou 'Non mentionnée'">
+                    </div>
+
+                    <div class="question-form">
+                        <label>
+                            <span class="question-number">8</span>
+                            Selon vous, quels sont les points forts de cette offre ?
+                            <span class="required-mark">*</span>
+                        </label>
+                        <textarea name="points_forts" required placeholder="Votre analyse personnelle..." maxlength="500"></textarea>
+                        <div class="char-counter"><span id="points_forts-count">0</span>/500 caractères</div>
+                    </div>
+
+                    <div class="error-message" id="errorMessage"></div>
+
+                    <div class="button-group">
+                        <button type="button" class="save-btn" id="saveBtn">💾 Sauvegarder mon brouillon</button>
+                        <button type="submit" class="submit-btn">✓ Soumettre mes réponses</button>
+                    </div>
+
+                    <div class="save-message" id="saveMessage">
+                        💾 Vos réponses ont été sauvegardées ! Vous pouvez revenir plus tard.
+                    </div>
+
+                    <div class="success-message" id="successMessage">
+                        ✓ Vos réponses ont été enregistrées avec succès ! Merci pour votre participation.
+                    </div>
+
+                    <div class="export-options" id="exportOptions">
+                        <h3>📥 Télécharger vos réponses</h3>
+                        <button type="button" class="export-btn" id="exportTxt">Télécharger (TXT)</button>
+                        <button type="button" class="export-btn" id="exportJson">Télécharger (JSON)</button>
+                        <button type="button" class="export-btn" id="copyClipboard">Copier dans le presse-papier</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="footer">
+            Formation · Recherche d'Emploi · Exercice Pratique
+        </div>
+    </div>
+
+    <!-- Admin Panel -->
+    <button class="admin-toggle" id="adminToggle">⚙️ Config</button>
+    <div class="admin-panel" id="adminPanel">
+        <h3>⚙️ Configuration de l'exercice</h3>
+        <input type="text" class="admin-input" id="adminPoste" placeholder="Nom du poste">
+        <input type="text" class="admin-input" id="adminEntreprise" placeholder="Nom de l'entreprise">
+        <input type="text" class="admin-input" id="adminVille" placeholder="Ville">
+        <div class="admin-buttons">
+            <button class="admin-btn admin-btn-save" id="adminSave">Enregistrer</button>
+            <button class="admin-btn admin-btn-cancel" id="adminCancel">Annuler</button>
+        </div>
+    </div>
+
+    <script>
+        // Timer
+        let startTime = Date.now();
+        let timerInterval;
+
+        function updateTimer() {
+            const elapsed = Date.now() - startTime;
+            const hours = Math.floor(elapsed / 3600000);
+            const minutes = Math.floor((elapsed % 3600000) / 60000);
+            const seconds = Math.floor((elapsed % 60000) / 1000);
+            
+            document.getElementById('timer').textContent = 
+                `⏱️ ${String(hours).padStart(2, '0')}:${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+        }
+
+        timerInterval = setInterval(updateTimer, 1000);
+
+        // Progress tracking
+        function updateProgress() {
+            const form = document.getElementById('questionForm');
+            const inputs = form.querySelectorAll('input[required], textarea[required]');
+            const participantName = document.getElementById('participantName');
+            
+            let filled = 0;
+            let total = inputs.length + 1; // +1 for participant name
+            
+            if (participantName.value.trim()) filled++;
+            
+            inputs.forEach(input => {
+                if (input.value.trim()) filled++;
+            });
+            
+            const percentage = Math.round((filled / total) * 100);
+            document.getElementById('progressBar').style.width = percentage + '%';
+            document.getElementById('progressText').textContent = 
+                `${percentage}% complété (${filled}/${total} champs remplis)`;
+        }
+
+        // Character counters
+        const textareas = {
+            'missions': 1000,
+            'competences': 1000,
+            'points_forts': 500
+        };
+
+        Object.keys(textareas).forEach(name => {
+            const textarea = document.querySelector(`textarea[name="${name}"]`);
+            const counter = document.getElementById(`${name}-count`);
+            
+            textarea.addEventListener('input', function() {
+                counter.textContent = this.value.length;
+                updateProgress();
+            });
+        });
+
+        // Update progress on all inputs
+        document.querySelectorAll('input, textarea').forEach(element => {
+            element.addEventListener('input', updateProgress);
+        });
+
+        // Local storage save/load
+        function saveToLocal() {
+            const formData = new FormData(document.getElementById('questionForm'));
+            const data = {};
+            
+            data.participantName = document.getElementById('participantName').value;
+            for (let [key, value] of formData.entries()) {
+                data[key] = value;
+            }
+            data.savedAt = new Date().toISOString();
+            data.timeSpent = Date.now() - startTime;
+            
+            localStorage.setItem('jobSearchExercise', JSON.stringify(data));
+            
+            document.getElementById('saveMessage').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('saveMessage').style.display = 'none';
+            }, 3000);
+        }
+
+        function loadFromLocal() {
+            const saved = localStorage.getItem('jobSearchExercise');
+            if (saved) {
+                const data = JSON.parse(saved);
+                document.getElementById('participantName').value = data.participantName || '';
+                
+                Object.keys(data).forEach(key => {
+                    const input = document.querySelector(`[name="${key}"]`);
+                    if (input) input.value = data[key];
+                });
+                
+                if (data.timeSpent) {
+                    startTime = Date.now() - data.timeSpent;
+                }
+                
+                updateProgress();
+                
+                if (confirm('Un brouillon a été trouvé. Voulez-vous le restaurer ?')) {
+                    // Already loaded
+                } else {
+                    localStorage.removeItem('jobSearchExercise');
+                    document.getElementById('questionForm').reset();
+                    document.getElementById('participantName').value = '';
+                }
+            }
+        }
+
+        // Save button
+        document.getElementById('saveBtn').addEventListener('click', saveToLocal);
+
+        // Auto-save every 2 minutes
+        setInterval(saveToLocal, 120000);
+
+        // Form submission
+        document.getElementById('questionForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const participantName = document.getElementById('participantName').value.trim();
+            if (!participantName) {
+                alert('Veuillez entrer votre nom et prénom.');
+                document.getElementById('participantName').focus();
+                return;
+            }
+            
+            // Get form data
+            const formData = new FormData(this);
+            const responses = {
+                participantName: participantName,
+                timeSpent: Math.floor((Date.now() - startTime) / 1000),
+                submittedAt: new Date().toLocaleString('fr-FR')
+            };
+            
+            for (let [key, value] of formData.entries()) {
+                responses[key] = value;
+            }
+            
+            // Job info
+            responses.jobInfo = {
+                poste: document.getElementById('poste').textContent,
+                entreprise: document.getElementById('entreprise').textContent,
+                ville: document.getElementById('ville').textContent
+            };
+            
+            console.log('Réponses du participant:', responses);
+            
+            // Show success and export options
+            document.getElementById('successMessage').style.display = 'block';
+            document.getElementById('exportOptions').style.display = 'block';
+            
+            // Clear local storage
+            localStorage.removeItem('jobSearchExercise');
+            
+            // Store responses for export
+            window.currentResponses = responses;
+            
+            // Scroll to success
+            document.getElementById('successMessage').scrollIntoView({ behavior: 'smooth' });
+            
+            // Disable form
+            this.querySelectorAll('input, textarea, button').forEach(el => el.disabled = true);
+        });
+
+        // Export functions
+        document.getElementById('exportTxt').addEventListener('click', function() {
+            const r = window.currentResponses;
+            const text = `
+RÉPONSES DE L'EXERCICE - RECHERCHE D'EMPLOI
+=============================================
+
+Participant: ${r.participantName}
+Date de soumission: ${r.submittedAt}
+Temps passé: ${Math.floor(r.timeSpent / 60)} minutes ${r.timeSpent % 60} secondes
+
+OFFRE RECHERCHÉE
+----------------
+Poste: ${r.jobInfo.poste}
+Entreprise: ${r.jobInfo.entreprise}
+Ville: ${r.jobInfo.ville}
+
+RÉPONSES
+--------
+
+1. URL de l'annonce:
+${r.url}
+
+2. Principales missions:
+${r.missions}
+
+3. Compétences requises:
+${r.competences}
+
+4. Type de contrat:
+${r.contrat}
+
+5. Informations sur le salaire:
+${r.salaire}
+
+6. Avantages:
+${r.avantages}
+
+7. Date limite:
+${r.date_limite || 'Non renseignée'}
+
+8. Points forts de l'offre:
+${r.points_forts}
+            `;
+            
+            const blob = new Blob([text], { type: 'text/plain;charset=utf-8' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reponses_${r.participantName.replace(/\s+/g, '_')}_${Date.now()}.txt`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('exportJson').addEventListener('click', function() {
+            const r = window.currentResponses;
+            const blob = new Blob([JSON.stringify(r, null, 2)], { type: 'application/json' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `reponses_${r.participantName.replace(/\s+/g, '_')}_${Date.now()}.json`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        });
+
+        document.getElementById('copyClipboard').addEventListener('click', function() {
+            const r = window.currentResponses;
+            const text = JSON.stringify(r, null, 2);
+            navigator.clipboard.writeText(text).then(() => {
+                alert('Copié dans le presse-papier !');
+            });
+        });
+
+        // Admin panel
+        document.getElementById('adminToggle').addEventListener('click', function() {
+            document.getElementById('adminPanel').style.display = 'block';
+            document.getElementById('overlay').style.display = 'block';
+            
+            // Load current values
+            document.getElementById('adminPoste').value = document.getElementById('poste').textContent;
+            document.getElementById('adminEntreprise').value = document.getElementById('entreprise').textContent;
+            document.getElementById('adminVille').value = document.getElementById('ville').textContent;
+        });
+
+        document.getElementById('adminCancel').addEventListener('click', function() {
+            document.getElementById('adminPanel').style.display = 'none';
+            document.getElementById('overlay').style.display = 'none';
+        });
+
+        document.getElementById('overlay').addEventListener('click', function() {
+            document.getElementById('adminPanel').style.display = 'none';
+            this.style.display = 'none';
+        });
+
+        document.getElementById('adminSave').addEventListener('click', function() {
+            const poste = document.getElementById('adminPoste').value.trim();
+            const entreprise = document.getElementById('adminEntreprise').value.trim();
+            const ville = document.getElementById('adminVille').value.trim();
+            
+            if (poste && entreprise && ville) {
+                document.getElementById('poste').textContent = poste;
+                document.getElementById('entreprise').textContent = entreprise;
+                document.getElementById('ville').textContent = ville;
+                
+                // Save to localStorage
+                localStorage.setItem('jobSearchConfig', JSON.stringify({ poste, entreprise, ville }));
+                
+                document.getElementById('adminPanel').style.display = 'none';
+                document.getElementById('overlay').style.display = 'none';
+                
+                alert('Configuration enregistrée !');
+            } else {
+                alert('Veuillez remplir tous les champs.');
+            }
+        });
+
+        // Load config on page load
+        window.addEventListener('load', function() {
+            const config = localStorage.getItem('jobSearchConfig');
+            if (config) {
+                const data = JSON.parse(config);
+                document.getElementById('poste').textContent = data.poste;
+                document.getElementById('entreprise').textContent = data.entreprise;
+                document.getElementById('ville').textContent = data.ville;
+            }
+            
+            loadFromLocal();
+        });
+
+        // Warn before leaving if form is filled
+        window.addEventListener('beforeunload', function(e) {
+            const form = document.getElementById('questionForm');
+            const inputs = form.querySelectorAll('input, textarea');
+            let hasContent = false;
+            
+            inputs.forEach(input => {
+                if (input.value.trim()) hasContent = true;
+            });
+            
+            if (hasContent && !form.disabled) {
+                e.preventDefault();
+                e.returnValue = '';
+            }
+        });
+    </script>
+</body>
+</html>

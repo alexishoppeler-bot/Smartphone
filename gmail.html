@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gmail Mobile - Système Complet</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg: #f6f8fc; --white: #ffffff; --blue: #0b57d0; --txt: #1f1f1f; --gray: #5e5e5e; --border: #eeeeee;
+        }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        body, html { margin: 0; padding: 0; height: 100%; font-family: 'Roboto', sans-serif; background: var(--white); overflow: hidden; }
+
+        /* --- HEADER --- */
+        header {
+            display: flex; align-items: center; padding: 8px 16px; height: 56px;
+            background: var(--bg); margin: 8px; border-radius: 28px; box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .burger { font-size: 24px; padding-right: 15px; cursor: pointer; }
+        .search-in { flex: 1; border: none; background: transparent; font-size: 16px; outline: none; }
+
+        /* --- SIDEBAR --- */
+        #sidebar {
+            position: fixed; top: 0; left: -280px; width: 280px; height: 100%;
+            background: white; z-index: 1000; transition: 0.3s; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
+            overflow-y: auto;
+        }
+        #sidebar.open { left: 0; }
+        .sidebar-title { padding: 20px; color: #d93025; font-size: 20px; font-weight: bold; border-bottom: 1px solid var(--border); }
+        .nav-label { padding: 15px 20px 5px; font-size: 11px; color: var(--gray); font-weight: bold; text-transform: uppercase; }
+        .nav-item { padding: 12px 20px; font-size: 14px; display: flex; align-items: center; gap: 15px; border-radius: 0 25px 25px 0; margin-right: 10px; cursor: pointer; }
+        .nav-item.active { background: #e8f0fe; color: var(--blue); font-weight: bold; }
+
+        /* --- EMAIL LIST --- */
+        #email-list { height: calc(100% - 72px); overflow-y: auto; }
+        .email-row { display: flex; padding: 15px; border-bottom: 1px solid #f2f2f2; align-items: center; }
+        .email-row.unread { font-weight: bold; }
+        .avatar { width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-right: 15px; color: white; flex-shrink: 0; font-weight: normal; }
+        .info { flex: 1; min-width: 0; }
+        .top-row { display: flex; justify-content: space-between; margin-bottom: 4px; }
+        .subj { font-size: 14px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+        /* --- FAB --- */
+        .fab { position: fixed; bottom: 25px; right: 25px; background: #c2e7ff; width: 56px; height: 56px; border-radius: 16px; display: flex; align-items: center; justify-content: center; font-size: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.3); z-index: 500; }
+
+        /* --- DETAIL VIEW --- */
+        #detail-view { position: fixed; top: 0; left: 100%; width: 100%; height: 100%; background: white; z-index: 2000; transition: 0.3s; overflow-y: auto; }
+        #detail-view.open { left: 0; }
+        .detail-bar { display: flex; align-items: center; padding: 12px; gap: 20px; border-bottom: 1px solid #eee; background: white; position: sticky; top: 0; }
+        .detail-icon { font-size: 20px; cursor: pointer; padding: 5px; }
+
+        /* --- BOTTOM SHEET (MOVE) --- */
+        #move-sheet { position: fixed; bottom: -100%; left: 0; width: 100%; background: white; z-index: 4000; transition: 0.3s; border-radius: 20px 20px 0 0; box-shadow: 0 -5px 15px rgba(0,0,0,0.2); padding: 20px 0; }
+        #move-sheet.open { bottom: 0; }
+        .move-option { padding: 15px 25px; font-size: 16px; border-bottom: 1px solid #f9f9f9; }
+
+        /* --- RÉDACTION --- */
+        #compose-view { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: white; z-index: 3000; display: none; flex-direction: column; }
+        .comp-header { display: flex; align-items: center; padding: 15px; justify-content: space-between; border-bottom: 1px solid var(--border); }
+        .comp-field { display: flex; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border); }
+        .field-label { width: 40px; color: var(--gray); font-size: 14px; }
+        .field-input { flex: 1; border: none; outline: none; font-size: 16px; font-family: inherit; }
+        #extra-fields { display: none; flex-direction: column; }
+        #extra-fields.show { display: flex; }
+        .comp-body { flex: 1; padding: 16px; border: none; outline: none; font-size: 16px; resize: none; font-family: inherit; }
+
+        .overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; z-index: 999; }
+    </style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+<body>
+
+    <div id="overlay" class="overlay" onclick="closeAllMenus()"></div>
+
+    <!-- SIDEBAR -->
+    <aside id="sidebar">
+        <div class="sidebar-title">Gmail</div>
+        <div class="nav-label">Système</div>
+        <div class="nav-item active" id="nav-inbox" onclick="setFolder('inbox')">📥 Boîte de réception</div>
+        <div class="nav-item" id="nav-sent" onclick="setFolder('sent')">📤 Envoyés</div>
+        <div class="nav-item" id="nav-trash" onclick="setFolder('trash')">🗑️ Corbeille</div>
+        
+        <div class="nav-label">Mes Dossiers</div>
+        <div id="custom-folders-list"></div>
+        <div style="padding: 10px 20px;">
+            <input type="text" id="new-folder-input" placeholder="+ Créer (Appuyez Entrée)" onkeypress="createNewFolder(event)" style="width:100%; padding:8px; border:1px solid #ddd; border-radius:4px; outline:none;">
+        </div>
+    </aside>
+
+    <header>
+        <div class="burger" onclick="toggleSidebar()">☰</div>
+        <input type="text" class="search-in" placeholder="Rechercher..." onkeyup="render()">
+        <div class="user-avatar" style="width:30px; height:30px; background:var(--blue); color:white; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:12px;">U</div>
+    </header>
+
+    <div id="email-list"></div>
+
+    <div class="fab" onclick="openCompose()">✏️</div>
+
+    <!-- DETAIL VIEW -->
+    <div id="detail-view">
+        <div class="detail-bar">
+            <div onclick="closeDetail()" style="font-size:24px">←</div>
+            <div style="flex:1"></div>
+            <div class="detail-icon" onclick="openMoveSheet()">📁</div>
+            <div class="detail-icon" onclick="deleteEmail()">🗑️</div>
+        </div>
+        <div id="detail-content" style="padding:20px;"></div>
+    </div>
+
+    <!-- MOVE SHEET -->
+    <div id="move-sheet">
+        <div style="text-align:center; padding-bottom:15px; color:gray; font-size:14px">Déplacer vers...</div>
+        <div id="move-options-list"></div>
+        <div class="move-option" style="text-align:center; color:red; border-top:1px solid #eee" onclick="closeMoveSheet()">Annuler</div>
+    </div>
+
+    <!-- RÉDACTION -->
+    <div id="compose-view">
+        <div class="comp-header">
+            <div onclick="closeCompose()" style="font-size:20px">✕</div>
+            <div style="font-weight:500;">Rédiger</div>
+            <div onclick="sendEmail()" style="color:var(--blue); font-weight:bold;">ENVOYER</div>
+        </div>
+        <div class="comp-field">
+            <span class="field-label">À</span>
+            <input type="text" id="c-to" class="field-input">
+            <div onclick="toggleExtra()" style="color:var(--gray); font-size:12px; cursor:pointer">▼</div>
+        </div>
+        <div id="extra-fields">
+            <div class="comp-field"><span class="field-label">Cc</span><input type="text" id="c-cc" class="field-input"></div>
+            <div class="comp-field"><span class="field-label">Cci</span><input type="text" id="c-bcc" class="field-input"></div>
+        </div>
+        <div class="comp-field"><input type="text" id="c-sub" class="field-input" placeholder="Objet"></div>
+        <textarea id="c-msg" class="comp-body" placeholder="Écrire un e-mail"></textarea>
+    </div>
+
+<script>
+    // --- DONNÉES ---
+    let emails = [
+        { id: 1, folder: 'inbox', from: 'Netflix', sub: 'Nouveautés de la semaine', body: 'Découvrez les derniers films ajoutés.', date: '10:00', unread: true },
+        { id: 2, folder: 'inbox', from: 'Amazon', sub: 'Confirmation de commande', body: 'Votre colis n°1234 est en route.', date: 'Hier', unread: false }
+    ];
+    let myFolders = ['Travail', 'Perso'];
+    let currentFolder = 'inbox';
+    let openedId = null;
+
+    // --- RENDU LISTE ---
+    function render() {
+        const list = document.getElementById('email-list');
+        const query = document.querySelector('.search-in').value.toLowerCase();
+        list.innerHTML = `<div style="padding:15px; font-size:12px; color:gray; background:#f9f9f9">${currentFolder.toUpperCase()}</div>`;
+        
+        emails.filter(m => m.folder === currentFolder && (m.from.toLowerCase().includes(query) || m.sub.toLowerCase().includes(query)))
+        .reverse().forEach(m => {
+            const div = document.createElement('div');
+            div.className = `email-row ${m.unread ? 'unread' : ''}`;
+            div.onclick = () => openDetail(m.id);
+            div.innerHTML = `
+                <div class="avatar" style="background:${stringToColor(m.from)}">${m.from[0]}</div>
+                <div class="info">
+                    <div class="top-row"><span>${m.from}</span><span style="font-size:12px; font-weight:normal">${m.date}</span></div>
+                    <div class="subj">${m.sub}</div>
+                </div>
+            `;
+            list.appendChild(div);
+        });
+        renderSidebarFolders();
+    }
+
+    function renderSidebarFolders() {
+        const container = document.getElementById('custom-folders-list');
+        container.innerHTML = '';
+        myFolders.forEach(f => {
+            const div = document.createElement('div');
+            div.className = `nav-item ${currentFolder === f ? 'active' : ''}`;
+            div.innerHTML = `📁 ${f}`;
+            div.onclick = () => setFolder(f);
+            container.appendChild(div);
+        });
+    }
+
+    // --- GESTION DOSSIERS ---
+    function createNewFolder(e) {
+        if (e.key === 'Enter' && e.target.value.trim()) {
+            myFolders.push(e.target.value.trim());
+            e.target.value = '';
+            renderSidebarFolders();
+        }
+    }
+
+    function setFolder(f) {
+        currentFolder = f;
+        document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+        if(document.getElementById('nav-'+f)) document.getElementById('nav-'+f).classList.add('active');
+        closeAllMenus();
+        render();
+    }
+
+    // --- RESET & RÉDACTION ---
+    function resetCompose() {
+        document.getElementById('c-to').value = '';
+        document.getElementById('c-cc').value = '';
+        document.getElementById('c-bcc').value = '';
+        document.getElementById('c-sub').value = '';
+        document.getElementById('c-msg').value = '';
+        document.getElementById('extra-fields').classList.remove('show');
+    }
+
+    function openCompose(to='', sub='', msg='') {
+        resetCompose();
+        document.getElementById('c-to').value = to;
+        document.getElementById('c-sub').value = sub;
+        document.getElementById('c-msg').value = msg;
+        document.getElementById('compose-view').style.display = 'flex';
+    }
+
+    function sendEmail() {
+        const to = document.getElementById('c-to').value;
+        if(!to) return alert("Veuillez indiquer un destinataire.");
+        
+        emails.push({
+            id: Date.now(), folder: 'sent', from: 'Moi', to: to,
+            cc: document.getElementById('c-cc').value,
+            bcc: document.getElementById('c-bcc').value,
+            sub: document.getElementById('c-sub').value,
+            body: document.getElementById('c-msg').value,
+            date: 'À l\'instant', unread: false
+        });
+
+        resetCompose();
+        closeCompose();
+        alert("Envoyé !");
+        render();
+    }
+
+    // --- NAVIGATION ---
+    function toggleSidebar() { 
+        document.getElementById('sidebar').classList.toggle('open');
+        document.getElementById('overlay').style.display = document.getElementById('sidebar').classList.contains('open') ? 'block' : 'none';
+    }
+    function closeCompose() { document.getElementById('compose-view').style.display = 'none'; }
+    function toggleExtra() { document.getElementById('extra-fields').classList.toggle('show'); }
+    function closeAllMenus() { 
+        document.getElementById('sidebar').classList.remove('open'); 
+        document.getElementById('move-sheet').classList.remove('open'); 
+        document.getElementById('overlay').style.display = 'none'; 
+    }
+
+    function openDetail(id) {
+        openedId = id;
+        const m = emails.find(e => e.id == id);
+        m.unread = false;
+        document.getElementById('detail-view').classList.add('open');
+        document.getElementById('detail-content').innerHTML = `
+            <h2 style="font-weight:400; margin-top:0">${m.sub}</h2>
+            <div style="display:flex; align-items:center; gap:12px; margin:20px 0;">
+                <div class="avatar" style="background:${stringToColor(m.from)}">${m.from[0]}</div>
+                <div style="flex:1"><b>${m.from}</b><br><small>À: ${m.to || 'moi'} ${m.cc ? '<br>Cc: '+m.cc : ''}</small></div>
+                <div style="font-size:12px; color:gray">${m.date}</div>
+            </div>
+            <div style="line-height:1.6; white-space:pre-wrap; color:#333;">${m.body}</div>
+            <div style="margin-top:30px; display:flex; gap:10px;">
+                <button onclick="prepareReply()" style="flex:1; padding:10px; border:1px solid #ccc; background:white; border-radius:20px;">↩️ Répondre</button>
+            </div>
+        `;
+        render();
+    }
+
+    function prepareReply() {
+        const m = emails.find(e => e.id == openedId);
+        openCompose(m.from, "Re: " + m.sub, "\n\n--- Message d'origine ---\n" + m.body);
+    }
+
+    function closeDetail() { document.getElementById('detail-view').classList.remove('open'); }
+
+    // --- DÉPLACER ---
+    function openMoveSheet() {
+        document.getElementById('move-sheet').classList.add('open');
+        document.getElementById('overlay').style.display = 'block';
+        const list = document.getElementById('move-options-list');
+        list.innerHTML = '';
+        ['inbox', 'sent', 'trash', ...myFolders].forEach(f => {
+            if (f !== currentFolder) {
+                const div = document.createElement('div');
+                div.className = 'move-option';
+                div.innerText = `📁 ${f}`;
+                div.onclick = () => { moveEmailTo(f); closeMoveSheet(); };
+                list.appendChild(div);
+            }
+        });
+    }
+
+    function closeMoveSheet() { document.getElementById('move-sheet').classList.remove('open'); if(!document.getElementById('sidebar').classList.contains('open')) document.getElementById('overlay').style.display = 'none';}
+
+    function moveEmailTo(folder) {
+        const m = emails.find(e => e.id == openedId);
+        if(m) {
+            m.folder = folder;
+            alert("Email déplacé");
+            closeDetail();
+            render();
+        }
+    }
+
+    function deleteEmail() { moveEmailTo('trash'); }
+
+    // --- UTILITAIRES ---
+    function stringToColor(str) {
+        let hash = 0;
+        for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
+        return `hsl(${hash % 360}, 60%, 40%)`;
+    }
+
+    render();
+</script>
+</body>
+</html>

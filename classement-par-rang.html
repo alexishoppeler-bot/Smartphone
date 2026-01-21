@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Classement par rang</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:Arial,sans-serif}
+.container{max-width:900px;margin:auto;padding:20px}
+h1{text-align:center}
+.consigne{text-align:center;color:var(--muted);margin:10px 0 16px}
+
+/* PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{text-align:center;font-weight:bold;margin-bottom:8px}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+}
+
+/* CARTE */
+.card{
+  background:var(--card);
+  padding:22px;
+  border-radius:18px;
+  border:2px solid transparent;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.list{
+  display:flex;
+  flex-direction:column;
+  gap:10px;
+  margin-bottom:16px;
+}
+.item{
+  padding:12px;
+  border-radius:12px;
+  border:2px solid var(--border);
+  background:#020617;
+  cursor:pointer;
+  text-align:center;
+  font-size:18px;
+}
+.item.selected{
+  border-color:var(--brand);
+  background:#083344;
+}
+
+/* BOUTONS */
+.buttons{
+  display:flex;
+  justify-content:center;
+  gap:16px;
+}
+.btn{
+  padding:12px 22px;
+  font-size:16px;
+  border-radius:12px;
+  border:2px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+}
+.btn.disabled{opacity:.5;cursor:default}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+#replayBtn{
+  margin-top:16px;
+  padding:10px 18px;
+  font-size:16px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  background:#020617;
+  color:var(--text);
+  cursor:pointer;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Classement par rang</h1>
+<div class="consigne" id="consigne"></div>
+
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar"><div class="progress-fill" id="progressFill"></div></div>
+</div>
+
+<div class="card" id="card">
+  <div class="list" id="list"></div>
+  <div class="buttons">
+    <button class="btn" id="validateBtn">Valider</button>
+  </div>
+</div>
+
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+  <button id="replayBtn">🔁 Rejouer</button>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   DONNÉES – CLASSEMENTS
+   ========================= */
+const SERIES = [
+  { consigne:"Classe du plus petit au plus grand", items:["petit","moyen","grand"], correct:["petit","moyen","grand"] },
+  { consigne:"Classe du plus tôt au plus tard", items:["matin","après-midi","soir"], correct:["matin","après-midi","soir"] },
+  { consigne:"Classe du moins fort au plus fort", items:["faible","moyen","fort"], correct:["faible","moyen","fort"] },
+  { consigne:"Classe du plus froid au plus chaud", items:["froid","tiède","chaud"], correct:["froid","tiède","chaud"] },
+  { consigne:"Classe du plus lent au plus rapide", items:["lent","rapide","très rapide"], correct:["lent","rapide","très rapide"] },
+  { consigne:"Classe du moins rempli au plus rempli", items:["vide","à moitié","plein"], correct:["vide","à moitié","plein"] },
+  { consigne:"Classe du plus simple au plus difficile", items:["facile","moyen","difficile"], correct:["facile","moyen","difficile"] },
+  { consigne:"Classe du plus bas au plus haut", items:["bas","moyen","haut"], correct:["bas","moyen","haut"] },
+  { consigne:"Classe du moins lourd au plus lourd", items:["léger","moyen","lourd"], correct:["léger","moyen","lourd"] },
+  { consigne:"Classe du moins occupé au plus occupé", items:["libre","occupé","très occupé"], correct:["libre","occupé","très occupé"] },
+
+  { consigne:"Classe du plus propre au plus sale", items:["propre","sale","très sale"], correct:["propre","sale","très sale"] },
+  { consigne:"Classe du plus calme au plus bruyant", items:["calme","bruyant","très bruyant"], correct:["calme","bruyant","très bruyant"] },
+  { consigne:"Classe du moins dangereux au plus dangereux", items:["sûr","risqué","dangereux"], correct:["sûr","risqué","dangereux"] },
+  { consigne:"Classe du plus proche au plus loin", items:["près","loin","très loin"], correct:["près","loin","très loin"] },
+  { consigne:"Classe du plus lent au plus pressé", items:["calme","pressé","très pressé"], correct:["calme","pressé","très pressé"] },
+  { consigne:"Classe du moins cher au plus cher", items:["bon marché","cher","très cher"], correct:["bon marché","cher","très cher"] },
+  { consigne:"Classe du plus clair au plus foncé", items:["clair","foncé","très foncé"], correct:["clair","foncé","très foncé"] },
+  { consigne:"Classe du moins plein au plus plein", items:["presque vide","à moitié","plein"], correct:["presque vide","à moitié","plein"] },
+  { consigne:"Classe du plus court au plus long", items:["court","long","très long"], correct:["court","long","très long"] },
+  { consigne:"Classe du moins précis au plus précis", items:["approximatif","précis","très précis"], correct:["approximatif","précis","très précis"] },
+
+  { consigne:"Classe du plus lent au plus efficace", items:["lent","rapide","efficace"], correct:["lent","rapide","efficace"] },
+  { consigne:"Classe du moins organisé au plus organisé", items:["désorganisé","organisé","très organisé"], correct:["désorganisé","organisé","très organisé"] },
+  { consigne:"Classe du moins concentré au plus concentré", items:["distrait","concentré","très concentré"], correct:["distrait","concentré","très concentré"] },
+  { consigne:"Classe du plus faible au plus solide", items:["fragile","solide","très solide"], correct:["fragile","solide","très solide"] },
+  { consigne:"Classe du moins clair au plus clair", items:["confus","clair","très clair"], correct:["confus","clair","très clair"] },
+  { consigne:"Classe du moins actif au plus actif", items:["passif","actif","très actif"], correct:["passif","actif","très actif"] },
+  { consigne:"Classe du moins utile au plus utile", items:["inutile","utile","très utile"], correct:["inutile","utile","très utile"] },
+  { consigne:"Classe du moins stable au plus stable", items:["instable","stable","très stable"], correct:["instable","stable","très stable"] },
+  { consigne:"Classe du moins motivé au plus motivé", items:["démotivé","motivé","très motivé"], correct:["démotivé","motivé","très motivé"] },
+  { consigne:"Classe du moins fiable au plus fiable", items:["peu fiable","fiable","très fiable"], correct:["peu fiable","fiable","très fiable"] },
+
+  { consigne:"Classe du moins précis au plus précis", items:["flou","précis","très précis"], correct:["flou","précis","très précis"] },
+  { consigne:"Classe du plus lent au plus productif", items:["lent","rapide","productif"], correct:["lent","rapide","productif"] },
+  { consigne:"Classe du moins propre au plus propre", items:["sale","propre","très propre"], correct:["sale","propre","très propre"] },
+  { consigne:"Classe du moins sûr au plus sûr", items:["risqué","sûr","très sûr"], correct:["risqué","sûr","très sûr"] },
+  { consigne:"Classe du plus simple au plus complexe", items:["simple","complexe","très complexe"], correct:["simple","complexe","très complexe"] },
+  { consigne:"Classe du moins attentif au plus attentif", items:["distrait","attentif","très attentif"], correct:["distrait","attentif","très attentif"] },
+  { consigne:"Classe du moins rempli au plus rempli", items:["vide","rempli","plein"], correct:["vide","rempli","plein"] },
+  { consigne:"Classe du moins rapide au plus rapide", items:["lent","rapide","très rapide"], correct:["lent","rapide","très rapide"] },
+  { consigne:"Classe du moins clair au plus clair", items:["sombre","clair","très clair"], correct:["sombre","clair","très clair"] },
+  { consigne:"Classe du moins fort au plus fort", items:["faible","fort","très fort"], correct:["faible","fort","très fort"] }
+];
+
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5)}
+
+/* =========================
+   ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="classement_rang_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  index:0,
+  score:0,
+  errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state))}
+
+/* ========================= */
+const consigneEl=document.getElementById("consigne");
+const listEl=document.getElementById("list");
+const validateBtn=document.getElementById("validateBtn");
+const card=document.getElementById("card");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+const replayBtn=document.getElementById("replayBtn");
+
+const TOTAL = SERIES.length;
+let selectedOrder = [];
+
+function updateProgress(){
+  const done = state.score + state.errors;
+  progressLabel.textContent=`Progression : ${done} / ${TOTAL}`;
+  progressFill.style.width=Math.round(done/TOTAL*100)+"%";
+}
+
+function load(){
+  card.className="card";
+  selectedOrder=[];
+  listEl.innerHTML="";
+  validateBtn.classList.remove("disabled");
+
+  const serie = SERIES[state.index];
+  consigneEl.textContent = serie.consigne;
+
+  shuffle(serie.items).forEach(word=>{
+    const div=document.createElement("div");
+    div.className="item";
+    div.textContent=word;
+    div.onclick=()=>{
+      if(div.classList.contains("selected")) return;
+      div.classList.add("selected");
+      selectedOrder.push(word);
+    };
+    listEl.appendChild(div);
+  });
+}
+
+validateBtn.onclick=()=>{
+  if(validateBtn.classList.contains("disabled")) return;
+  validateBtn.classList.add("disabled");
+
+  const serie = SERIES[state.index];
+  const ok = JSON.stringify(selectedOrder) === JSON.stringify(serie.correct);
+
+  card.classList.add(ok?"ok":"err");
+  ok?state.score++:state.errors++;
+
+  save();
+  updateProgress();
+
+  setTimeout(next,700);
+};
+
+function next(){
+  state.index++;
+  if(state.index<TOTAL){
+    save();
+    load();
+  }else{
+    showEnd();
+  }
+}
+
+function showEnd(){
+  card.style.display="none";
+  end.style.display="block";
+
+  const ratio = state.score/TOTAL;
+
+  starsEl.textContent=
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===TOTAL && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Classements corrects : ${state.score} / ${TOTAL}<br>Erreurs : ${state.errors}`;
+}
+
+/* 🔒 Rejouer seulement à la fin */
+replayBtn.onclick=()=>{
+  localStorage.removeItem(STORAGE_KEY);
+  location.reload();
+};
+
+/* INIT */
+updateProgress();
+load();
+</script>
+
+</body>
+</html>
+

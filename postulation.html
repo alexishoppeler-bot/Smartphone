@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Postulation – Aide à écrire</title>
+
+<style>
+body{
+    font-family: Arial, sans-serif;
+    background:#eef3f9;
+    margin:0;
+    padding:20px;
+}
+.container{
+    max-width:600px;
+    margin:auto;
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 6px 25px rgba(0,0,0,.12);
+}
+h1{
+    text-align:center;
+    color:#004c97;
+}
+label{
+    font-weight:bold;
+    margin-top:15px;
+    display:block;
+}
+input, textarea{
+    width:100%;
+    padding:12px;
+    margin-top:6px;
+    border-radius:10px;
+    border:1px solid #ccc;
+    font-size:16px;
+}
+button{
+    margin-top:14px;
+    width:100%;
+    padding:14px;
+    font-size:18px;
+    background:#3f71ff;
+    color:white;
+    border:none;
+    border-radius:14px;
+    cursor:pointer;
+}
+button.secondary{
+    background:#666;
+}
+.hidden{
+    display:none;
+}
+.preview{
+    font-size:15px;
+    font-weight:bold;
+    margin-bottom:10px;
+}
+.info{
+    font-size:14px;
+    color:#555;
+    margin-top:10px;
+    text-align:center;
+}
+hr{
+    margin:22px 0;
+}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+
+<div class="container">
+<h1>📩 Postulation</h1>
+
+<!-- PROFIL -->
+<div id="profil">
+    <label>Prénom</label>
+    <input id="prenom">
+
+    <label>Nom</label>
+    <input id="nom">
+
+    <label>Poste recherché</label>
+    <input id="poste" placeholder="Ex : aide-cuisine, agent d’entretien">
+
+    <button onclick="validerProfil()">✅ Continuer</button>
+
+    <p class="info">
+        Le prénom et le nom restent mémorisés sur ce téléphone.
+    </p>
+
+    <hr>
+    <button class="secondary" onclick="nouvelUtilisateur()">👤 Nouvel utilisateur</button>
+</div>
+
+<!-- MESSAGE -->
+<div id="messageZone" class="hidden">
+
+    <div class="preview" id="objetPreview"></div>
+
+    <label>Message</label>
+    <textarea id="message" rows="9"></textarea>
+
+    <button class="secondary" onclick="copierObjet()">📋 Copier l’objet</button>
+    <button onclick="copierMessage()">📋 Copier le message</button>
+
+    <p class="info">
+        Collez l’objet et le message dans votre boîte mail.
+    </p>
+
+    <hr>
+    <button class="secondary" onclick="resetPoste()">🔄 Nouvelle postulation (changer le poste)</button>
+    <button class="secondary" onclick="nouvelUtilisateur()">👤 Nouvel utilisateur</button>
+</div>
+
+</div>
+
+<script>
+const prenomElt = document.getElementById("prenom");
+const nomElt   = document.getElementById("nom");
+const posteElt = document.getElementById("poste");
+const profil   = document.getElementById("profil");
+const messageZone = document.getElementById("messageZone");
+const objetPreview = document.getElementById("objetPreview");
+const message = document.getElementById("message");
+
+// ===== VALIDATION PROFIL =====
+function validerProfil(){
+    if(!prenomElt.value || !nomElt.value || !posteElt.value){
+        alert("Merci de compléter prénom, nom et poste.");
+        return;
+    }
+    localStorage.setItem("prenom", prenomElt.value.trim());
+    localStorage.setItem("nom", nomElt.value.trim());
+    localStorage.setItem("poste", posteElt.value.trim());
+    genererMessage();
+}
+
+// ===== OBJET EMAIL (de / d') =====
+function buildObjet(poste){
+    let first = poste.trim().charAt(0).toLowerCase();
+    let voyelles = ["a","e","i","o","u","y","h"];
+    let deOuD = voyelles.includes(first) ? "d’" : "de ";
+    return "Candidature – poste " + deOuD + poste;
+}
+
+// ===== MESSAGE =====
+function genererMessage(){
+    let prenom = localStorage.getItem("prenom");
+    let nom = localStorage.getItem("nom");
+    let poste = localStorage.getItem("poste");
+
+    objetPreview.innerText = "Objet : " + buildObjet(poste);
+
+    message.value =
+`Madame, Monsieur,
+
+Je vous envoie ci-joint mon dossier de candidature pour le poste de ${poste}.
+
+Je vous remercie par avance pour l’attention portée à ma candidature.
+
+Je reste à votre disposition pour me présenter lors d’un entretien.
+
+Cordialement,
+${prenom} ${nom}`;
+
+    profil.classList.add("hidden");
+    messageZone.classList.remove("hidden");
+}
+
+// ===== COPIER =====
+function copierObjet(){
+    navigator.clipboard.writeText(
+        buildObjet(localStorage.getItem("poste") || "")
+    );
+    alert("Objet copié ✅");
+}
+
+function copierMessage(){
+    navigator.clipboard.writeText(message.value);
+    alert("Message copié ✅");
+}
+
+// ===== RESET POSTE (même utilisateur) =====
+function resetPoste(){
+    localStorage.removeItem("poste");
+    posteElt.value = "";
+    messageZone.classList.add("hidden");
+    profil.classList.remove("hidden");
+}
+
+// ===== NOUVEL UTILISATEUR (reset total) =====
+function nouvelUtilisateur(){
+    if(confirm("Changer d’utilisateur et effacer toutes les données ?")){
+        localStorage.clear();
+        location.reload();
+    }
+}
+
+// ===== AUTO-REMPLISSAGE =====
+if(localStorage.getItem("prenom")) prenomElt.value = localStorage.getItem("prenom");
+if(localStorage.getItem("nom")) nomElt.value = localStorage.getItem("nom");
+
+// Si un poste existe déjà → afficher directement le message
+if(localStorage.getItem("poste")){
+    genererMessage();
+}
+</script>
+
+</body>
+</html>

@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Démêler le mot</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+.consigne{
+  text-align:center;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+
+/* PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+}
+
+/* CARTES */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.card{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  border:2px solid transparent;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+
+.scrambled{
+  text-align:center;
+  font-size:22px;
+  letter-spacing:4px;
+  margin-bottom:10px;
+}
+
+.boxes{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:10px;
+}
+.box{
+  width:34px;
+  height:34px;
+  border:2px solid var(--border);
+  background:#020617;
+  color:white;
+  font-size:18px;
+  text-align:center;
+  text-transform:uppercase;
+}
+
+.card-actions{text-align:center}
+.reset-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Démêler le mot</h1>
+<div class="consigne">
+Remets les lettres dans le bon ordre. Tape le mot en continu.
+</div>
+
+<!-- PROGRESSION -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- CARTES -->
+<div class="grid" id="grid"></div>
+
+<!-- FIN -->
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   🔽 SÉRIES (MODÈLE)
+const series = [
+  ["MAIN","PAUSE","EQUIPE","TRAVAIL","MATERIEL","ORGANISER"],
+  ["PIED","TEMPS","PROPRE","BUREAUX","COLLEGUE","SECURITES"],
+  ["CHEF","HORAIRE","PONCTUEL","RETARD","ABSENT","PRESENT"],
+  ["NETTOYER","RANGER","LAVER","ESSUYER","BALAYER","VIDER"],
+  ["ENTRER","SORTIR","COMMENCER","TERMINER","ATTENDRE","CONTINUER"],
+  ["CALME","RAPIDE","LENT","ATTENTIF","SERIEUX","MOTIVE"],
+  ["GANTS","MASQUE","CASQUE","CHAUSSURES","VESTE","PROTECTION"],
+  ["SIGNER","LIRE","COMPRENDRE","SUIVRE","RESPECTER","APPLIQUER"],
+  ["MATIN","MIDI","SOIR","SEMAINE","JOUR","PAUSE"],
+  ["AIDE","DEMANDER","EXPLIQUER","MONTRER","REPETER","VERIFIER"],
+
+  ["TRAVAILLER","FINIR","COMMENCER","CONTINUER","ARRETER","REPRENDRE"],
+  ["PROPRE","SALE","ORDRE","DESORDRE","RANGEMENT","NETTOYAGE"],
+  ["SECURITE","DANGER","RISQUE","ATTENTION","PRUDENCE","ALERTE"],
+  ["COLLEGUES","EQUIPE","CHEF","RESPONSABLE","ENTREPRISE","POSTE"],
+  ["OUTIL","BALAI","CHIFFON","PRODUIT","MACHINE","EQUIPEMENT"],
+  ["HEURE","MINUTE","RETARD","AVANCE","TEMPS","DUREE"],
+  ["ABSENCE","MALADIE","CONGE","PRESENCE","RETARD","JUSTIFIER"],
+  ["PARLER","ECOUTER","REPONDRE","QUESTIONNER","SIGNALER","INFORMER"],
+  ["COMMENCER","PREPARER","ORGANISER","EXECUTER","VERIFIER","TERMINER"],
+  ["CALME","STRESS","PRESSION","FATIGUE","PAUSE","REPOS"],
+
+  ["ORDRE","CONSIGNE","REGLE","PROCEDURE","INSTRUCTION","DIRECTIVE"],
+  ["QUALITE","ERREUR","CONTROLE","VERIFICATION","CORRECTION","RESULTAT"],
+  ["RAPIDE","EFFICACE","LENT","PRECIS","ATTENTIF","APPLIQUE"],
+  ["PROBLEME","SOLUTION","AIDE","SUPPORT","CONTACT","SUIVI"],
+  ["POSTE","LIEU","SALLE","BUREAU","ENTREE","SORTIE"],
+  ["VETEMENT","TENUE","UNIFORME","GANTS","CHAUSSURES","PROTECTION"],
+  ["PLANNING","HORAIRE","JOURNEE","SEMAINE","MOIS","TEMPS"],
+  ["ORGANISATION","PRIORITE","ORDRE","METHODE","STRUCTURE","PLAN"],
+  ["COLLABORER","AIDER","PARTAGER","SOUTENIR","COOPERER","TRAVAILLER"],
+  ["SECURITE","INCIDENT","ACCIDENT","RISQUE","PREVENTION","PROTECTION"],
+
+  ["PONCTUEL","REGULIER","STABLE","FIABLE","SERIEUX","MOTIVE"],
+  ["ENTREPRISE","TRAVAIL","MISSION","TACHE","ROLE","FONCTION"],
+  ["PREPARATION","ACTION","EXECUTION","SUIVI","FIN","RESULTAT"],
+  ["ATTENTION","CONCENTRATION","FOCUS","SOINS","PRECISION","DETAIL"],
+  ["AUTONOMIE","AIDE","SUPPORT","GUIDE","ACCOMPAGNEMENT","CONSEIL"],
+  ["EFFORT","ENGAGEMENT","MOTIVATION","VOLONTE","DISCIPLINE","RESPECT"],
+  ["NETTOYER","DESINFECTER","ESSUYER","LAVER","SECHER","RANGER"],
+  ["CONTROLE","VERIFIER","TESTER","CONFIRMER","VALIDER","CORRIGER"],
+  ["COMMUNICATION","MESSAGE","INFORMATION","ECHANGE","CONTACT","DIALOGUE"],
+  ["OBJECTIF","BUT","RESULTAT","SUCCES","PROGRES","AMELIORATION"],
+
+  ["SECURISER","PROTEGER","PREVENIR","EVITER","CONTROLER","SIGNALER"],
+  ["ORGANISE","STRUCTURE","CLASSE","ORDONNE","METHODIQUE","LOGIQUE"],
+  ["RAPIDITE","LENTEUR","EFFICIENCE","PRECISION","QUALITE","RESULTAT"],
+  ["CONFIANCE","RESPECT","POLITESSE","COURTOISIE","ECOUTE","ATTITUDE"],
+  ["DEBUT","MILIEU","FIN","ETAPE","PHASE","PROCESSUS"],
+  ["RESPONSABLE","AUTONOME","FIABLE","SERIEUX","ENGAGE","PRESENT"],
+  ["AMELIORER","CORRIGER","ADAPTER","MODIFIER","OPTIMISER","AJUSTER"],
+  ["SUIVRE","RESPECTER","APPLIQUER","EXECUTER","REALISER","ACCOMPLIR"],
+  ["TRAVAIL","EFFORT","DISCIPLINE","RIGUEUR","SERIEUX","QUALITE"],
+  ["STABILITE","REGULARITE","CONTINUITE","FIABILITE","ENGAGEMENT","DUREE"]
+];
+
+
+/* ========================= */
+function shuffle(arr){
+  return [...arr].sort(()=>Math.random()-0.5);
+}
+
+/* =========================
+   📊 ÉTAT + SAUVEGARDE
+   ========================= */
+const STORAGE_KEY="demeler_v1";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie:0, done:{}, score:0, errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+/* ========================= */
+const grid=document.getElementById("grid");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+
+const totalWords = series.flat().length;
+
+function scramble(word){
+  return shuffle(word.split("")).join("");
+}
+
+function updateProgress(){
+  const doneCount = Object.keys(state.done).length;
+  progressLabel.textContent=`Progression : ${doneCount} / ${totalWords}`;
+  progressFill.style.width=Math.round(doneCount/totalWords*100)+"%";
+}
+
+function loadSerie(){
+  grid.innerHTML="";
+  const data = shuffle(series[state.serie]);
+
+  data.forEach(word=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.word=word;
+    card.tabIndex=0;
+    let cursor=0;
+
+    const scr=document.createElement("div");
+    scr.className="scrambled";
+    scr.textContent = scramble(word);
+    card.appendChild(scr);
+
+    const boxes=document.createElement("div");
+    boxes.className="boxes";
+    const inputs=[];
+
+    for(let i=0;i<word.length;i++){
+      const b=document.createElement("input");
+      b.className="box";
+      b.readOnly=true;
+      inputs.push(b);
+      boxes.appendChild(b);
+    }
+
+    card.addEventListener("keydown",e=>{
+      if(state.done[word]) return;
+
+      if(e.key==="Backspace"){
+        if(cursor>0){cursor--; inputs[cursor].value="";}
+        e.preventDefault(); return;
+      }
+      if(e.key.length===1 && /[a-zA-Z]/.test(e.key)){
+        if(cursor<inputs.length){
+          inputs[cursor].value=e.key.toUpperCase();
+          cursor++; check(card,inputs);
+        }
+        e.preventDefault();
+      }
+    });
+
+    const actions=document.createElement("div");
+    actions.className="card-actions";
+    const reset=document.createElement("button");
+    reset.className="reset-btn";
+    reset.textContent="Reset";
+    reset.onclick=()=>{
+      inputs.forEach(b=>b.value="");
+      cursor=0;
+      card.classList.remove("ok","err");
+      delete state.done[word];
+      save();
+    };
+    actions.appendChild(reset);
+
+    card.appendChild(boxes);
+    card.appendChild(actions);
+    grid.appendChild(card);
+  });
+
+  updateProgress();
+}
+
+function check(card,inputs){
+  const word=card.dataset.word;
+  if(inputs.some(b=>!b.value)) return;
+
+  let ok=true;
+  inputs.forEach((b,i)=>{ if(b.value!==word[i]) ok=false; });
+
+  card.classList.add(ok?"ok":"err");
+  state.done[word]=true;
+  ok?state.score++:state.errors++;
+  save();
+  updateProgress();
+
+  if(series[state.serie].every(w=>state.done[w])){
+    state.serie++;
+    save();
+    if(state.serie<series.length) loadSerie();
+    else showEnd();
+  }
+}
+
+function showEnd(){
+  end.style.display="block";
+  const ratio=state.score/totalWords;
+
+  starsEl.textContent=
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  let medal="";
+  if(state.score===totalWords && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Score : ${state.score} / ${totalWords}<br>Erreurs : ${state.errors}`;
+}
+
+/* INIT */
+updateProgress();
+loadSerie();
+</script>
+
+</body>
+</html>
+

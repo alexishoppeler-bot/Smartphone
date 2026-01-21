@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<title>Nombre de lettres – Séries</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+:root{
+  --brand:#0f766e;
+  --ok:#16a34a;
+  --err:#dc2626;
+  --bg:#0b1220;
+  --card:#111827;
+  --text:#e5e7eb;
+  --muted:#9ca3af;
+  --border:#374151;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Arial, sans-serif;
+}
+.container{
+  max-width:1100px;
+  margin:auto;
+  padding:20px;
+}
+h1{text-align:center}
+.consigne{
+  text-align:center;
+  color:var(--muted);
+  margin:10px 0 16px;
+}
+
+/* 📊 PROGRESSION */
+.progress-wrap{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.progress-label{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:8px;
+}
+.progress-bar{
+  width:100%;
+  height:14px;
+  background:#020617;
+  border-radius:10px;
+  overflow:hidden;
+  border:1px solid var(--border);
+}
+.progress-fill{
+  height:100%;
+  width:0%;
+  background:linear-gradient(90deg,var(--brand),#22c55e);
+  transition:width .3s ease;
+}
+
+/* LISTE MOTS */
+.word-list{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  margin-bottom:20px;
+}
+.words{
+  display:flex;
+  flex-wrap:wrap;
+  gap:10px;
+}
+.word-item{
+  padding:6px 10px;
+  border:1px solid var(--border);
+  border-radius:8px;
+  background:#020617;
+  font-weight:bold;
+}
+.word-item.used{
+  text-decoration:line-through;
+  opacity:.4;
+}
+
+/* CARTES */
+.grid{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:16px;
+}
+.card{
+  background:var(--card);
+  padding:14px;
+  border-radius:14px;
+  border:2px solid transparent;
+  outline:none;
+}
+.card.ok{border-color:var(--ok)}
+.card.err{border-color:var(--err)}
+.card-title{
+  text-align:center;
+  font-weight:bold;
+  margin-bottom:10px;
+}
+.boxes{
+  display:flex;
+  justify-content:center;
+  gap:6px;
+  margin-bottom:10px;
+}
+.box{
+  width:34px;
+  height:34px;
+  border:2px solid var(--border);
+  background:#020617;
+  color:white;
+  font-size:18px;
+  text-align:center;
+  text-transform:uppercase;
+}
+.card-actions{
+  text-align:center;
+}
+.reset-btn{
+  background:transparent;
+  border:1px solid var(--border);
+  color:var(--text);
+  padding:6px 12px;
+  border-radius:8px;
+  cursor:pointer;
+}
+
+/* FIN */
+.end{
+  display:none;
+  margin-top:30px;
+  text-align:center;
+  background:var(--card);
+  padding:20px;
+  border-radius:14px;
+}
+.stars{font-size:26px}
+.medal{font-size:32px;margin-top:10px}
+</style>
+
+  <link rel="stylesheet" href="mobile.css">
+</head>
+
+<body>
+<div class="container">
+
+<h1>Nombre de lettres</h1>
+<div class="consigne">
+Tape le mot en continu.  
+🥇 uniquement si tout est juste <strong>et sans aucune erreur</strong>.
+</div>
+
+<!-- 📊 PROGRESSION -->
+<div class="progress-wrap">
+  <div class="progress-label" id="progressLabel">Progression : 0 / 0</div>
+  <div class="progress-bar">
+    <div class="progress-fill" id="progressFill"></div>
+  </div>
+</div>
+
+<!-- MOTS -->
+<div class="word-list">
+  <div class="words" id="wordList"></div>
+</div>
+
+<!-- CARTES -->
+<div class="grid" id="grid"></div>
+
+<!-- FIN -->
+<div class="end" id="end">
+  <div class="stars" id="stars"></div>
+  <div class="medal" id="medal"></div>
+  <p id="result"></p>
+</div>
+
+</div>
+
+<script>
+/* =========================
+   SÉRIES (VALIDÉES)
+   ========================= */
+const series = [
+  [
+    { word:"MAIN", length:4 },
+    { word:"PAUSE", length:5 },
+    { word:"EQUIPE", length:6 },
+    { word:"TRAVAIL", length:7 },
+    { word:"MATERIEL", length:8 },
+    { word:"ORGANISER", length:9 }
+  ],
+  [
+    { word:"PIED", length:4 },
+    { word:"TEMPS", length:5 },
+    { word:"PROPRE", length:6 },
+    { word:"BUREAUX", length:7 },
+    { word:"COLLEGUE", length:8 },
+    { word:"SECURITES", length:9 }
+  ],
+  [
+    { word:"CHEF", length:4 },
+    { word:"ORDRE", length:5 },
+    { word:"NETTOYER", length:7 },
+    { word:"RANGEMENT", length:9 },
+    { word:"PROCEDURE", length:9 },
+    { word:"ORGANISATION", length:12 }
+  ],
+  [
+    { word:"LIRE", length:4 },
+    { word:"ECRIRE", length:6 },
+    { word:"SIGNER", length:6 },
+    { word:"COMPRENDRE", length:10 },
+    { word:"RESPECTER", length:9 },
+    { word:"APPLIQUER", length:9 }
+  ],
+  [
+    { word:"JOUR", length:4 },
+    { word:"MATIN", length:5 },
+    { word:"SOIREE", length:6 },
+    { word:"SEMAINE", length:7 },
+    { word:"HORAIRE", length:7 },
+    { word:"PLANNING", length:8 }
+  ],
+
+  [
+    { word:"PROPRE", length:6 },
+    { word:"SALE", length:4 },
+    { word:"RANGER", length:6 },
+    { word:"LAVER", length:5 },
+    { word:"ESSUYER", length:7 },
+    { word:"DESINFECTER", length:11 }
+  ],
+  [
+    { word:"CALME", length:5 },
+    { word:"SERIEUX", length:7 },
+    { word:"ATTENTIF", length:8 },
+    { word:"CONCENTRE", length:9 },
+    { word:"ORGANISE", length:8 },
+    { word:"METHODIQUE", length:10 }
+  ],
+  [
+    { word:"AIDE", length:4 },
+    { word:"SOUTIEN", length:7 },
+    { word:"CONSEIL", length:7 },
+    { word:"EXPLICATION", length:11 },
+    { word:"ACCOMPAGNEMENT", length:14 },
+    { word:"COLLABORATION", length:13 }
+  ],
+  [
+    { word:"DANGER", length:6 },
+    { word:"RISQUE", length:6 },
+    { word:"SECURITE", length:8 },
+    { word:"PREVENTION", length:10 },
+    { word:"PROTECTION", length:10 },
+    { word:"RESPONSABILITE", length:14 }
+  ],
+  [
+    { word:"RAPIDE", length:6 },
+    { word:"LENT", length:4 },
+    { word:"EFFICACE", length:8 },
+    { word:"PRECIS", length:6 },
+    { word:"QUALITE", length:7 },
+    { word:"PERFORMANCE", length:11 }
+  ],
+
+  [
+    { word:"OUTIL", length:5 },
+    { word:"BALAI", length:5 },
+    { word:"CHIFFON", length:7 },
+    { word:"PRODUIT", length:7 },
+    { word:"MACHINE", length:7 },
+    { word:"EQUIPEMENT", length:10 }
+  ],
+  [
+    { word:"ENTRER", length:6 },
+    { word:"SORTIR", length:6 },
+    { word:"COMMENCER", length:9 },
+    { word:"CONTINUER", length:9 },
+    { word:"TERMINER", length:8 },
+    { word:"FINALISER", length:9 }
+  ],
+  [
+    { word:"ERREUR", length:6 },
+    { word:"CORRIGER", length:8 },
+    { word:"VERIFIER", length:8 },
+    { word:"CONTROLER", length:8 },
+    { word:"VALIDER", length:7 },
+    { word:"CONFIRMER", length:9 }
+  ],
+  [
+    { word:"ABSENT", length:6 },
+    { word:"PRESENT", length:7 },
+    { word:"RETARD", length:6 },
+    { word:"JUSTIFIER", length:9 },
+    { word:"PREVENIR", length:8 },
+    { word:"COMMUNIQUER", length:11 }
+  ],
+  [
+    { word:"POSTE", length:5 },
+    { word:"LIEU", length:4 },
+    { word:"SALLE", length:5 },
+    { word:"BUREAU", length:6 },
+    { word:"ENTREPRISE", length:10 },
+    { word:"ENVIRONNEMENT", length:13 }
+  ],
+
+  [
+    { word:"BUT", length:3 },
+    { word:"OBJECTIF", length:8 },
+    { word:"RESULTAT", length:8 },
+    { word:"PROGRES", length:7 },
+    { word:"AMELIORATION", length:12 },
+    { word:"DEVELOPPEMENT", length:13 }
+  ],
+  [
+    { word:"ORDRE", length:5 },
+    { word:"REGLE", length:5 },
+    { word:"CONSIGNE", length:8 },
+    { word:"PROCEDURE", length:9 },
+    { word:"NORME", length:5 },
+    { word:"REGLEMENT", length:10 }
+  ],
+  [
+    { word:"AUTONOME", length:8 },
+    { word:"FIABLE", length:6 },
+    { word:"REGULIER", length:8 },
+    { word:"STABLE", length:6 },
+    { word:"ENGAGE", length:6 },
+    { word:"PROFESSIONNEL", length:14 }
+  ],
+  [
+    { word:"EFFORT", length:6 },
+    { word:"VOLONTE", length:7 },
+    { word:"MOTIVATION", length:10 },
+    { word:"DISCIPLINE", length:10 },
+    { word:"RIGUEUR", length:7 },
+    { word:"EXIGENCE", length:8 }
+  ],
+  [
+    { word:"DEBUT", length:5 },
+    { word:"ETAPE", length:5 },
+    { word:"PHASE", length:5 },
+    { word:"PROCESSUS", length:9 },
+    { word:"STRUCTURE", length:9 },
+    { word:"ORGANISATION", length:12 }
+  ]
+];
+
+
+/* sécurité */
+series.forEach((s,i)=>{
+  const seen=new Set();
+  s.forEach(o=>{
+    if(o.word.length!==o.length) throw Error("Erreur longueur "+o.word);
+    if(seen.has(o.length)) throw Error("Doublon "+o.length+" série "+(i+1));
+    seen.add(o.length);
+  });
+});
+
+function shuffle(a){return [...a].sort(()=>Math.random()-0.5);}
+
+/* ÉTAT + SAUVEGARDE */
+const STORAGE_KEY="nb_lettres_final_or_zero_erreur";
+let state = JSON.parse(localStorage.getItem(STORAGE_KEY)) || {
+  serie:0, done:{}, score:0, errors:0
+};
+function save(){localStorage.setItem(STORAGE_KEY,JSON.stringify(state));}
+
+const grid=document.getElementById("grid");
+const wordList=document.getElementById("wordList");
+const progressLabel=document.getElementById("progressLabel");
+const progressFill=document.getElementById("progressFill");
+const end=document.getElementById("end");
+const starsEl=document.getElementById("stars");
+const medalEl=document.getElementById("medal");
+const result=document.getElementById("result");
+
+const totalWords=series.flat().length;
+
+function updateProgress(){
+  const doneCount=Object.keys(state.done).length;
+  progressLabel.textContent=`Progression : ${doneCount} / ${totalWords}`;
+  progressFill.style.width=Math.round(doneCount/totalWords*100)+"%";
+}
+
+function loadSerie(){
+  grid.innerHTML="";
+  wordList.innerHTML="";
+  const data=shuffle(series[state.serie]);
+
+  shuffle(data).forEach(o=>{
+    const w=document.createElement("span");
+    w.className="word-item";
+    w.textContent=o.word;
+    if(state.done[o.word]) w.classList.add("used");
+    wordList.appendChild(w);
+  });
+
+  data.forEach(o=>{
+    const card=document.createElement("div");
+    card.className="card";
+    card.dataset.word=o.word;
+    card.tabIndex=0;
+    let cursor=0;
+
+    const title=document.createElement("div");
+    title.className="card-title";
+    title.textContent=o.length+" lettres";
+    card.appendChild(title);
+
+    const boxes=document.createElement("div");
+    boxes.className="boxes";
+    const inputs=[];
+
+    for(let i=0;i<o.length;i++){
+      const b=document.createElement("input");
+      b.className="box";
+      b.readOnly=true;
+      inputs.push(b);
+      boxes.appendChild(b);
+    }
+
+    card.addEventListener("keydown",e=>{
+      if(state.done[o.word]) return;
+
+      if(e.key==="Backspace"){
+        if(cursor>0){cursor--; inputs[cursor].value="";}
+        e.preventDefault(); return;
+      }
+      if(e.key.length===1 && /[a-zA-Z]/.test(e.key)){
+        if(cursor<inputs.length){
+          inputs[cursor].value=e.key.toUpperCase();
+          cursor++; check(card,inputs);
+        }
+        e.preventDefault();
+      }
+    });
+
+    const actions=document.createElement("div");
+    actions.className="card-actions";
+    const reset=document.createElement("button");
+    reset.className="reset-btn";
+    reset.textContent="Reset";
+    reset.onclick=()=>{
+      inputs.forEach(b=>b.value="");
+      cursor=0;
+      card.classList.remove("ok","err");
+      delete state.done[o.word];
+      save();
+    };
+    actions.appendChild(reset);
+
+    card.appendChild(boxes);
+    card.appendChild(actions);
+    grid.appendChild(card);
+  });
+
+  updateProgress();
+}
+
+function check(card,inputs){
+  const word=card.dataset.word;
+  if(inputs.some(b=>!b.value)) return;
+
+  let ok=true;
+  inputs.forEach((b,i)=>{ if(b.value!==word[i]) ok=false; });
+
+  card.classList.add(ok?"ok":"err");
+  state.done[word]=true;
+  ok?state.score++:state.errors++;
+  save();
+  updateProgress();
+
+  if(series[state.serie].every(o=>state.done[o.word])){
+    state.serie++;
+    save();
+    if(state.serie<series.length) loadSerie();
+    else showEnd();
+  }
+}
+
+function showEnd(){
+  end.style.display="block";
+  const ratio=state.score/totalWords;
+
+  starsEl.textContent=
+    ratio===1?"⭐⭐⭐⭐":
+    ratio>=0.8?"⭐⭐⭐":
+    ratio>=0.6?"⭐⭐":
+    ratio>=0.5?"⭐":"";
+
+  /* 🥇 seulement si score parfait ET 0 erreur */
+  let medal="";
+  if(state.score===totalWords && state.errors===0){
+    medal="🥇 Médaille d’or";
+  }else if(ratio>=0.8){
+    medal="🥈 Médaille d’argent";
+  }else if(ratio>=0.6){
+    medal="🥉 Médaille de bronze";
+  }
+  medalEl.textContent=medal;
+
+  result.innerHTML=`Score : ${state.score} / ${totalWords}<br>Erreurs : ${state.errors}`;
+}
+
+/* INIT */
+updateProgress();
+loadSerie();
+</script>
+
+</body>
+</html>
+

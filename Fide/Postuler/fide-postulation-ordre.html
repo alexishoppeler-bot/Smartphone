@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Jeu - Remettre les images en ordre</title>
+<style>
+  :root{
+    --bg:#efe9e0;
+    --bg-2:#f7f3ea;
+    --card:#ffffff;
+    --accent:#0f6b5f;
+    --accent-dark:#0a5249;
+    --accent-2:#e29b2a;
+    --muted:#5a5a5a;
+    --shadow:0 18px 36px rgba(26, 28, 32, 0.12);
+  }
+  body{
+    font-family: "Trebuchet MS", "Gill Sans", "Segoe UI", sans-serif;
+    background:
+      radial-gradient(1200px 500px at 10% 0%, #fff 0%, transparent 60%),
+      linear-gradient(135deg, var(--bg) 0%, var(--bg-2) 100%);
+    padding:18px;
+    color:#1b1b1b;
+  }
+  .container{
+    max-width:1000px;
+    margin:0 auto;
+    background:var(--card);
+    padding:20px;
+    border-radius:12px;
+    box-shadow:var(--shadow);
+    border:1px solid #eee6d9;
+    animation:floatIn 700ms ease-out;
+  }
+  h1{
+    margin:0 0 6px 0;
+    text-align:center;
+    font-size:24px;
+    letter-spacing:0.5px;
+  }
+  .intro{
+    text-align:center;
+    color:var(--muted);
+    margin-bottom:16px;
+  }
+  .actions{
+    display:flex;
+    gap:10px;
+    justify-content:center;
+    margin-bottom:14px;
+    flex-wrap:wrap;
+  }
+  .btn{
+    padding:10px 16px;
+    background:linear-gradient(135deg, var(--accent), var(--accent-dark));
+    color:#fff;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    text-decoration:none;
+    font-size:14px;
+    box-shadow:0 6px 14px rgba(15, 107, 95, 0.25);
+    transition:transform 180ms ease, box-shadow 180ms ease, filter 180ms ease;
+  }
+  .btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 10px 18px rgba(15, 107, 95, 0.28);
+  }
+  .btn.secondary{
+    background:linear-gradient(135deg, #2c3e50, #22313f);
+  }
+  .grid{
+    list-style:none;
+    padding:0;
+    margin:0;
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(140px, 1fr));
+    gap:12px;
+  }
+  .card{
+    background:#fff;
+    border:2px solid #efe6d7;
+    border-radius:10px;
+    padding:8px;
+    cursor:move;
+    transition:transform 180ms ease, box-shadow 180ms ease, border-color 180ms ease;
+    animation:fadeUp 420ms ease both;
+  }
+  .card.dragging{
+    opacity:0.6;
+  }
+  .card:hover{
+    transform:translateY(-4px) scale(1.02);
+    box-shadow:0 12px 20px rgba(0,0,0,0.12);
+    border-color:#e8d4b8;
+  }
+  .card img{
+    width:100%;
+    height:auto;
+    border-radius:8px;
+    display:block;
+  }
+  .caption{
+    display:none;
+    margin-top:8px;
+    font-size:12px;
+    color:#3c2f23;
+    line-height:1.3;
+  }
+  .card.revealed .caption{
+    display:block;
+  }
+  .status{
+    text-align:center;
+    margin-top:14px;
+    font-weight:bold;
+    color:#1f4f49;
+    animation:fadeUp 300ms ease both;
+  }
+  .lightbox{
+    position:fixed;
+    inset:0;
+    background:rgba(0,0,0,0.75);
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    z-index:1000;
+  }
+  .lightbox.open{
+    display:flex;
+    animation:fadeIn 180ms ease;
+  }
+  .lightbox img{
+    max-width:95vw;
+    max-height:90vh;
+    border-radius:10px;
+    box-shadow:0 12px 30px rgba(0,0,0,0.35);
+    animation:zoomIn 220ms ease;
+  }
+  .card:nth-child(1){ animation-delay:40ms; }
+  .card:nth-child(2){ animation-delay:80ms; }
+  .card:nth-child(3){ animation-delay:120ms; }
+  .card:nth-child(4){ animation-delay:160ms; }
+  .card:nth-child(5){ animation-delay:200ms; }
+  .card:nth-child(6){ animation-delay:240ms; }
+  .card:nth-child(7){ animation-delay:280ms; }
+
+  @keyframes fadeUp{
+    from{ opacity:0; transform:translateY(12px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @keyframes fadeIn{
+    from{ opacity:0; }
+    to{ opacity:1; }
+  }
+  @keyframes zoomIn{
+    from{ transform:scale(0.95); }
+    to{ transform:scale(1); }
+  }
+  @keyframes floatIn{
+    from{ opacity:0; transform:translateY(10px); }
+    to{ opacity:1; transform:translateY(0); }
+  }
+  @media (prefers-reduced-motion: reduce){
+    *{
+      animation:none !important;
+      transition:none !important;
+    }
+  }
+</style>
+
+  <link rel="stylesheet" href="../../mobile.css">
+</head>
+<body>
+  <div class="container">
+    <h1>Remettre les images en ordre</h1>
+    <div class="intro">Glisse les images pour retrouver l'ordre de 1 a 7.</div>
+
+    <div class="actions">
+      <button class="btn" id="shuffleBtn" type="button">Melanger</button>
+      <button class="btn" id="checkBtn" type="button">Verifier</button>
+      <a class="btn secondary" href="../index.html">Retour</a>
+    </div>
+
+    <ul class="grid" id="imageList" aria-label="Images a reordonner">
+      <li class="card" draggable="true" data-order="1" data-text="Je me rends sur le site Job-Room.">
+        <img src="1.png" alt="Image 1">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="2" data-text="Je me connecte à mon compte.">
+        <img src="2.png" alt="Image 2">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="3" data-text="Je reçois un SMS de validation.">
+        <img src="3.png" alt="Image 3">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="4" data-text="Je filtre ma recherche.">
+        <img src="4.png" alt="Image 4">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="5" data-text="Je trouve une annonce intéressante.">
+        <img src="5.png" alt="Image 5">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="6" data-text="J’envoie mon dossier de candidature.">
+        <img src="6.png" alt="Image 6">
+        <div class="caption"></div>
+      </li>
+      <li class="card" draggable="true" data-order="7" data-text="J’enregistre ma postulation.">
+        <img src="7.png" alt="Image 7">
+        <div class="caption"></div>
+      </li>
+    </ul>
+
+    <div class="status" id="status"></div>
+  </div>
+
+  <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Agrandir l'image">
+    <img id="lightboxImg" alt="Image agrandie">
+  </div>
+
+<script>
+  const list = document.getElementById("imageList");
+  const status = document.getElementById("status");
+  const shuffleBtn = document.getElementById("shuffleBtn");
+  const checkBtn = document.getElementById("checkBtn");
+  const lightbox = document.getElementById("lightbox");
+  const lightboxImg = document.getElementById("lightboxImg");
+  let dragSrcEl = null;
+
+  function addDnDHandlers(card){
+    card.addEventListener("dragstart", () => {
+      dragSrcEl = card;
+      card.classList.add("dragging");
+    });
+    card.addEventListener("dragend", () => {
+      card.classList.remove("dragging");
+    });
+    card.addEventListener("dragover", (e) => {
+      e.preventDefault();
+    });
+    card.addEventListener("drop", (e) => {
+      e.preventDefault();
+      if (!dragSrcEl || dragSrcEl === card) return;
+
+      const srcNext = dragSrcEl.nextSibling === card ? dragSrcEl : dragSrcEl.nextSibling;
+      list.insertBefore(dragSrcEl, card);
+      list.insertBefore(card, srcNext);
+    });
+
+    const img = card.querySelector("img");
+    img.addEventListener("click", () => {
+      lightboxImg.src = img.src;
+      lightboxImg.alt = img.alt;
+      lightbox.classList.add("open");
+    });
+  }
+
+  function shuffleCards(){
+    const cards = Array.from(list.children);
+    for (let i = cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+    cards.forEach((card) => list.appendChild(card));
+    setCaptionsVisible(false);
+    status.textContent = "";
+  }
+
+  function checkOrder(){
+    const orders = Array.from(list.children).map((li) => li.getAttribute("data-order"));
+    const isCorrect = orders.every((val, idx) => String(idx + 1) === val);
+    status.textContent = isCorrect ? "Bravo, c'est le bon ordre !" : "Pas encore, essaye encore.";
+    setCaptionsVisible(isCorrect);
+  }
+
+  function setCaptionsVisible(show){
+    Array.from(list.children).forEach((card) => {
+      const caption = card.querySelector(".caption");
+      if (caption) {
+        caption.textContent = card.getAttribute("data-text") || "";
+      }
+      card.classList.toggle("revealed", show);
+    });
+  }
+
+  Array.from(list.children).forEach(addDnDHandlers);
+  shuffleBtn.addEventListener("click", shuffleCards);
+  checkBtn.addEventListener("click", checkOrder);
+  shuffleCards();
+
+  lightbox.addEventListener("click", () => {
+    lightbox.classList.remove("open");
+  });
+</script>
+</body>
+</html>
